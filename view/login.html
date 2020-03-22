@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Up</title>
+    <!-- Bootstrap CSS -->
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!-- MATERIALIZE Compiled and minified CSS and icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- MATERIALIZE Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/3a6781b4ed.js" crossorigin="anonymous"></script>
+    <!-- custom Styles -->
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- jQuery CDN -->
+    <script type="text/javascript" src="./js/index.js"></script>
+    <!-- Ajax CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+    <nav class="indigo darken-4 lighten-1" role="navigation">
+        <div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">Team Up <i class="material-icons">group</i></a>
+          <ul class="right hide-on-med-and-down">
+            <!-- <li><a href="#">Navbar Link</a></li> -->
+            <li><a href="#" id="signup-button" class="btn-small waves-effect waves-light light-blue accent-4" style="margin: 0">Sign Up</a>
+            <a href="#" id="login-button" class="btn-small waves-effect waves-light light-blue accent-4" style="margin: 0">Login</a></li>
+          </ul>
+    
+          <ul id="nav-mobile" class="sidenav">
+            <!-- <li><a href="#">Navbar Link</a></li> -->
+            <li><a href="#" id="signup-button" class="btn-small waves-effect waves-light light-blue accent-4">Sign Up</a></li>
+            <li><a href="#" id="login-button" class="btn-small waves-effect waves-light light-blue accent-4">Login</a></li>
+            
+          </ul>
+          <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="row ">
+            <br><br>
+            <div class="col s6 m6 info" style="margin-left: 25%">
+              <h5 class="center-align register">Login</h5>
+              <br>
+            </div>
+        </div>
+        <div class="row">
+            <form class="col s6 m6" id="reg-form" style="margin-left: 25%">
+                <div class="input-field col s12">
+                  <input id="email" type="email" class="validate" required>
+                  <label for="email">Email</label>
+                </div>
+                <div class="input-field col s12">
+                  <input id="password" type="password" class="" minlength="6" required>
+                  <label for="password">Password</label>
+                </div>
+                <div class="input-field col s6">
+                    <a href="/" id="signup-button" class="btn waves-effect waves-light light-blue accent-4">Login
+                        <i class="material-icons right">done</i>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <br><br>
+    </div>
+
+    
+      <footer class="page-footer grey darken-3">
+        <div class="container">
+          <div class="row">
+            <div class="col l3 s12">
+              <h5 class="white-text">Team Bio</h5>
+              <p class="grey-text text-lighten-4">We are a team of college students working on this project like it's our full time job.</p>
+            </div>
+            <div class="col l3 s12">
+            </div>
+            <div class="col l3 s12">
+              <h5 class="white-text">Connect</h5>
+              <ul>
+                <li><a class="white-text" href="#!">Sajad</a></li>
+                <li><a class="white-text" href="#!">Arun</a></li>
+                <li><a class="white-text" href="#!">Abdul</a></li>
+                <li><a class="white-text" href="#!">Ahsan</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer-copyright">
+          <div class="container">
+          <a class="darkblue-text text-lighten-3" href=""></a>
+          </div>
+        </div>
+      </footer>
+    
+    <script src="assets/js/materialize.js"></script>
+    <script type="text/javascript" src="assets/js/front.js"></script>
+</body>
+</html>
