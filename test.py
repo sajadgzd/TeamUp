@@ -1,6 +1,6 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='view')
 
 tasks = [
     {
@@ -17,13 +17,22 @@ tasks = [
     }
 ]
 
-@app.route('/', methods=['GET'])
+@app.route('/test1', methods=['GET'])
 def get_tasks():
+    # print(request.get_json())
     return jsonify({'tasks': tasks})
+    
+@app.route('/test2', methods=['POST'])
+def push_tasks():
+    # Get data received from javascript
+    data = request.get_data()
+    resp = {"message": "Your msg is " + data}
+    print(data)
+    return jsonify(resp)
 
-@app.route('/test', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def html_route():
-    return render_template("view/login.html")
+    return render_template("landing.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
