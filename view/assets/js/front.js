@@ -7,9 +7,16 @@
     }); // end of document ready
   })(jQuery); // end of jQuery name space
   
-$(function() {
+  $(document).ready(function() {
 
-
-
+    function getData() {
+      $.ajax({
+          url: "/",
+          method: "GET"
+      }).then(function(response) {
+          console.log(response);
+      });
+    };
+    getData();
 
 });
