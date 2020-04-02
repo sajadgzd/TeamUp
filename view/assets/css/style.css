@@ -5,6 +5,9 @@
 .icon-block {
     padding: 0 15px;
   }
-  .icon-block .material-icons {
+.icon-block .material-icons {
       font-size: inherit;
   }
+/* body {
+    background-color: rgba(223, 207, 207, 0.842);
+} */

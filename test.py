@@ -1,6 +1,7 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_from_directory
 
-app = Flask(__name__, template_folder='view')
+app = Flask(__name__, static_folder='view/assets', template_folder="view")
+# app.config['SERVER_NAME'] = 'localhost:5000'
 
 tasks = [
     {
@@ -19,20 +20,30 @@ tasks = [
 
 @app.route('/test1', methods=['GET'])
 def get_tasks():
-    # print(request.get_json())
+    print("GET test1")
     return jsonify({'tasks': tasks})
     
 @app.route('/test2', methods=['POST'])
 def push_tasks():
     # Get data received from javascript
-    data = request.get_data()
-    resp = {"message": "Your msg is " + data}
-    print(data)
-    return jsonify(resp)
+    result = request.form
+    # resp = {"message": "Your msg is " + data}
+    print("POST test2")
+    print(result)
+    return result
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/test2', methods=['GET'])
+def get_tasks2():
+    print(request.get_json())
+    print("GET task2")
+    return request.json
+
+
+@app.route('/', methods=['GET'])
 def html_route():
+    print("Loaded root")
     return render_template("landing.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
