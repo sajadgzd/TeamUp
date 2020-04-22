@@ -18,10 +18,10 @@ tasks = [
     }
 ]
 
-@app.route('/test1', methods=['GET'])
-def get_tasks():
-    print("GET test1")
-    return jsonify({'tasks': tasks})
+@app.route('/test13', methods=['GET'])
+def get_tasksfs():
+    print("GET tedfsst1")
+    return jsonify({'tasks': tafdsfsks})
     
 @app.route('/test2', methods=['POST'])
 def push_tasks():
