@@ -1,15 +1,21 @@
 // Make sure we wait to attach our handlers until the DOM is fully loaded.
-// (function($){
-//   $(function(){
-
-//     $('.sidenav').sidenav();
-
-//   }); // end of document ready
-// })(jQuery); // end of jQuery name space
-
 $(document).ready(function() {
 
   $('.sidenav').sidenav();
+
+  $('.chips').chips();
+  $('.chips-placeholder').chips({
+    placeholder: 'Enter an interest',
+    secondaryPlaceholder: '+Interest',
+  });
+
+  var chip = {
+    tag: 'chip content',
+    image: '', //optional
+  };
+  var instance = M.Chips.getInstance(elem);
+  instance.selectChip(2); // Select 2nd chip
+
   function getData() {
     $.ajax({
         url: "/test1",
@@ -37,6 +43,8 @@ $(document).ready(function() {
       alert("POST worked...");
     });
 
-});
+  });
+
+  
 
 });

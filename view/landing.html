@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team Up</title>
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Bootstrap CSS -->
     <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
     <!-- Bootstrap JS -->
@@ -56,18 +58,9 @@
             <h5 class="header col s12 light">Join our community and build great projects along the way!</h5>
           </div>
           <div class="row center">
-            <a href="/test1" id="test1" class="btn-small waves-effect waves-light light-blue accent-4">/test1 GET</a>
-            <!-- <a href="/test2" id="test2" class="btn-large waves-effect waves-light light-blue accent-4">Login</a> -->
-            <!-- test form -->
-            <form class="col s12 m12" id="reg-form">
-              <div class="input-field col s12">
-                <input id="test2txt" type="text" name="name" required="">
-                <label for="email">text</label>
-              </div>
-              <button value="Submit" type="submit" id="test2btn" class="btn waves-effect waves-light light-blue accent-4">Test2 POST
-                  <i class="material-icons right">done</i>
-              </a>
-            </form>
+            <a href="#" id="signup-button" class="btn-large waves-effect waves-light light-blue accent-4">Sign Up</a>
+            <a href="#" id="login-button" class="btn-large waves-effect waves-light light-blue accent-4">Login</a>
+
           </div>
           <br><br>
     
@@ -111,35 +104,71 @@
         <br><br>
         <div class="row ">
           <br><br>
-          <div class="col s12 m12 center-align">
-            <h5 class="center-align register">We help you make it to the top three</h5>
-            <h4 class="center-align register">Checkout who is doing great right now!</h4>
+          <div data-aos="fade-right" data-aos-duration="3000">
+            <div class="col s12 m12 center-align">
+              <h5 class="center-align register">We help you make it to the top three</h5>
+              <h4 class="center-align register">Checkout who is doing great right now!</h4>
+            </div>
           </div>
-          <br><br>
         </div>
-        <div class="icon-block">
+        <!-- <div class="icon-block">
         <h2 class="center light-blue-text"><i class="material-icons">arrow_downward</i></h2>
-        </div>
-        <br><br>
+        </div> -->
+        <br>
 
         <div class="row ">
           <br><br>
           <div class="col s12 m12 center-align">
-            <h3 class="center-align register">Top Three Projects and Users</h3>
+            <h4 class="center-align register">Top Three Projects and Users</h4>
+            <br><br>
           </div>
           <br><br>
           <div class="col s6 m6 center-align">
-            <h5 class="center-align register">Best Projects</h5>
+            <h5 class="left-align register">Best Projects</h5>
+
+            <div class="carousel carousel-slider center">
+              <div class="carousel-fixed-item center">
+                <a href="#" id="findMore-button" class="btn waves-effect waves-light indigo darken-4">Find More!
+                <i class="material-icons right">find_in_page</i>
+                </a>
+              </div>
+              <div class="carousel-item blue white-text" href="#one!">
+                <h2>First project</h2>
+                <p class="white-text">This is your first project</p>
+              </div>
+              <div class="carousel-item amber white-text" href="#two!">
+                <h2>Second project</h2>
+                <p class="white-text">This is your second project</p>
+              </div>
+              <div class="carousel-item green white-text" href="#three!">
+                <h2>Third project</h2>
+                <p class="white-text">This is your third project</p>
+              </div>
+            </div>
+
           </div>
+
           <div class="col s6 m6 center-align">
-            <h5 class="center-align register">Best Users</h5>
-          </div>
-          
-          <div class="col s12 m12 center-align">
-            <br><br>
-            <a href="/" id="findMore-button" class="btn waves-effect waves-light light-blue accent-4">Find More!
-            <i class="material-icons right">find_in_page</i>
-            </a>
+            <h5 class="left-align register">Best Users</h5>
+            <div class="carousel carousel-slider center">
+              <div class="carousel-fixed-item center">
+                <a href="#" id="findMore-button" class="btn waves-effect waves-light indigo darken-4">Find More!
+                <i class="material-icons right">find_in_page</i>
+                </a>
+              </div>
+              <div class="carousel-item red white-text" href="#one!">
+                <h2>First User</h2>
+                <p class="white-text">This is your first User</p>
+              </div>
+              <div class="carousel-item blue white-text" href="#two!">
+                <h2>Second User</h2>
+                <p class="white-text">This is your second User</p>
+              </div>
+              <div class="carousel-item green white-text" href="#three!">
+                <h2>Third User</h2>
+                <p class="white-text">This is your third User</p>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -175,8 +204,13 @@
           </div>
         </div>
       </footer>
-    
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      AOS.init();
+    </script>
+
     <script src="./assets/js/materialize.js"></script>
-    <script type="text/javascript" src="./assets/js/front.js"></script>
+    <script type="text/javascript" src="./assets/js/landing.js"></script>
 </body>
 </html>
