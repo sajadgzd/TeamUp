@@ -16,6 +16,9 @@ $(document).ready(function() {
   var instance = M.Chips.getInstance(elem);
   // instance.selectChip(2); // Select 2nd chip
 
+  var elems = document.querySelectorAll('.modal');
+  var instances = M.Modal.init(elems, {});
+
   function getData() {
     $.ajax({
         url: "/test1",
