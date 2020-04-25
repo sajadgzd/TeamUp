@@ -12,8 +12,9 @@ $(document).ready(function() {
     tag: 'chip content',
     image: '', //optional
   };
+  var elem = $('.chips')
   var instance = M.Chips.getInstance(elem);
-  instance.selectChip(2); // Select 2nd chip
+  // instance.selectChip(2); // Select 2nd chip
 
   function getData() {
     $.ajax({
