@@ -83,9 +83,11 @@
                   <label for="password">Password</label>
                 </div>
                 <div class="input-field col s12">
-                  <input id="interests" type="text" class="" minlength="6" required>
-                  <label for="password">Interests</label>
-                  <span class="helper-text" data-error="wrong" data-success="right">Enter with space in between</span>
+                  <!-- <input id="interests" type="text" class="" minlength="6" required> -->
+                  <br>
+                  <div class="chips chips-placeholder"></div>
+                  <label for="interests">Interests</label>
+
                 </div>
                 <div class="input-field col s12">
                   <input id="referringMember" type="text" class="" minlength="6" required>
@@ -129,8 +131,13 @@
           </div>
         </div>
       </footer>
-    
-    <script src="assets/js/materialize.js"></script>
-    <script type="text/javascript" src="assets/js/front.js"></script>
+
+      <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+      <script>
+        AOS.init();
+      </script>
+  
+      <script src="./assets/js/materialize.js"></script>
+      <script type="text/javascript" src="./assets/js/singup.js"></script>
 </body>
 </html>
