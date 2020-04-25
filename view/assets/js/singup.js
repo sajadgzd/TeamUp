@@ -9,6 +9,13 @@ $(document).ready(function() {
     secondaryPlaceholder: '+Interest',
   });
 
+  var chip = {
+    tag: 'chip content',
+    image: '', //optional
+  };
+  var instance = M.Chips.getInstance(elem);
+  instance.selectChip(2); // Select 2nd chip
+
   function getData() {
     $.ajax({
         url: "/test1",
