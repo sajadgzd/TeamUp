@@ -1,4 +1,7 @@
 # softwareEngineeringProject
 Repo for CSC322 project. More description coming soon.
 
-test22
+Team Up is a web application that will help users find team members to work on
+altruistic projects together. The application will have a directory of projects that is
+available to users, as well as a directory of registered users that can be used by
+users to find team members for a given project.
