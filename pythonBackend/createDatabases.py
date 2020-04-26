@@ -15,8 +15,8 @@ print(tableList)
 
 if "signup" not in tableList:
      cursor.execute("CREATE TABLE signup  (\
-                              fullname                TEXT PRIMARY KEY,\
-                              email                   TEXT,\
+                              fullname                TEXT,\
+                              email                   TEXT PRIMARY KEY,\
                               interests               TEXT,\
                               credentials             TEXT,\
                               reference               TEXT,\
