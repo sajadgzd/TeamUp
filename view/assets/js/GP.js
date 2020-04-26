@@ -2,22 +2,28 @@
 $(document).ready(function() {
 
   $('.sidenav').sidenav();
-  $('.chips').chips();
-  $('.chips-placeholder').chips({
-    placeholder: 'Enter a username',
-    secondaryPlaceholder: '+Interest',
-  });
+  // $('.chips').chips();
+  // $('.chips-placeholder').chips({
+  //   placeholder: 'Enter a username',
+  //   secondaryPlaceholder: '+Interest',
+  // });
 
-  var chip = {
-    tag: 'chip content',
-    image: '', //optional
-  };
-  var elem = $('.chips')
-  var instance = M.Chips.getInstance(elem);
+  // var chip = {
+  //   tag: 'chip content',
+  //   image: '', //optional
+  // };
+  // var elem = $('.chips')
+  // var instance = M.Chips.getInstance(elem);
   // instance.selectChip(2); // Select 2nd chip
 
-  var elems = document.querySelectorAll('.modal');
-  var instances = M.Modal.init(elems, {});
+  var modalelems = document.querySelectorAll('.modal');
+  var modalinstances = M.Modal.init(modalelems, {});
+
+  var dateelems = document.querySelectorAll('.datepicker');
+  var dateinstances = M.Datepicker.init(dateelems, {format: "mm/dd/yyyy"});
+
+  var timeelems = document.querySelectorAll('.timepicker');
+  var timeinstances = M.Timepicker.init(timeelems, {});
 
   function getData() {
     $.ajax({
