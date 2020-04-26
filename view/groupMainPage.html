@@ -43,9 +43,8 @@
           <ul id="nav-mobile" class="sidenav">
             <!-- <li><a href="#">Navbar Link</a></li> -->
             <li><a href="#" id="logout-button" class="btn-small waves-effect waves-light light-blue accent-4">Logout</a></li>
-            <li><a href="#" id="closeGroup-button" class="btn-small waves-effect waves-light light-blue accent-4">Close Group</a></li>
-            <!-- <li><a href="#" id="warnPraise-button" class="btn-small waves-effect waves-light light-blue accent-4">Warn or Praise</a></li> -->
-            
+            <li><a id="closeGroup-button" class="btn-small waves-effect waves-light light-blue accent-4 modal-trigger" href="#modal1">Close Group</a></li>
+            <!-- Modal Trigger -->
           </ul>
           <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
         </div>
@@ -171,7 +170,13 @@
                   </a>
                 </form>
                   <br>
-                <br>
+                  <br>
+                  <form action="#" style="border: 1px;">
+                    <h6>Ahsan posted an update</h6>
+                    <h6>Hey guys, please try to get here on time.</h6>
+                    <h6>The meeting will start at the exact time.</h6>
+                  </form>
+
               </div>
           </div>
   
@@ -179,7 +184,71 @@
 
           <div class="col s4 m4 info" style="margin-left: 0">
             <ul class="collection with-header">
-              <a href="#" id="closeGroup-button" class="btn waves-effect waves-light light-blue accent-4 right-align right" style="margin: 0">Close Group</a>
+              <!-- <a href="#" id="closeGroup-button" class="btn waves-effect waves-light light-blue accent-4 right-align right" style="margin: 0">Close Group</a> -->
+              <li><a id="closeGroup-button" class="btn waves-effect waves-light light-blue accent-4 right-align right modal-trigger" href="#modal1">Close Group</a></li>
+              <!-- Modal Structure -->
+              <div id="modal1" class="modal">
+                <div class="modal-content">
+                  <h4>Closing Assesment</h4>
+                  <p>Rate your team members and choose to put them in white or black list</p>
+
+                  <ul class="collection with-header">
+                    <li class="collection-header"><h5>Group Members</h5></li>
+                    <li class="collection-item">
+                      <div>Ahsan
+                        <label></label>
+                        <select class="browser-default" style="width: 40%; display: inline; margin-left: 3%;">
+                          <option value="" selected>Choose your option</option>
+                          <option value="1">Add to BlackList</option>
+                          <option value="2">Add to WhiteList</option>
+                        </select>
+                          <input id="score" type="text" required style="width: 20%">
+                          <label for="score">Score</label>
+                      </div>
+                    </li>
+                    <li class="collection-item">
+                      <div>Sajad
+                        <label></label>
+                        <select class="browser-default" style="width: 40%; display: inline; margin-left: 3%;">
+                          <option value="" selected>Choose your option</option>
+                          <option value="1">Add to BlackList</option>
+                          <option value="2">Add to WhiteList</option>
+                        </select>
+                          <input id="score" type="text" required style="width: 20%">
+                          <label for="score">Score</label>
+                      </div>
+                    </li>
+                    <li class="collection-item">
+                      <div>Arun
+                        <label></label>
+                        <select class="browser-default" style="width: 40%; display: inline; margin-left: 3%;">
+                          <option value="" selected>Choose your option</option>
+                          <option value="1">Add to BlackList</option>
+                          <option value="2">Add to WhiteList</option>
+                        </select>
+                          <input id="score" type="text" required style="width: 20%">
+                          <label for="score">Score</label>
+                      </div>
+                    </li>              
+                    <li class="collection-item">
+                      <div>Abdul
+                        <label></label>
+                        <select class="browser-default" style="width: 40%; display: inline; margin-left: 3%;">
+                          <option value="" selected>Choose your option</option>
+                          <option value="1">Add to BlackList</option>
+                          <option value="2">Add to WhiteList</option>
+                        </select>
+                          <input id="score" type="text" required style="width: 20%">
+                          <label for="score">Score</label>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="modal-footer">
+                  <a href="#!" class="modal-close waves-effect waves-green btn-flat light-blue accent-3">Submit</a>
+                </div>
+              </div>
+
               <li class="collection-header"><h5>Group Management</h5></li>
               <li class="collection-item">
                 <div>Ahsan
