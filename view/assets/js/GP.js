@@ -28,8 +28,22 @@ $(document).ready(function() {
   $("#radiobtn").click(function(){
     var radioValue = $("input[name='group1']:checked").val();
     if(radioValue){
-        alert("Your are a - " + radioValue);
+        alert("Your chose " + radioValue);
     }
+  });
+  $("#addSchedule-button").click(function(){
+    $(".datechoices").append('<div class="input-field col s4">' +
+                                                  '<input type="text" class="datepicker">' +
+                                                  '<label for="postText">Date</label>' +
+                                                '</div>' +
+                                                '<div class="input-field col s4">' +
+                                                  '<input type="text" class="timepicker">' +
+                                                  '<label for="postText">From Time</label>' +
+                                                '</div>' +
+                                                '<div class="input-field col s4">' +
+                                                  '<input type="text" class="timepicker">' +
+                                                  '<label for="postText">To Time</label>' +
+                                                '</div>')
   });
 
   function getData() {
