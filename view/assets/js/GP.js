@@ -25,6 +25,13 @@ $(document).ready(function() {
   var timeelems = document.querySelectorAll('.timepicker');
   var timeinstances = M.Timepicker.init(timeelems, {});
 
+  $("#radiobtn").click(function(){
+    var radioValue = $("input[name='group1']:checked").val();
+    if(radioValue){
+        alert("Your are a - " + radioValue);
+    }
+  });
+
   function getData() {
     $.ajax({
         url: "/test1",
