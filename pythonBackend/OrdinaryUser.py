@@ -5,18 +5,18 @@ class OrdinaryUser(BaseUser):
         BaseUser.__init__(self)
 
     def appealReputation():
-        #stub
+        pass
     
     def reportUser():
-        #stub
+        pass
     
     def reportGroup():
-        #stub
+        pass
     
     def referenceReputation():
-        #stub
+        pass
     
-    
+
 
     
     

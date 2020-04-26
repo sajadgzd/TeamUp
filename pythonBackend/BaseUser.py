@@ -1,57 +1,58 @@
 class BaseUser():
 
-    def __init__(self):
-        self.name = ''
-        self.email = ''
-        self.username = ''
-        self.interest = ''
-        self.cred = ''
-        self. rejection = ''
+    def __init__(self, name, email, username, interest, cred, rejection):
+        self.name = name
+        self.email = email
+        self.username = username
+        self.interest = interest
+        self.cred = cred
+        self.rejection = rejection
 
 
     def login(name, email, interest, cred, ref):
-        #stub
+        pass
 
-    # def inviteToGroup(username):
+    def inviteToGroup(username):
+        pass
 
     def handleGroupMeeting():
-        #stub
+        pass
 
     def createMeetupPoll():
-        #stub
+        pass
 
     def createWarningPoll():
-        #stub
+        pass
 
     def createPraisePoll():
-        #stub
+        pass
     
     def createKickPoll():
-        #stub
+        pass
     
     def createCloseGroupPoll():
-        #stub
+        pass
     
     def issueMeetupVote():
-        #stub
+        pass
     
     def issueWarningVote():
-        #stub
+        pass
     
     def issuePraiseVote():
-        #stub
+        pass
     
     def issueKickVote():
-        #stub
+        pass
     
     def issueCloseGroupPoll():
-        #stub
+        pass
     
     def issueCompliment():
-        #stub
+        pass
     
     def addToWhiteBox():
-        #stub
+        pass
     
     def addToBlackBox():
-        #stub
+        pass

@@ -5,7 +5,7 @@ class VipUser(OrdinaryUser):
         OrdinaryUser.__init__(self)
     
     def createDemocraticSuperUserPoll():
-        #stub
+        pass
     
     def issueDemocraticSuperUserVote():
-        #stub
+        pass

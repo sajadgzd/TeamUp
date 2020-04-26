@@ -5,22 +5,22 @@ class SuperUser(BaseUser):
         BaseUser.__init__(self)
 
     def handleApplication():
-        #stub
+        pass
     
     def blacklistFromServer():
-        #stub
+        pass
 
     def reverseReputationDeduction():
-        #stub
+        pass
     
     def shutDownGroup():
-        #stub
+        pass
     
     def issuePointDeduction():
-        #stub
+        pass
     
     def issuePointIncrement():
-        #stub
+        pass
 
     def banUser():
-        #stub
+        pass
