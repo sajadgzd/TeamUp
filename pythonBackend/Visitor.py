@@ -11,6 +11,21 @@ class Visitor():
 
 
     def signUp(self):
+        # Take in the following info from visitor: name, email, password, credentials, referral
+        #
+        # if (user already exists in the PendingUsers database):
+        #   print("Please wait while your current application status is under review")
+        #
+        # if (user already exists in the User Database):
+        #   print("Account already exists, Sign in")
+        #
+        # if (the user exists in the blacklist database):
+        #   print("You are banned, signup denied")
+        #
+        # else:
+        #   user data entry submitted to the User database
+        #   user application status returned
+        #   verify that application has been submitted
 
         connection = sqlite3.connect(r"./database.db")
         cursor = connection.cursor()
@@ -29,7 +44,17 @@ class Visitor():
 
 
     def appealRejection():
-        pass
+        # Vistor inputs an appeal message 
+        # 
+        # if (the visitor userID exists in the PendingUser Database):
+        #   fetch the User data
+        #   send the user's message and appeal request to SuperUser 
+        # 
+        # if (the appeal request submitted to the User database successfully):
+        #   return the application status
+        # else:
+        #   return failed status
+        
 
 test = Visitor("ahsan","ahsan@iknox.com", "passwordl","abdul","food")
 
