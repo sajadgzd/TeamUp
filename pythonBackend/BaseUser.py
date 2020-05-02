@@ -22,27 +22,23 @@ class BaseUser():
         #   stay on the signup page
 
 
-
     def inviteToGroup(senderUserID, groupName, recipientUserID):
         # if (senderUserID && recipientUserID is in User Database) &&
         #       (groupName in Group Database)
-        # 
-        #   recipientUserID.inboxDatabase.append(invite)
-        #   recipientUserID.inboxDatabase.append(senderUserID)
-        #   recipientUserID.inboxDatabase.append(groupName)
+        #   row = []
+        #   row.append(invite, senderUserID, groupName)
+        #   recipientUser_database.table.upload(row)
         #   (backend process)
         #   print(status)
 
 
     def handleGroupMeeting(senderUserID, decision, reason, recepientUserID):
         # if (senderUserID && recipientUserID is in User Database) &&
-        #       (groupName in Group Database)
-        # 
-        #   recipientUserID.inboxDatabase.append(decision)
-        #   recipientUserID.inboxDatabase.append(reason)
-        #   recipientUserID.inboxDatabase.append(senderUserID)
-        #   recipientUserID.inboxDatabase.append(groupName)
-        #   groupDatabase.append(recipientUserID)
+        #   (groupName in Group Database)
+        #
+        #   row = []
+        #   row.append(decision, senderUserID, reason, groupName, recipientUserID)
+        #   recipientUser_database.table.upload(row)
         # 
         #   print(status)
 
@@ -53,10 +49,10 @@ class BaseUser():
         #       print("Poll already exists")
         #
         #   else:
-        #       PollDatabase.append(creatorUserID)
-        #       PollDatabase.append(pollName)
-        #       PollDatabase.append(optionsList)
-        #       PollDatabase.append(pollType
+        #       row = []
+        #       row.append(creatorUserID, pollName, optionsList, pollType, recipientUserID)
+        #       Polldatabase.table.upload(row)
+        #
         #       print("Poll added to the database")
 
     def createWarningPoll(pollName, pollType, optionsList, targetUserID):
@@ -66,10 +62,9 @@ class BaseUser():
         #       print("Poll already exists")
         #
         #   else:
-        #       PollDatabase.append(targetUserID)
-        #       PollDatabase.append(pollName)
-        #       PollDatabase.append(optionsList)
-        #       PollDatabase.append(pollType)
+        #       row = []
+        #       row.append(targetUserID, pollName, optionsList, pollType)
+        #       Polldatabase.table.upload(row)
         #       print("Poll added to the database")
 
     def createPraisePoll(pollName, pollType, optionsList, targetUserID):
@@ -79,10 +74,10 @@ class BaseUser():
         #       print("Poll already exists")
         #
         #   else:
-        #       PollDatabase.append(targetUserID)
-        #       PollDatabase.append(pollName)
-        #       PollDatabase.append(optionsList)
-        #       PollDatabase.append(pollType)
+        #       row = []
+        #       row.append(targetUserID, pollName, optionsList, pollType)
+        #       Polldatabase.table.upload(row)
+        #       
         #       print("Poll added to the database")
     
     def createKickPoll(pollName, pollType, optionsList, targetUserID):
@@ -92,10 +87,10 @@ class BaseUser():
         #       print("Poll already exists")
         #
         #   else:
-        #       PollDatabase.append(targetUserID)
-        #       PollDatabase.append(pollName)
-        #       PollDatabase.append(optionsList)
-        #       PollDatabase.append(pollType)
+        #       row = []
+        #       row.append(targetUserID, pollName, optionsList, pollType)
+        #       Polldatabase.table.upload(row)
+        #
         #       print("Poll added to the database")
     
     def createCloseGroupPoll(pollName, pollType, optionsList, targetGroupID):
@@ -105,26 +100,27 @@ class BaseUser():
         #       print("Poll already exists")
         #
         #   else:
-        #       PollDatabase.append(targetGroupID)
-        #       PollDatabase.append(pollName)
-        #       PollDatabase.append(optionsList)
-        #       PollDatabase.append(pollType)
+        #       row = []
+        #       row.append(targetUserID, pollName, optionsList, pollType)
+        #       Polldatabase.table.upload(row)
         #       print("Poll added to the database")
     
     def issueMeetupVote(pollName, UserID, decision):
         # if (UserID is in vip User Database) 
         #
         #    if (vipUserID has not voted yet):
-        #       pollDatabase.append(pollName)
-        #       pollDatabase.append(decision)
+        #       row = []
+        #       row.append(UserID, pollName, decison)
+        #       Polldatabase.table.upload(row)
         #       print("Your decision has been submitted")
     
     def issueWarningVote(pollName, UserID, decision):
         # if (userID is in User Database && pollName in Poll Database) 
         #
         #    if (userID has not voted yet):
-        #       pollDatabase.append(pollName)
-        #       pollDatabase.append(decision)
+        #       row = []
+        #       row.append(UserID, pollName, decision)
+        #       Polldatabase.table.upload(row)
         #       print("Your decision has been submitted")
         #
         #   else:
@@ -134,8 +130,11 @@ class BaseUser():
         # if (userID is in User Database && pollName in Poll Database) 
         #
         #    if (userID has not voted yet):
-        #       pollDatabase.append(pollName)
-        #       pollDatabase.append(decision)
+        #       row = []
+        #       row.append(UserID, pollName, decision)
+        #       Polldatabase.table.upload(row)
+        #       print("Poll added to the database")
+
         #       print("Your decision has been submitted")
         #   else:
         #       print("You have already submitted your response for this poll")
@@ -144,8 +143,9 @@ class BaseUser():
         # if (userID is in User Database && pollName in Poll Database) 
         #
         #    if (userID has not voted yet):
-        #       pollDatabase.append(pollName)
-        #       pollDatabase.append(decision)
+        #       row = []
+        #       row.append(UserID, pollName, decision)
+        #       Polldatabase.table.upload(row)
         #       print("Your decision has been submitted")
         #   else:
         #       print("You have already submitted your response for this poll")
@@ -153,7 +153,10 @@ class BaseUser():
     
     def issueCompliment(UserId, complimentComment):
         #if (userID exists in the user database):
-        #   print(UserID.complimentDatabase.append(UserId, complimentComment))
+        #   row = []
+        #   row.append(UserID, complimentComment)
+        #   Userdatabase.table.upload(row)
+
         #   return success status
         #
         #else:
@@ -166,8 +169,10 @@ class BaseUser():
         #       print("User already added to whitebox")
         #   
         #   else:
-        #        add user to the self.whitebox database
-        #        print("User added to your blackbox")
+        #       row = []
+        #       row.append(UserID)
+        #       Whitelistdatabase.table.upload(row)
+        #       print("User added to your whitebox")
         #
         # else:
         #   print("The user you are trying to whitelist doesn't exist")
@@ -178,8 +183,11 @@ class BaseUser():
         #       print("User already to blackbox")
         #   
         #   else:
-        #        add user to the self.blackbox database
-        #        print("User banned")
+        #       row = []
+        #       row.append(UserID)
+        #       blacklistdatabase.table.upload(row)
+        #       print("User added to your blackbox")
+        #       print("User banned")
         #
         # else:
         #   print("The user you are trying to ban doesn't exist")

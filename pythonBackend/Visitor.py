@@ -23,7 +23,9 @@ class Visitor():
         #   print("You are banned, signup denied")
         #
         # else:
-        #   user data entry submitted to the User database
+        #   row = []
+        #   row.append(name, email, password, credentials, referral)
+        #   Userdatabase.table.upload(row)
         #   user application status returned
         #   verify that application has been submitted
 
@@ -43,12 +45,15 @@ class Visitor():
         #attempt to upload information into signup database.
 
 
-    def appealRejection():
+    def appealRejection(userID, message):
         # Vistor inputs an appeal message 
         # 
         # if (the visitor userID exists in the PendingUser Database):
         #   fetch the User data
-        #   send the user's message and appeal request to SuperUser 
+        #   row = []
+        #   row.append(UserID, message)
+        #   SuperUser.Database.table.upload(row) #send the user's message and appeal request to SuperUser
+        #    
         # 
         # if (the appeal request submitted to the User database successfully):
         #   return the application status

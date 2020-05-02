@@ -9,7 +9,9 @@ class SuperUser(BaseUser):
         # if (UserID exists in the pending application database):
         #   if (decision == accept):
         #       remove the user from PendingUser Database
-        #       add the user to the User Database
+        #       row = []
+        #       row.append(UserID, decision)
+        #       database.table.upload(row)
         #       print("User Registered Successfully")
         #   
         #   elif (decision == deny):
@@ -24,13 +26,15 @@ class SuperUser(BaseUser):
         # input UserID
         # if (UserID exists in the User Database):
         #   if (User already not exists in BlackList database):
-        #       BlackList_Database.append(UserID)
+        #       row = []
+        #       row.append(UserID)
+        #       BlackList_Database.table.upload(row)
 
 
     def reverseReputationDeduction(UserID, decision):
         # input UserID
         # if (UserID exists in the UserDatabase):
-        #   currentUser.reputationpoint += 5
+        #   databasetable.currentUser.reputationpoint += 5
         #   print("Reputation Deduction is reversed")
     
     def shutDownGroup(groupName):
@@ -56,7 +60,9 @@ class SuperUser(BaseUser):
         #       print("User already banned")
         #   
         #   else:
-        #        add user to the blacklist database
+        #       row = []
+        #       row.append(UserID)
+        #       BlackList_Database.table.upload(row)
         #
         # else:
         #   print("The user you are trying to ban doesn't exist")

@@ -11,16 +11,18 @@ class VipUser(OrdinaryUser):
         #       print("Poll already exists")
         #
         #   else:
-        #       PollDatabase.append(pollName)
-        #       PollDatabase.append(optionsList)
-        #       PollDatabase.append(pollType)
-        #       print("Poll added to the database")
+        #       row = []
+        #       row.append(vipUserID, pollName, pollType, optionsList)
+        #       database.table.upload(row)
+
+        #   return status
         #  
     
     def issueDemocraticSuperUserVote(pollName, vipUserID, decision):
         # if (vipUserID is in vip User Database && pollName in Poll Database) 
-        #
+        #       
         #    if (vipUserID has not voted yet):
-        #       pollDatabase.append(pollName)
-        #       pollDatabase.append(decision)
+        #       row = []
+        #       row.append(pollName, vipUserID, decision)
+        #       database.table.upload(row)
         #       print("Your decision has been submitted")

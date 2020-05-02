@@ -6,13 +6,19 @@ class OrdinaryUser(BaseUser):
 
     def appealReputation(appealMessage):
         # input appealMessage
-        # Send the appealMessage to SuperUser inbox database
+        # row = []
+        # row.append(appealMessage)
+        # SuperUser_inbox_database.table.upload(row)
+        #
         # if (append to SuperUser Inbox database status == "success"):
         #   print("Appeal submitted successfully")
     
     def reportUser(UserID, reportMessage):
         # input UserID and reportMessage
-        # Send reportMessage to the SuperUser inbox database
+        # row = []
+        # row.append(UserID, reportMessage)
+        # SuperUser_inbox_database.table.upload(row)
+
         # if (append to SuperUser Inbox database status == "success"):
         #   print("Report submitted successsfully")
 
@@ -21,7 +27,9 @@ class OrdinaryUser(BaseUser):
         # input groupName and reportMessage
         #
         # if (groupName is in Group Database)
-        #   Send reportMessage to the SuperUser inbox database
+        # row = []
+        # row.append(groupName, reportMessage)
+        # SuperUser_inbox_database.table.upload(row)
         #
         #   if (append to SuperUser Inbox databae status == "success"):
         #       print("Report submitted successsfully")
