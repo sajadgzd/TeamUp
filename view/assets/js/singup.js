@@ -2,45 +2,39 @@
 $(document).ready(function() {
 
   $('.sidenav').sidenav();
+  var elems = document.querySelectorAll('.chips');
+  var instances = M.Chips.init(elems, {});
 
-  $('.chips').chips();
-  $('.chips-placeholder').chips({
-    placeholder: 'Enter an interest',
-    secondaryPlaceholder: '+Interest',
-  });
-
-  var chip = {
-    tag: 'chip content',
-    image: '', //optional
-  };
+  let elem = $(".chips")
   var instance = M.Chips.getInstance(elem);
-  instance.selectChip(2); // Select 2nd chip
 
-  function getData() {
-    $.ajax({
-        url: "/test1",
-        method: "GET"
-    }).then(function(response) {
-        console.log("GET root worked fine\n",response);
-        $("#test1").append("<p style='font-weight: bold'> Type: " + response.tasks[0].description + "</p><br>");
-    });
-  };
-  getData();
-
-  $(document.body).on("click", "#test2btn", function(event) {
+  $(document.body).on("click", "#signup-button", function(event) {
     event.preventDefault();
-    var text = $("#test2txt").val().trim()
-    $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
-    console.log("text value:", text)
-
-    var msg = {
-      textmsg: text 
+    let firstname = $("#first_name").val().trim()
+    let lastname = $("#last_name").val().trim()
+    let email = $("#email").val().trim()
+    let password = $("#password").val().trim()
+    let referringMember = $("#referringMember").val().trim()
+    let interests = []
+    // console.log("CHIP 0:\t", instance.chipsData)
+    for(let i=0; i< instance.chipsData.length; i++){
+      interests.push(instance.chipsData[i].tag)
     }
 
-    $.post("/test2", msg)
+    let user = {
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      password: password,
+      referringMember: referringMember,
+      interests: interests
+    }
+
+    console.log("FORM COMPLETED:\v", JSON.stringify(user))
+
+    $.post("/signup", user)
     .then(function(data) {
-      console.log("got data back from POST call", data.textmsg);
-      alert("POST worked...");
+      console.log("signup POST wroked");
     });
 
   });
