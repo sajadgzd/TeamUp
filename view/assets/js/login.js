@@ -3,6 +3,11 @@ $(document).ready(function() {
 
   $('.sidenav').sidenav();
 
+  var elems = document.querySelectorAll('.modal');
+  var instances = M.Modal.init(elems, {});
+  let elem = $(".modal")
+  var instance = M.Modal.getInstance(elem);
+
 
   // function getData() {
   //   $.ajax({
@@ -33,6 +38,30 @@ $(document).ready(function() {
     .then(function(data) {
       console.log("login POST call worked");
     });
+
+    loginFirstTime = true;
+    if(loginFirstTime){
+      instance.open();
+
+      let newEmail = $("#newEmail").val().trim()
+      let newPassword = $("#newPassword").val().trim()
+      // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
+      // console.log("text value:", text)
+  
+      var userlogin = {
+        newEmail: newEmail,
+        newPassword: newPassword 
+      }
+
+      $.post("/newPassword", newPassword)
+      .then(function(data) {
+        console.log("new pass POST call worked");
+      });
+
+      loginFirstTime = false
+    }
+
+    
 
   });
 

@@ -71,11 +71,31 @@
                   <label for="password">Password</label>
                 </div>
                 <div class="input-field col s6">
-                    <a href="" id="login-button" class="btn waves-effect waves-light light-blue accent-4">Login
+                    <a href="#" id="login-button" class="btn waves-effect waves-light light-blue accent-4">Login
                         <i class="material-icons right">done</i>
                     </a>
                 </div>
             </form>
+        </div>
+
+        <!-- Modal Structure -->
+        <div id="modal1" class="modal">
+          <div class="modal-content">
+            <h6>You are required to change your password</h6>
+            <form class="col s6 m6" id="reg-form" style="">
+              <div class="input-field col s6 m6">
+                <input id="newEmail" type="text" class="validate" required>
+                <label for="newEmail">Email</label>
+              </div>
+              <div class="input-field col s6 m6">
+                <input id="newPassword" type="password" class="" minlength="6" required>
+                <label for="newPassword">New Password</label>
+              </div>
+          </form>
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Submit</a>
+          </div>
         </div>
 
         <br><br><br><br><br><br><br><br><br><br><br><br>
