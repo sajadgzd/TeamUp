@@ -3,37 +3,35 @@ $(document).ready(function() {
 
   $('.sidenav').sidenav();
 
-  $('.chips').chips();
-  $('.chips-placeholder').chips({
-    placeholder: 'Enter an interest',
-    secondaryPlaceholder: '+Interest',
-  });
 
-  function getData() {
-    $.ajax({
-        url: "/test1",
-        method: "GET"
-    }).then(function(response) {
-        console.log("GET root worked fine\n",response);
-        $("#test1").append("<p style='font-weight: bold'> Type: " + response.tasks[0].description + "</p><br>");
-    });
-  };
-  getData();
+  // function getData() {
+  //   $.ajax({
+  //       url: "/test1",
+  //       method: "GET"
+  //   }).then(function(response) {
+  //       console.log("GET root worked fine\n",response);
+  //       $("#test1").append("<p style='font-weight: bold'> Type: " + response.tasks[0].description + "</p><br>");
+  //   });
+  // };
+  // getData();
 
-  $(document.body).on("click", "#test2btn", function(event) {
+  $(document.body).on("click", "#login-button", function(event) {
     event.preventDefault();
-    var text = $("#test2txt").val().trim()
-    $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
-    console.log("text value:", text)
+    let email = $("#email").val().trim()
+    let password = $("#password").val().trim()
+    // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
+    // console.log("text value:", text)
 
-    var msg = {
-      textmsg: text 
+    var userlogin = {
+      email: email,
+      password: password 
     }
 
-    $.post("/test2", msg)
+    console.log("LOGIN FORM COMPLETED:\v", JSON.stringify(userlogin))
+
+    $.post("/login", userlogin)
     .then(function(data) {
-      console.log("got data back from POST call", data.textmsg);
-      alert("POST worked...");
+      console.log("login POST call worked");
     });
 
   });
