@@ -10,8 +10,8 @@ $(document).ready(function() {
   let chipElem = $(".chips")
   var chipInstance = M.Chips.getInstance(chipElem);
 
-  var elems = document.querySelectorAll('.modal');
-  var instances = M.Modal.init(elems, {});
+  var modalElems = document.querySelectorAll('.modal');
+  var modalInstances = M.Modal.init(modalElems, {});
 
   function getData() {
     $.ajax({
@@ -24,7 +24,7 @@ $(document).ready(function() {
   };
   getData();
 
-  $(document.body).on("click", "#submit", function(event) {
+  $(document.body).on("click", "#createGroup-button", function(event) {
     event.preventDefault();
     // var text = $("#test2txt").val().trim()
     // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
