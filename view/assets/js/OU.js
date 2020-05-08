@@ -40,8 +40,8 @@ $(document).ready(function() {
     }
 
     let newGroup = {
-      groupName = groupName,
-      invitees = invitees
+      groupName : groupName,
+      invitees : invitees
     }
 
     $.post("/createGroup", newGroup)
