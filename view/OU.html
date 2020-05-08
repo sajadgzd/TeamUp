@@ -52,10 +52,12 @@
 
     <div class="row">
       <div class="col s12">
-        <ul class="tabs">
+        <ul class="tabs" style="color: aliceblue;">
           <li class="tab col s2"><a href="#test1">Groups</a></li>
-          <li class="tab col s2"><a href="#test2">Invitations</a></li>
-          <li class="tab col s2"><a href="#test3">White List</a></li>
+          <li class="tab col s2">                        <!-- Modal Trigger -->
+            <a class=" modal-trigger" href="#invitationsModal">View Invitations</a></li>
+          <li class="tab col s2">                  <!-- Modal Trigger -->
+            <a class="modal-trigger" href="#whiteListModal">View WhiteList</a></li>
           <li class="tab col s2"><a href="#test4">BlackList</a></li>
           <li class="tab col s2"><a href="#test5">Create a Group</a></li>
           <li class="tab col s2"><a href="#test6">Pending Scores</a></li>
@@ -64,31 +66,32 @@
     </div>
 
     <div class="row">
-      <div class="col l12 m12">
+      
           <h5 class="left" style="margin-left: 2%;">Ordinary User name</h5>
-      </div>
+          
+
     </div>
 
     <!-- <div class="container"> -->
         <div class="row" id="test1" style="margin: 2%;">
           <div class="col s12 m4">
             <div class="row">
-              <h5 class="left">Your Invitations</h5> <br>
+              <!-- <h5 class="left">Your Invitations</h5> <br> -->
+
             </div>
             
             <div class="row">
-              <h5 class="left">Your White List</h5>
-                <div class="row">
+              <!-- <h5 class="left">Your White List</h5> -->
+
                   <!-- Modal Trigger -->
-                  <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Add to White List</a>
-                </div>
+                  <a class="waves-effect waves-light btn modal-trigger" href="#addToWhiteListModal">Add to White List</a>
             </div>
             <div class="row">
-              <h5 class="left">Your Black List</h5>
-                <div class="row">
+              <!-- <h5 class="left">Your Black List</h5> -->
                 <!-- Modal Trigger -->
-                <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Add to Black List </a>
-                </div>
+                <a class="waves-effect waves-light btn modal-trigger" href="#whiteListModal">View BlackList</a>
+                <!-- Modal Trigger -->
+                <a class="waves-effect waves-light btn modal-trigger" href="#addToBlackListModal">Add to Black List </a>
             </div>
 
             <div class="row">
@@ -202,7 +205,7 @@
             </div>   -->
 
           <!-- Modal Structure -->
-          <div id="modal1" class="modal">
+          <div id="addToWhiteListModal" class="modal">
             <div class="modal-content">
               <h4>Add to your White list</h4>
               <p>Enter the user name</p>
@@ -267,7 +270,7 @@
 
           <!-- <i class="material-icons">add</i> -->
           <!-- Modal Structure -->
-          <div id="modal1" class="modal">
+          <div id="addToBlackListModal" class="modal">
             <div class="modal-content">
               <h4>Add to your Black list</h4>
               <p>Enter the user name</p>

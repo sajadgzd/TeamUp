@@ -2,6 +2,8 @@
 $(document).ready(function() {
 
   $('.sidenav').sidenav();
+  $('.tabs').tabs();
+
   $('.chips').chips();
   $('.chips-placeholder').chips({
     placeholder: 'Enter a username',
