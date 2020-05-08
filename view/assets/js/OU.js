@@ -46,7 +46,7 @@ $(document).ready(function() {
 
     $.post("/createGroup", newGroup)
     .then(function(data) {
-      console.log("Create Group POST call worked");
+      console.log("Create Group POST call worked with", JSON.stringify(newGroup));
     });
 
   });
