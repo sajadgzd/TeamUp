@@ -2,22 +2,18 @@
 $(document).ready(function() {
 
   $('.sidenav').sidenav();
+  $('.tabs').tabs();
+  
   $('.chips').chips();
   $('.chips-placeholder').chips({
     placeholder: 'Enter a username',
-    secondaryPlaceholder: '+Interest',
+    secondaryPlaceholder: '+User',
   });
+  let chipElem = $(".chips")
+  var chipInstance = M.Chips.getInstance(chipElem);
 
-  var chip = {
-    tag: 'chip content',
-    image: '', //optional
-  };
-  var elem = $('.chips')
-  var instance = M.Chips.getInstance(elem);
-  // instance.selectChip(2); // Select 2nd chip
-
-  var elems = document.querySelectorAll('.modal');
-  var instances = M.Modal.init(elems, {});
+  var modalElems = document.querySelectorAll('.modal');
+  var modalInstances = M.Modal.init(modalElems, {});
 
   function getData() {
     $.ajax({
@@ -32,18 +28,27 @@ $(document).ready(function() {
 
   $(document.body).on("click", "#test2btn", function(event) {
     event.preventDefault();
-    var text = $("#test2txt").val().trim()
-    $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
-    console.log("text value:", text)
+    // var text = $("#test2txt").val().trim()
+    // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
+    // console.log("text value:", text)
+    // var msg = {
+    //   textmsg: text 
+    // }
+    let groupName = $("#groupName").val().trim()
+    let invitees = []
 
-    var msg = {
-      textmsg: text 
+    for(let i=0; i< chipInstance.chipsData.length; i++){
+      invitees.push(chipInstance.chipsData[i].tag)
     }
 
-    $.post("/test2", msg)
+    let newGroup = {
+      groupName : groupName,
+      invitees : invitees
+    }
+
+    $.post("/createGroup", newGroup)
     .then(function(data) {
-      console.log("got data back from POST call", data.textmsg);
-      alert("POST worked...");
+      console.log("Create Group POST call worked with", JSON.stringify(newGroup));
     });
 
   });
