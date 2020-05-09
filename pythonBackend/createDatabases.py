@@ -20,7 +20,8 @@ if "signup" not in tableList:
                               interests               TEXT,\
                               credentials             TEXT,\
                               reference               TEXT,\
-                              rejectionCount          INTEGER\
+                              appeal                  TEXT,\
+                              status                  TEXT\
                          );"
                          )
      connection.commit()

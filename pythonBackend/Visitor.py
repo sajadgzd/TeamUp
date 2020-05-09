@@ -1,61 +1,104 @@
 import sqlite3
+import json
+import requests
+from flask import Flask, jsonify, render_template, request, send_from_directory
 
 
-class Visitor():
-    def __init__(self, name, email, password, referredBy, topicOfInterest):
-        self.name = name
-        self.email = email
-        self.password = password
-        self.referredBy = referredBy
-        self.topicOfInterest = topicOfInterest
 
-
-    def signUp(self):
-        # Take in the following info from visitor: name, email, password, credentials, referral
-        #
-        # if (user already exists in the PendingUsers database):
-        #   print("Please wait while your current application status is under review")
-        #
-        # if (user already exists in the User Database):
-        #   print("Account already exists, Sign in")
-        #
-        # if (the user exists in the blacklist database):
-        #   print("You are banned, signup denied")
-        #
-        # else:
-        #   user data entry submitted to the User database
-        #   user application status returned
-        #   verify that application has been submitted
-
-        connection = sqlite3.connect(r"./database.db")
-        cursor = connection.cursor()
-        found = []
-        cursor.execute("SELECT * FROM signup WHERE [email] = ?",(self.email,))
-        for row in cursor.fetchall():
-            found.append(row)
-
-        if len(found) != 0:
-            print("user alreayd exists")
-        else:
-            cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,rejectionCount) VALUES(?,?,?,?,?,0)",(self.name,self.email,self.topicOfInterest,self.password,self.referredBy))
-            connection.commit()
+@app.route('/signup', methods = ["POST"])
+def signUp(self):
+    jsonData = requests.json
+    #
+    rowData = [] #Data to be uploaded to database
+    rowData.append(jsonData["fullname"])
+    rowData.append(jsonData["email"].lower())
+    rowData.append(jsonData["interests"])
+    rowData.append(jsonData["credentials"])
+    rowData.append(jsonData["reference"])
+    rowData.append("")
+    rowData.append("PENDING")
+     
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    found = []
+    cursor.execute("SELECT * FROM signup WHERE [email] = ?",(jsonData["email"].lower(),))
+    for row in cursor.fetchall():
+        found = list(row)
+        break
+    if len(found) != 0:
         connection.close()
-        #attempt to upload information into signup database.
+        return (jsonify({
+            "Message": "Sorry, an account with this email already exists. Please check your application status instead."
+        }))
+    else:
+        cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(rowData))
+        connection.commit()
+    connection.close()
+    #
+    return (jsonify({
+        "Message": "Thank you for registering! Your application is pending approval."
+    }))
+
+@app.route('/checkStatus', methods = ["POST"])
+def checkStatus(self):
+    jsonData = requests.json
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    found = []
+    cursor.execute("SELECT * FROM signup WHERE [email] = ?",(jsonData["email"].lower(),))
+    for row in cursor.fetchall():
+        found = row
+        break
+    connection.close()
+    if len(found) != 0:
+        if found[6] == "PENDING":
+            return (jsonify({
+                "Status" : "PENDING",
+                "Message": "Your application is pending approval."
+            }))
+        elif found[6] == "USER":
+            return (jsonify({
+                "Status" : "USER",
+                "Message": "Congratulations! Your account has been approved. Please sign in with the email and credentials you've provided."
+            }))
+        elif found[6] == "APPEALED":
+            return (jsonify({
+                "Status" : "APPEALED",
+                "Message": "Your appeal is pending approval."
+            }))
+        elif found[6] == "BLACKLISTED":
+            return (jsonify({
+                "Status" : "BLACKLISTED",
+                "Message": "You have been blacklisted from Team Up."
+            }))
+        elif found[6] == "REJECTED":
+            return (jsonify({
+                "Status" : "REJECTED",
+                "Message": "Sorry, your application did not pass our first round of approval. Please write an appeal message telling us why you'd be a great fit for this community."
+            }))
+    return (jsonify({
+        "Message": "Sorry, we couldn't find any users related to this email. Please sign up."
+    }))
 
 
-    def appealRejection():
-        # Vistor inputs an appeal message 
-        # 
-        # if (the visitor userID exists in the PendingUser Database):
-        #   fetch the User data
-        #   send the user's message and appeal request to SuperUser 
-        # 
-        # if (the appeal request submitted to the User database successfully):
-        #   return the application status
-        # else:
-        #   return failed status
+@app.route("/appealRejection", methods = ["POST"])
+def appealRejection(self):
+ 
+    jsonData = requests.json
+    email = jsonData["email"].lower()
+    appealMessage = jsonData["appealMessage"]
+ 
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM signup WHERE [email] = ?",(email,))
+    row = list(cursor.fetchone())
+ 
+    cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+    row[5] = appealMessage
+    row[6] = "APPEALED"
+    cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(row))
+    connection.commit()
+    connection.close()
+    return (jsonify({"Success" : "appeal has been submitted."}))
         
-
-test = Visitor("ahsan","ahsan@iknox.com", "passwordl","abdul","food")
-
-test.signUp()
