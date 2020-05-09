@@ -1,6 +1,7 @@
 import sqlite3
 import json
 from flask import Flask, jsonify, render_template, request, send_from_directory
+import uuid
 
 
 @app.route('/login', methods = ["POST"])
@@ -177,6 +178,7 @@ def createMeetupPoll():
     groupName = jsonData["groupName"]
     pollCreator = jsonData["creator"]
     pollTitle = jsonData["pollTitle"]
+    pollData["uuid"] = str(uuid.uuid4())
     pollPrompt = jsonData["pollPrompt"]
     pollType = "MEETUP"
     pollStatus = "ACTIVE"
@@ -191,6 +193,7 @@ def createMeetupPoll():
     pollData["pollTitle"] = pollTitle
     pollData["pollPromopt"] = pollPrompt
     pollData["pollType"] = pollType
+    pollData["uuid"] = str(uuid.uuid4())
     pollData["pollStatus"] = pollStatus
     pollData["pollVoteOptions"] = pollVoteOptions
     pollData["voters"] = voters
@@ -223,6 +226,7 @@ def createWarningPoll():
     targetedMemberEmail = jsonData["email"]
     targetedMemberName = jsonData["fullname"]
     pollTitle = jsonData["pollTitle"]
+    pollData["uuid"] = str(uuid.uuid4())
     pollPrompt = jsonData["pollPrompt"]
     pollType = "WARNING"
     pollStatus = "ACTIVE"
@@ -237,6 +241,7 @@ def createWarningPoll():
     pollData["targetedMemberEmail"] = targetedMemberEmail
     pollData["targetedMemberName"] = targetedMemberName
     pollData["pollTitle"] = pollTitle
+    pollData["uuid"] = str(uuid.uuid4())
     pollData["pollPromopt"] = pollPrompt
     pollData["pollType"] = pollType
     pollData["pollStatus"] = pollStatus
@@ -271,6 +276,7 @@ def createPraisePoll():
     targetedMemberEmail = jsonData["email"]
     targetedMemberName = jsonData["fullname"]
     pollTitle = jsonData["pollTitle"]
+    pollData["uuid"] = str(uuid.uuid4())
     pollPrompt = jsonData["pollPrompt"]
     pollType = "PRAISE"
     pollStatus = "ACTIVE"
@@ -285,6 +291,7 @@ def createPraisePoll():
     pollData["targetedMemberEmail"] = targetedMemberEmail
     pollData["targetedMemberName"] = targetedMemberName
     pollData["pollTitle"] = pollTitle
+    pollData["uuid"] = str(uuid.uuid4())
     pollData["pollPromopt"] = pollPrompt
     pollData["pollType"] = pollType
     pollData["pollStatus"] = pollStatus
@@ -320,6 +327,7 @@ def createKickPoll():
     targetedMemberEmail = jsonData["email"]
     targetedMemberName = jsonData["fullname"]
     pollTitle = jsonData["pollTitle"]
+    pollData["uuid"] = str(uuid.uuid4())
     pollPrompt = jsonData["pollPrompt"]
     pollType = "KICK"
     pollStatus = "ACTIVE"
@@ -334,6 +342,7 @@ def createKickPoll():
     pollData["targetedMemberEmail"] = targetedMemberEmail
     pollData["targetedMemberName"] = targetedMemberName
     pollData["pollTitle"] = pollTitle
+    pollData["uuid"] = str(uuid.uuid4())
     pollData["pollPromopt"] = pollPrompt
     pollData["pollType"] = pollType
     pollData["pollStatus"] = pollStatus
@@ -366,6 +375,7 @@ def createCloseGroupPoll():
     groupName = jsonData["groupName"]
     pollCreator = jsonData["creator"]
     pollTitle = jsonData["pollTitle"]
+    pollData["uuid"] = str(uuid.uuid4())
     pollPrompt = jsonData["pollPrompt"]
     pollType = "CLOSE"
     pollStatus = "ACTIVE"
@@ -378,6 +388,7 @@ def createCloseGroupPoll():
     pollData = {}
     pollData["pollCreator"] = pollCreator
     pollData["pollTitle"] = pollTitle
+    pollData["uuid"] = str(uuid.uuid4())
     pollData["pollPromopt"] = pollPrompt
     pollData["pollType"] = pollType
     pollData["pollStatus"] = pollStatus
@@ -404,7 +415,7 @@ def createCloseGroupPoll():
         "Message": "Your Close Group has been created."
     })
 
-
+@app.route('/issueMeetupVote', methods = ["POST"])
 def issueMeetupVote(pollName, UserID, decision):
     # if (UserID is in vip User Database) 
     #
@@ -413,6 +424,7 @@ def issueMeetupVote(pollName, UserID, decision):
     #       pollDatabase.append(decision)
     #       print("Your decision has been submitted")
 
+@app.route('/issueWarningVote', methods = ["POST"])
 def issueWarningVote(pollName, UserID, decision):
     # if (userID is in User Database && pollName in Poll Database) 
     #
@@ -424,6 +436,7 @@ def issueWarningVote(pollName, UserID, decision):
     #   else:
     #       print("You have already submitted your response for this poll")
 
+@app.route('/issuePraiseVote', methods = ["POST"])
 def issuePraiseVote(pollName, UserID, decision):
     # if (userID is in User Database && pollName in Poll Database) 
     #
@@ -434,6 +447,7 @@ def issuePraiseVote(pollName, UserID, decision):
     #   else:
     #       print("You have already submitted your response for this poll")
 
+@app.route('/issueKickVote', methods = ["POST"])
 def issueKickVote(pollName, UserID, decision):
     # if (userID is in User Database && pollName in Poll Database) 
     #
@@ -444,7 +458,7 @@ def issueKickVote(pollName, UserID, decision):
     #   else:
     #       print("You have already submitted your response for this poll")
 
-
+@app.route('/issueComplimentVote', methods = ["POST"])
 def issueCompliment(UserId, complimentComment):
     #if (userID exists in the user database):
     #   print(UserID.complimentDatabase.append(UserId, complimentComment))
