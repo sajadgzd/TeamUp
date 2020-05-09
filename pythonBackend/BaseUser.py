@@ -197,6 +197,7 @@ def createMeetupPoll():
     pollData["pollStatus"] = pollStatus
     pollData["pollVoteOptions"] = pollVoteOptions
     pollData["voters"] = voters
+    pollData["result"] = None
 
      
     connection = sqlite3.connect(r"./database.db")
@@ -247,6 +248,7 @@ def createWarningPoll():
     pollData["pollStatus"] = pollStatus
     pollData["pollVoteOptions"] = pollVoteOptions
     pollData["voters"] = voters
+    pollData["result"] = None
 
      
     connection = sqlite3.connect(r"./database.db")
@@ -297,6 +299,7 @@ def createPraisePoll():
     pollData["pollStatus"] = pollStatus
     pollData["pollVoteOptions"] = pollVoteOptions
     pollData["voters"] = voters
+    pollData["result"] = None
 
      
     connection = sqlite3.connect(r"./database.db")
@@ -348,6 +351,7 @@ def createKickPoll():
     pollData["pollStatus"] = pollStatus
     pollData["pollVoteOptions"] = pollVoteOptions
     pollData["voters"] = voters
+    pollData["result"] = None
 
      
     connection = sqlite3.connect(r"./database.db")
@@ -394,6 +398,7 @@ def createCloseGroupPoll():
     pollData["pollStatus"] = pollStatus
     pollData["pollVoteOptions"] = pollVoteOptions
     pollData["voters"] = voters
+    pollData["result"] = None
 
      
     connection = sqlite3.connect(r"./database.db")
@@ -417,12 +422,72 @@ def createCloseGroupPoll():
 
 @app.route('/issueMeetupVote', methods = ["POST"])
 def issueMeetupVote(pollName, UserID, decision):
-    # if (UserID is in vip User Database) 
-    #
-    #    if (vipUserID has not voted yet):
-    #       pollDatabase.append(pollName)
-    #       pollDatabase.append(decision)
-    #       print("Your decision has been submitted")
+    jsonData = request.json
+
+    pollResponse = jsonData["pollResponse"] #Option they selected
+    pollResponder = jsonData["email"]
+    pollUUID = jsonData["pollUUID"]
+    groupName = jsonData["groupName"]
+
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
+
+    groupData = list(cursor.fetchone())
+    groupPolls = json.loads(groupData[4])
+    for index,poll in enumerate(groupPolls):
+        if poll["uuid"] == pollUUID:
+            poll["voters"].append(pollResponder)
+            pollVoteOptions = poll["pollVoteOptions"]
+            pollVoteOptions[pollResponse] += 1 
+            poll["pollVoteOptions"] = pollVoteOptions
+            groupPolls[index] = poll
+            break
+    groupPolls = json.dumps(groupPolls)
+    groupData[4] = groupPolls
+    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+    connection.commit()
+
+    groupPolls = json.loads(groupPolls)
+    sumVotes = 0
+    for index,poll in enumerate(groupPolls):
+        if poll["uuid"] == pollUUID:
+            pollVoteOptions = poll["pollVoteOptions"]
+            for option,voteCount in pollVoteOptions.items():
+                sumVotes += voteCount
+            break
+    totalMembers = len(groupData[5])
+
+    maxResponseCount = 0
+    answer = None
+    if sumVotes == totalMembers:
+        for index,poll in enumerate(groupPolls):
+            if poll["uuid"] == pollUUID:
+                pollVoteOptions = poll["pollVoteOptions"]
+                for option,voteCount in pollVoteOptions.items():
+                    if voteCount > maxResponseCount:
+                        maxResponseCount = voteCount
+                        answer = option
+                poll["result"] = answer
+                poll["pollStatus"] = "CLOSED"
+                groupPolls[index] = poll
+                break
+
+        groupPolls = json.dumps(groupPolls)
+        groupData[4] = groupPolls
+        cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+        cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+        connection.commit()
+    connection.close()
+
+    return (jsonify({
+        "Message": "Your vote has been submitted."
+    }))
+
+
+
 
 @app.route('/issueWarningVote', methods = ["POST"])
 def issueWarningVote(pollName, UserID, decision):
