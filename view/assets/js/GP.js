@@ -44,6 +44,9 @@ $(document).ready(function() {
                                                   '<input type="text" class="timepicker">' +
                                                   '<label for="postText">To Time</label>' +
                                                 '</div>')
+    $('.datepicker').datepicker({format: "mm/dd/yyyy"});
+    $('.timepicker').timepicker();                                          
+
   });
 
   function getData() {
