@@ -99,16 +99,77 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
 
 @app.route('/handleGroupInvite', methods = ["POST"])
 def handleGroupInvite():
-    # if (senderUserID && recipientUserID is in User Database) &&
-    #       (groupName in Group Database)
-    # 
-    #   recipientUserID.inboxDatabase.append(decision)
-    #   recipientUserID.inboxDatabase.append(reason)
-    #   recipientUserID.inboxDatabase.append(senderUserID)
-    #   recipientUserID.inboxDatabase.append(groupName)
-    #   groupDatabase.append(recipientUserID)
-    # 
-    #   print(status)
+    jsonData = request.json
+ 
+    inviter = jsonData["inviterEmail"].lower()
+    inviterFullname = jsonData["inviterFullname"]
+    groupName = jsonData["groupName"]
+    invitee = jsonData["inviteeEmail"].lower()
+    message = jsonData["message"]
+    response = jsonData["response"]
+ 
+ 
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE [email] = ?"(invitee,))
+    if response.lower() == "accepted":
+        #group data base add user
+        cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
+        groupData= list(cursor.fetchone())
+        memberList = json.loads(groupData[4])
+        memberList.append(invitee)
+        memberList = json.dumps(groupData[4])
+        groupData[4] = memberList
+        cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+        cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+        connection.commit()
+ 
+        #user databas, add group to invitee list
+        cursor.execute("SELECT * FROM users where [email] = ?",(invitee,))
+        inviteeData = list(cursor.fetchone())
+        groupList = json.loads(inviteeData[3])
+        groupList.append(groupName)
+        groupList = json.dumps(groupList)
+        inviteeData[3] =groupList
+        cursor.execute("DELETE FROM users WHERE [email] = ?",(invitee,))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+        connection.commit()
+ 
+        #user database, add message to inviter inbox
+        cursor.execute("SELECT * FROM users where [email] = ?",(inviter,))
+        inviterData = list(cursor.fetchone())
+        inboxList = json.loads(inviteeData[10])
+        inboxList.append({
+            "sender": inviter,
+            "message": message
+        })
+        inboxList = json.dumps(inboxList)
+        inviterData[10] =inboxList
+        cursor.execute("DELETE FROM users WHERE [email] = ?",(inviter,))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviterData))
+        connection.commit()
+        connection.close()
+        return (jsonify({
+            "message": "You've been added to the group {} and your response has been sent to your inviter.".format(groupName)
+        }))
+    elif response.lower() == "declined":
+        #user database, add message to inviter inbox
+        cursor.execute("SELECT * FROM users where [email] = ?",(inviter,))
+        inviterData = list(cursor.fetchone())
+        inboxList = json.loads(inviteeData[10])
+        inboxList.append({
+            "sender": inviter,
+            "message": message
+        })
+        inboxList = json.dumps(inboxList)
+        inviterData[10] =inboxList
+        cursor.execute("DELETE FROM users WHERE [email] = ?",(inviter,))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviterData))
+        connection.commit()
+        connection.close()
+        return (jsonify({
+            "message": "You have declined your invitation to the group {} and your response has been sent to your inviter.".format(groupName)
+        }))
 
 def createMeetupPoll(creatorUserID, pollName, pollType, optionsList):
     # if (UserID is in User Database)
