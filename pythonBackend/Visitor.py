@@ -1,13 +1,12 @@
 import sqlite3
 import json
-import requests
 from flask import Flask, jsonify, render_template, request, send_from_directory
 
 
 
 @app.route('/signup', methods = ["POST"])
 def signUp():
-    jsonData = requests.json
+    jsonData = request.json
     #
     rowData = [] #Data to be uploaded to database
     rowData.append(jsonData["fullname"])
@@ -22,9 +21,9 @@ def signUp():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM signup WHERE [email] = ?",(jsonData["email"].lower(),))
 
-    found = cursor.fetchone()
+    userData = cursor.fetchone()
 
-    if found is not None:
+    if userData is not None:
         connection.close()
         return (jsonify({
             "Message": "Sorry, an account with this email already exists. Please check your application status instead."
@@ -40,36 +39,36 @@ def signUp():
 
 @app.route('/checkStatus', methods = ["POST"])
 def checkStatus():
-    jsonData = requests.json
+    jsonData = request.json
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     
     cursor.execute("SELECT * FROM signup WHERE [email] = ?",(jsonData["email"].lower(),))
-    found = cursor.fetchone()
+    userData = cursor.fetchone()
     connection.close()
-    if found is not None:
-        if found[6] == "PENDING":
+    if userData is not None:
+        if userData[6] == "PENDING":
             return (jsonify({
                 "Status" : "PENDING",
                 "Message": "Your application is pending approval."
             }))
-        elif found[6] == "USER":
+        elif userData[6] == "USER":
             return (jsonify({
                 "Status" : "USER",
                 "Message": "Congratulations! Your account has been approved. Please sign in with the email and credentials you've provided."
             }))
-        elif found[6] == "APPEALED":
+        elif userData[6] == "APPEALED":
             return (jsonify({
                 "Status" : "APPEALED",
                 "Message": "Your appeal is pending approval."
             }))
-        elif found[6] == "BLACKLISTED":
+        elif userData[6] == "BLACKLISTED":
             return (jsonify({
                 "Status" : "BLACKLISTED",
                 "Message": "You have been blacklisted from Team Up."
             }))
-        elif found[6] == "REJECTED":
+        elif userData[6] == "REJECTED":
             return (jsonify({
                 "Status" : "REJECTED",
                 "Message": "Sorry, your application did not pass our first round of approval. Please write an appeal message telling us why you'd be a great fit for this community."
@@ -82,7 +81,7 @@ def checkStatus():
 @app.route("/appealRejection", methods = ["POST"])
 def appealRejection():
  
-    jsonData = requests.json
+    jsonData = request.json
     email = jsonData["email"].lower()
     appealMessage = jsonData["appealMessage"]
  

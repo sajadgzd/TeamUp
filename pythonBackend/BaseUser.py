@@ -1,6 +1,5 @@
 import sqlite3
 import json
-import requests
 from flask import Flask, jsonify, render_template, request, send_from_directory
 
 
@@ -14,11 +13,11 @@ def login():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE [email] = ? AND [credentials] = ?"(jsonData["email"].lower(),credentials))
-    found = cursor.fetchone()
+    userData = cursor.fetchone()
     
-    if found is not None:
+    if userData is not None:
         return jsonify({
-            "data": found
+            "data": userData
         })
     else:
         return jsonify({
