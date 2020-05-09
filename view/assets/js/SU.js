@@ -2,22 +2,18 @@
 $(document).ready(function() {
 
   $('.sidenav').sidenav();
+  $('.tabs').tabs();
+  
   $('.chips').chips();
   $('.chips-placeholder').chips({
     placeholder: 'Enter a username',
-    secondaryPlaceholder: '+Interest',
+    secondaryPlaceholder: '+User',
   });
+  let chipElem = $(".chips")
+  var chipInstance = M.Chips.getInstance(chipElem);
 
-  var chip = {
-    tag: 'chip content',
-    image: '', //optional
-  };
-  var elem = $('.chips')
-  var instance = M.Chips.getInstance(elem);
-  // instance.selectChip(2); // Select 2nd chip
-
-  var elems = document.querySelectorAll('.modal');
-  var instances = M.Modal.init(elems, {});
+  var modalElems = document.querySelectorAll('.modal');
+  var modalInstances = M.Modal.init(modalElems, {});
 
   function getData() {
     $.ajax({
