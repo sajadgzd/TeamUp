@@ -68,8 +68,13 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
             
             cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
             groupData = list(cursor.fetchone())
-            memberData = json.loads(groupData[4])
-            memberData.append(invitee)
+            memberData = json.loads(groupData[5])
+            memberData.append({
+                "member": invitee,
+                "warnings": 0,
+                "praises": 0,
+                "taskscompleted":0
+            })
             memberData = json.dumps(memberData)
             groupData[4] = memberData
 
@@ -117,9 +122,14 @@ def handleGroupInvite():
         #group data base add user
         cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
         groupData= list(cursor.fetchone())
-        memberList = json.loads(groupData[4])
-        memberList.append(invitee)
-        memberList = json.dumps(groupData[4])
+        memberData = json.loads(groupData[5])
+            memberData.append({
+                "member": invitee,
+                "warnings": 0,
+                "praises": 0,
+                "taskscompleted":0
+            })
+            memberData = json.dumps(memberData)
         groupData[4] = memberList
         cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
         cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
@@ -554,6 +564,8 @@ def issueWarningVote(pollName, UserID, decision):
         connection.commit()
     connection.close()
 
+    ####HELPER
+
     return (jsonify({
         "Message": "Your vote has been submitted."
     }))
@@ -622,6 +634,8 @@ def issuePraiseVote(pollName, UserID, decision):
             cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
         connection.commit()
     connection.close()
+    
+    ####HELPER
 
     return (jsonify({
         "Message": "Your vote has been submitted."
@@ -691,6 +705,8 @@ def issueKickVote(pollName, UserID, decision):
             cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
         connection.commit()
     connection.close()
+
+    ####HELPER
 
     return (jsonify({
         "Message": "Your vote has been submitted."
