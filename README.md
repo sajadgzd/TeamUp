@@ -1,4 +1,3 @@
-# softwareEngineeringProject
 # TEAM UP
 ----------
 ## Table of Contents 
