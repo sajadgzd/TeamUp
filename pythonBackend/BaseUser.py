@@ -25,14 +25,69 @@ def login():
         })
 
 def inviteToGroup(senderUserID, groupName, recipientUserID):
-    # if (senderUserID && recipientUserID is in User Database) &&
-    #       (groupName in Group Database)
-    # 
-    #   recipientUserID.inboxDatabase.append(invite)
-    #   recipientUserID.inboxDatabase.append(senderUserID)
-    #   recipientUserID.inboxDatabase.append(groupName)
-    #   (backend process)
-    #   print(status)
+    jsonData = request.json
+
+    inviter = jsonData["inviterEmail"].lower()
+    inviterFullname = jsonData["inviterFullname"]
+    groupName = jsonData["groupName"]
+    invitee = jsonData["inviteeEmail"].lower()
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE [email] = ?"(invitee,))
+
+    inviteeData = cursor.fetchone()
+
+    inviteeData = list(inviteeData)
+
+    blackList = json.loads(inviteeData[7])
+    for blocked in blackList:
+        if blocked["email"] == inviter:
+            connection.close()
+            return (jsonify({
+            "Message": "Sorry, your invitation has been rejected."
+        }))
+
+    whiteList = json.loads(inviteeData[8])
+    for autoAccept in whiteList:
+        if autoAccept["email"] == inviter:
+            groupList = json.loads(inviteeData[3])
+            groupList.append(groupName)
+            groupList = json.dumps(groupList)
+            inviteeData[3] = groupList
+            cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
+            cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints) VALUES (?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+            
+            cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
+            groupData = list(cursor.fetchone())
+            memberData = json.loads(groupData[4])
+            memberData.append(invitee)
+            memberData = json.dumps(memberData)
+            groupData[4] = memberData
+
+            cursor.execute("DELETE * FROM groups WHERE [groupName] = ?",(groupName,))
+            cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+            connection.commit()
+            connection.close()
+            return (jsonify({
+                "Message": "Your invitation has been accepted!"
+            }))
+    
+    invitations = json.loads(inviteeData[6])
+    invitations.append({
+        "fullname": inviterFullname,
+        "email" :inviter,
+        "groupName": groupName
+    })
+
+    invitations = json.dumps(invitations)
+    cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
+    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints) VALUES (?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+    connection.commit()
+    connection.close()
+    return(jsonify({
+        "Message": "Your invitation has been sent!"
+    }))
 
 
 def handleGroupMeeting(senderUserID, decision, reason, recepientUserID):
