@@ -13,10 +13,6 @@ altruistic projects together. The application will have a directory of projects 
 available to users, as well as a directory of registered users that can be used by
 users to find team members for a given project.
 
-<a name="overview"></a>
-## Overview 
-A Node based app which primarily aims to give a voice to the minorities and women to speak up and report crimes which often go unreported. 
-
 <a name="technologies"></a>
 ## Technologies
  * HTML
