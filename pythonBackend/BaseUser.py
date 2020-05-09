@@ -14,7 +14,13 @@ def login():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE [email] = ? AND [credentials] = ?"(jsonData["email"].lower(),credentials))
     userData = cursor.fetchone()
-    
+    userData = list(userData)
+    userData[3] = json.loads(userData[3]) #grouplist
+    userData[6] = json.loads(userData[6]) #invitations
+    userData[7] = json.loads(userData[7]) #blacklist
+    userData[8] = json.loads(userData[8]) #whitelist
+    userData[10] = json.loads(userData[10]) #inbox
+
     if userData is not None:
         return jsonify({
             "data": userData
@@ -46,7 +52,7 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
         if blocked["email"] == inviter:
             connection.close()
             return jsonify({
-            "Message": "Sorry, your invitation has been rejected."
+            "Message": "Sorry, your invitation has been automatically rejected."
         })
 
     whiteList = json.loads(inviteeData[8])
@@ -71,13 +77,13 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
             connection.commit()
             connection.close()
             return jsonify({
-                "Message": "Your invitation has been accepted!"
+                "Message": "Your invitation has been automatically accepted!"
             })
     
     invitations = json.loads(inviteeData[6])
     invitations.append({
         "fullname": inviterFullname,
-        "email" :inviter,
+        "inviterEmail" :inviter,
         "groupName": groupName
     })
 
