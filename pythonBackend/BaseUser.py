@@ -13,13 +13,10 @@ def login():
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    found = []
     cursor.execute("SELECT * FROM users WHERE [email] = ? AND [credentials] = ?"(jsonData["email"].lower(),credentials))
-    for row in cursor.fetchall():
-        found = list(row)
-        break
+    found = cursor.fetchone()
     
-    if len(found) > 0:
+    if found is not None:
         return jsonify({
             "data": found
         })

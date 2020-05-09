@@ -6,7 +6,7 @@ from flask import Flask, jsonify, render_template, request, send_from_directory
 
 
 @app.route('/signup', methods = ["POST"])
-def signUp(self):
+def signUp():
     jsonData = requests.json
     #
     rowData = [] #Data to be uploaded to database
@@ -20,12 +20,11 @@ def signUp(self):
      
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    found = []
     cursor.execute("SELECT * FROM signup WHERE [email] = ?",(jsonData["email"].lower(),))
-    for row in cursor.fetchall():
-        found = list(row)
-        break
-    if len(found) != 0:
+
+    found = cursor.fetchone()
+
+    if found is not None:
         connection.close()
         return (jsonify({
             "Message": "Sorry, an account with this email already exists. Please check your application status instead."
@@ -40,18 +39,16 @@ def signUp(self):
     }))
 
 @app.route('/checkStatus', methods = ["POST"])
-def checkStatus(self):
+def checkStatus():
     jsonData = requests.json
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    found = []
+    
     cursor.execute("SELECT * FROM signup WHERE [email] = ?",(jsonData["email"].lower(),))
-    for row in cursor.fetchall():
-        found = row
-        break
+    found = cursor.fetchone()
     connection.close()
-    if len(found) != 0:
+    if found is not None:
         if found[6] == "PENDING":
             return (jsonify({
                 "Status" : "PENDING",
@@ -83,7 +80,7 @@ def checkStatus(self):
 
 
 @app.route("/appealRejection", methods = ["POST"])
-def appealRejection(self):
+def appealRejection():
  
     jsonData = requests.json
     email = jsonData["email"].lower()
