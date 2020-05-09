@@ -491,37 +491,210 @@ def issueMeetupVote(pollName, UserID, decision):
 
 @app.route('/issueWarningVote', methods = ["POST"])
 def issueWarningVote(pollName, UserID, decision):
-    # if (userID is in User Database && pollName in Poll Database) 
-    #
-    #    if (userID has not voted yet):
-    #       pollDatabase.append(pollName)
-    #       pollDatabase.append(decision)
-    #       print("Your decision has been submitted")
-    #
-    #   else:
-    #       print("You have already submitted your response for this poll")
+   jsonData = request.json
+
+    pollResponse = jsonData["pollResponse"] #Option they selected
+    pollResponder = jsonData["email"]
+    pollUUID = jsonData["pollUUID"]
+    groupName = jsonData["groupName"]
+
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
+
+    groupData = list(cursor.fetchone())
+    memberPolls = json.loads(groupData[3])
+    for index,poll in enumerate(memberPolls):
+        if poll["uuid"] == pollUUID:
+            poll["voters"].append(pollResponder)
+            pollVoteOptions = poll["pollVoteOptions"]
+            pollVoteOptions[pollResponse] += 1 
+            poll["pollVoteOptions"] = pollVoteOptions
+            memberPolls[index] = poll
+            break
+    
+
+    memberPolls = json.dumps(memberPolls)
+    groupData[3] = memberPolls
+    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+    connection.commit()
+
+    memberPolls = json.loads(memberPolls)
+    sumVotes = 0
+    for index,poll in enumerate(memberPolls):
+        if poll["uuid"] == pollUUID:
+            pollVoteOptions = poll["pollVoteOptions"]
+            for option,voteCount in pollVoteOptions.items():
+                sumVotes += voteCount
+            break
+    totalMembers = len(groupData[5])
+
+    maxResponseCount = 0
+    answer = None
+    if sumVotes == totalMembers-1:
+        for index,poll in enumerate(memberPolls):
+            if poll["uuid"] == pollUUID:
+                pollVoteOptions = poll["pollVoteOptions"]
+                for option,voteCount in pollVoteOptions.items():
+                    if voteCount > maxResponseCount:
+                        maxResponseCount = voteCount
+                        answer = option
+                poll["result"] = answer
+                poll["pollStatus"] = "CLOSED"
+                memberPolls[index] = poll
+                break
+        
+        if maxResponseCount == totalMembers-1:
+            memberPolls = json.dumps(memberPolls)
+            groupData[3] = memberPolls
+            cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+            cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+        connection.commit()
+    connection.close()
+
+    return (jsonify({
+        "Message": "Your vote has been submitted."
+    }))
 
 @app.route('/issuePraiseVote', methods = ["POST"])
 def issuePraiseVote(pollName, UserID, decision):
-    # if (userID is in User Database && pollName in Poll Database) 
-    #
-    #    if (userID has not voted yet):
-    #       pollDatabase.append(pollName)
-    #       pollDatabase.append(decision)
-    #       print("Your decision has been submitted")
-    #   else:
-    #       print("You have already submitted your response for this poll")
+   jsonData = request.json
+
+    pollResponse = jsonData["pollResponse"] #Option they selected
+    pollResponder = jsonData["email"]
+    pollUUID = jsonData["pollUUID"]
+    groupName = jsonData["groupName"]
+
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
+
+    groupData = list(cursor.fetchone())
+    memberPolls = json.loads(groupData[3])
+    for index,poll in enumerate(memberPolls):
+        if poll["uuid"] == pollUUID:
+            poll["voters"].append(pollResponder)
+            pollVoteOptions = poll["pollVoteOptions"]
+            pollVoteOptions[pollResponse] += 1 
+            poll["pollVoteOptions"] = pollVoteOptions
+            memberPolls[index] = poll
+            break
+    
+
+    memberPolls = json.dumps(memberPolls)
+    groupData[3] = memberPolls
+    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+    connection.commit()
+
+    memberPolls = json.loads(memberPolls)
+    sumVotes = 0
+    for index,poll in enumerate(memberPolls):
+        if poll["uuid"] == pollUUID:
+            pollVoteOptions = poll["pollVoteOptions"]
+            for option,voteCount in pollVoteOptions.items():
+                sumVotes += voteCount
+            break
+    totalMembers = len(groupData[5])
+
+    maxResponseCount = 0
+    answer = None
+    if sumVotes == totalMembers-1:
+        for index,poll in enumerate(memberPolls):
+            if poll["uuid"] == pollUUID:
+                pollVoteOptions = poll["pollVoteOptions"]
+                for option,voteCount in pollVoteOptions.items():
+                    if voteCount > maxResponseCount:
+                        maxResponseCount = voteCount
+                        answer = option
+                poll["result"] = answer
+                poll["pollStatus"] = "CLOSED"
+                memberPolls[index] = poll
+                break
+        
+        if maxResponseCount == totalMembers-1:
+            memberPolls = json.dumps(memberPolls)
+            groupData[3] = memberPolls
+            cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+            cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+        connection.commit()
+    connection.close()
+
+    return (jsonify({
+        "Message": "Your vote has been submitted."
+    }))
 
 @app.route('/issueKickVote', methods = ["POST"])
 def issueKickVote(pollName, UserID, decision):
-    # if (userID is in User Database && pollName in Poll Database) 
-    #
-    #    if (userID has not voted yet):
-    #       pollDatabase.append(pollName)
-    #       pollDatabase.append(decision)
-    #       print("Your decision has been submitted")
-    #   else:
-    #       print("You have already submitted your response for this poll")
+   jsonData = request.json
+
+    pollResponse = jsonData["pollResponse"] #Option they selected
+    pollResponder = jsonData["email"]
+    pollUUID = jsonData["pollUUID"]
+    groupName = jsonData["groupName"]
+
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
+
+    groupData = list(cursor.fetchone())
+    memberPolls = json.loads(groupData[3])
+    for index,poll in enumerate(memberPolls):
+        if poll["uuid"] == pollUUID:
+            poll["voters"].append(pollResponder)
+            pollVoteOptions = poll["pollVoteOptions"]
+            pollVoteOptions[pollResponse] += 1 
+            poll["pollVoteOptions"] = pollVoteOptions
+            memberPolls[index] = poll
+            break
+    
+
+    memberPolls = json.dumps(memberPolls)
+    groupData[3] = memberPolls
+    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+    connection.commit()
+
+    memberPolls = json.loads(memberPolls)
+    sumVotes = 0
+    for index,poll in enumerate(memberPolls):
+        if poll["uuid"] == pollUUID:
+            pollVoteOptions = poll["pollVoteOptions"]
+            for option,voteCount in pollVoteOptions.items():
+                sumVotes += voteCount
+            break
+    totalMembers = len(groupData[5])
+
+    maxResponseCount = 0
+    answer = None
+    if sumVotes == totalMembers-1:
+        for index,poll in enumerate(memberPolls):
+            if poll["uuid"] == pollUUID:
+                pollVoteOptions = poll["pollVoteOptions"]
+                for option,voteCount in pollVoteOptions.items():
+                    if voteCount > maxResponseCount:
+                        maxResponseCount = voteCount
+                        answer = option
+                poll["result"] = answer
+                poll["pollStatus"] = "CLOSED"
+                memberPolls[index] = poll
+                break
+        
+        if maxResponseCount == totalMembers-1:
+            memberPolls = json.dumps(memberPolls)
+            groupData[3] = memberPolls
+            cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+            cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+        connection.commit()
+    connection.close()
+
+    return (jsonify({
+        "Message": "Your vote has been submitted."
+    }))
 
 @app.route('/issueComplimentVote', methods = ["POST"])
 def issueCompliment(UserId, complimentComment):
