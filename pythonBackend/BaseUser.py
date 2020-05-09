@@ -24,6 +24,7 @@ def login():
             "Error": "Sorry, email or password combination does not exist."
         })
 
+@app.route('/inviteToGroup', methods = ["POST"])
 def inviteToGroup(senderUserID, groupName, recipientUserID):
     jsonData = request.json
 
@@ -90,7 +91,8 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
     })
 
 
-def handleGroupMeeting(senderUserID, decision, reason, recepientUserID):
+@app.route('/handleGroupMeeting', methods = ["POST"])
+def handleGroupMeeting():
     # if (senderUserID && recipientUserID is in User Database) &&
     #       (groupName in Group Database)
     # 
