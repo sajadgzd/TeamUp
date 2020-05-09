@@ -51,5 +51,5 @@ Go to your browser and type in the corresponding address you see the app is runn
 
 <a name="display"></a>
 ## App Screenshot
-<img src="/view/assets/images/landing.png" width="200">
+<img src="/view/assets/images/landing.png">
 
