@@ -44,9 +44,9 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
     for blocked in blackList:
         if blocked["email"] == inviter:
             connection.close()
-            return (jsonify({
+            return jsonify({
             "Message": "Sorry, your invitation has been rejected."
-        }))
+        })
 
     whiteList = json.loads(inviteeData[8])
     for autoAccept in whiteList:
@@ -69,9 +69,9 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
             cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
             connection.commit()
             connection.close()
-            return (jsonify({
+            return jsonify({
                 "Message": "Your invitation has been accepted!"
-            }))
+            })
     
     invitations = json.loads(inviteeData[6])
     invitations.append({
@@ -85,9 +85,9 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints) VALUES (?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
     connection.commit()
     connection.close()
-    return(jsonify({
+    return jsonify({
         "Message": "Your invitation has been sent!"
-    }))
+    })
 
 
 def handleGroupMeeting(senderUserID, decision, reason, recepientUserID):
