@@ -34,7 +34,10 @@ if "users" not in tableList:
                               groupList            TEXT,\
                               reputationScore      TEXT,\
                               status               TEXT,\
-                              invitations          TEXT\
+                              invitations          TEXT,\
+                              blacklist            TEXT,\
+                              whitelist            TEXT,\
+                              complimentsorcomplaints TEXT\
                          );"
                          )
      connection.commit()
@@ -44,6 +47,8 @@ if "groups" not in tableList:
                               groupName            TEXT PRIMARY KEY,\
                               status               TEXT,\
                               posts                TEXT,\
-                              polls                TEXT);"
+                              memberPolls          TEXT,\
+                              groupPolls           TEXT,\
+                              members              TEXT);"
                     )
      connection.commit()
