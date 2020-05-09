@@ -25,6 +25,8 @@ $(document).ready(function() {
   var timeelems = document.querySelectorAll('.timepicker');
   var timeinstances = M.Timepicker.init(timeelems, {});
 
+  let numOfChoices = 2;
+
   $("#radiobtn").click(function(){
     var radioValue = $("input[name='group1']:checked").val();
     if(radioValue){
@@ -44,6 +46,7 @@ $(document).ready(function() {
                                                   '<input type="text" class="timepicker">' +
                                                   '<label for="postText">To Time</label>' +
                                                 '</div>')
+    numOfChoices++;
     $('.datepicker').datepicker({format: "mm/dd/yyyy"});
     $('.timepicker').timepicker();                                          
 
@@ -60,17 +63,48 @@ $(document).ready(function() {
   };
   getData();
 
-  $(document.body).on("click", "#test2btn", function(event) {
+  $(document.body).on("click", "#post-button", function(event) {
     event.preventDefault();
-    var text = $("#test2txt").val().trim()
-    $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
+    var text = $("#postText").val().trim()
+    // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
     console.log("text value:", text)
 
     var msg = {
       textmsg: text 
     }
 
-    $.post("/test2", msg)
+    $.post("/postText", msg)
+    .then(function(data) {
+      console.log("got data back from POST call", data.textmsg);
+      alert("POST worked...");
+    });
+
+  });
+
+
+
+  $(document.body).on("click", "#schedule-button", function(event) {
+    event.preventDefault();
+    var text = $("#scheduleText").val().trim()
+    // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
+    console.log("text value:", text);
+
+    let date = ""
+    let time1 = ""
+    let time2 = ""
+
+    let choices = []
+
+    for(let i=0; i<numOfChoices.length; i++){
+      choices.push(date + " From " + time1 + " to " + time2)
+    }
+
+    var schedule = {
+      textmsg: text,
+      choices: choices
+    }
+
+    $.post("/postText", msg)
     .then(function(data) {
       console.log("got data back from POST call", data.textmsg);
       alert("POST worked...");
