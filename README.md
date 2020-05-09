@@ -1,5 +1,4 @@
 # TEAM UP
-----------
 ## Table of Contents 
 1. [Overview](#overview)
 2. [Technologies](#technologies)
