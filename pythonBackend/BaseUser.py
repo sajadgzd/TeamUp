@@ -57,7 +57,7 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
             groupList = json.dumps(groupList)
             inviteeData[3] = groupList
             cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
-            cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints) VALUES (?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+            cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
             
             cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
             groupData = list(cursor.fetchone())
@@ -83,7 +83,7 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
 
     invitations = json.dumps(invitations)
     cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
-    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints) VALUES (?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
     connection.commit()
     connection.close()
     return jsonify({
@@ -91,8 +91,8 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
     })
 
 
-@app.route('/handleGroupMeeting', methods = ["POST"])
-def handleGroupMeeting():
+@app.route('/handleGroupInvite', methods = ["POST"])
+def handleGroupInvite():
     # if (senderUserID && recipientUserID is in User Database) &&
     #       (groupName in Group Database)
     # 

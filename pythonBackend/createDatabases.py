@@ -37,7 +37,8 @@ if "users" not in tableList:
                               invitations          TEXT,\
                               blacklist            TEXT,\
                               whitelist            TEXT,\
-                              complimentsorcomplaints TEXT\
+                              complimentsorcomplaints TEXT,\
+                              inbox                TEXT\
                          );"
                          )
      connection.commit()
