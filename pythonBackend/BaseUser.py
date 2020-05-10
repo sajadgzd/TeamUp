@@ -728,7 +728,7 @@ def issueKickVote():
     #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
     handleWarningPraiseClosure(cursor = cursor,groupName= groupName,pollType = "kicks",connection = connection,pollUUID=pollUUID,pollTargetedMemberEmail=pollTargetedMemberEmail)
     
-    #Check the warning count for members and kick out if necessary
+    #Check the kick count and kick out if necessary
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
     memberList = json.loads(groupData[5])

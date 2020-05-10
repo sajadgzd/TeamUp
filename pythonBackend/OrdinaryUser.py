@@ -2,6 +2,7 @@ import sqlite3
 import json
 from flask import Flask, jsonify, render_template, request, send_from_directory
 
+@app.route('/appealReputation', methods = ["POST"])
 def appealReputation():
     jsonData = request.json
     userEmail = jsonData["email"].lower()
@@ -14,6 +15,7 @@ def appealReputation():
     connection.close()
     return jsonify({"Success: appeal has been submitted."})
 
+@app.route('/reportUser', methods = ["POST"])
 def reportUser():
     jsonData = request.json
     targetEmail = jsonData["email"].lower()
@@ -26,9 +28,10 @@ def reportUser():
     connection.close()
     return jsonify({"Success: report has been submitted."})
 
+@app.route('/reportGroup', methods = ["POST"])
 def reportGroup():
     jsonData = request.json
-    groupName = jsonData["groupName"].lower()
+    groupName = jsonData["groupName"]
     reportMessage = jsonData["reportMessage"]
 
     connection = sqlite3.connect(r"./database.db")
@@ -38,6 +41,7 @@ def reportGroup():
     connection.close()
     return jsonify({"Success: report has been submitted."})
 
+@app.route('/referenceReputation', methods = ["POST"])
 def referenceReputation():
     jsonData = request.json
     referredUserEmail = jsonData["referredUser"]
