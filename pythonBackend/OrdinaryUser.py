@@ -2,12 +2,6 @@ import sqlite3
 import json
 from flask import Flask, jsonify, render_template, request, send_from_directory
 
-#Helper function
-def numOfRequests(cursor):
-    cursor.execute("SELECT * FROM moderationQueue")
-    results = cursor.fetchall()
-    return len(results)
-
 def appealReputation():
     jsonData = request.json
     userEmail = jsonData["email"].lower()
@@ -15,9 +9,7 @@ def appealReputation():
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    number = numOfRequests(cursor)
-    number += 1
-    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(userEmail,appealMessage,"REP_APPEAL","OPEN",number))
+    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(userEmail,appealMessage,"REP_APPEAL","OPEN",None))
     connection.commit()
     connection.close()
     return jsonify({"Success: appeal has been submitted."})
@@ -29,9 +21,7 @@ def reportUser():
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    number = numOfRequests(cursor)
-    number += 1
-    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(targetEmail,reportMessage,"REPORT","OPEN",number))
+    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(targetEmail,reportMessage,"REPORT","OPEN",None))
     connection.commit()
     connection.close()
     return jsonify({"Success: report has been submitted."})
@@ -43,9 +33,7 @@ def reportGroup():
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    number = numOfRequests(cursor)
-    number += 1
-    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status) VALUES(?,?,?,?,?)",(groupName,reportMessage,"REPORT","OPEN",number))
+    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status) VALUES(?,?,?,?,?)",(groupName,reportMessage,"REPORT","OPEN",None))
     connection.commit()
     connection.close()
     return jsonify({"Success: report has been submitted."})
