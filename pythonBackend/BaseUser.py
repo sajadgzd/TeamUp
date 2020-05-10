@@ -32,7 +32,7 @@ def login():
         })
 
 @app.route('/inviteToGroup', methods = ["POST"])
-def inviteToGroup(senderUserID, groupName, recipientUserID):
+def inviteToGroup():
     jsonData = request.json
 
     inviter = jsonData["inviterEmail"].lower()
@@ -431,7 +431,7 @@ def createCloseGroupPoll():
     })
 
 @app.route('/issueMeetupVote', methods = ["POST"])
-def issueMeetupVote(pollName, UserID, decision):
+def issueMeetupVote():
     jsonData = request.json
 
     pollResponse = jsonData["pollResponse"] #Option they selected
@@ -500,7 +500,7 @@ def issueMeetupVote(pollName, UserID, decision):
 
 
 @app.route('/issueWarningVote', methods = ["POST"])
-def issueWarningVote(pollName, UserID, decision):
+def issueWarningVote():
    jsonData = request.json
 
     pollResponse = jsonData["pollResponse"] #Option they selected
@@ -571,7 +571,7 @@ def issueWarningVote(pollName, UserID, decision):
     }))
 
 @app.route('/issuePraiseVote', methods = ["POST"])
-def issuePraiseVote(pollName, UserID, decision):
+def issuePraiseVote():
    jsonData = request.json
 
     pollResponse = jsonData["pollResponse"] #Option they selected
@@ -642,7 +642,7 @@ def issuePraiseVote(pollName, UserID, decision):
     }))
 
 @app.route('/issueKickVote', methods = ["POST"])
-def issueKickVote(pollName, UserID, decision):
+def issueKickVote():
    jsonData = request.json
 
     pollResponse = jsonData["pollResponse"] #Option they selected
@@ -713,7 +713,7 @@ def issueKickVote(pollName, UserID, decision):
     }))
 
 @app.route('/issueComplimentVote', methods = ["POST"])
-def issueCompliment(UserId, complimentComment):
+def issueCompliment():
     #if (userID exists in the user database):
     #   print(UserID.complimentDatabase.append(UserId, complimentComment))
     #   return success status
@@ -722,7 +722,7 @@ def issueCompliment(UserId, complimentComment):
     #   print("The user you are trying to issue a compliment to, doesnt't exist")
     pass
 
-def addToWhiteBox(UserID):
+def addToWhiteBox():
     #if (userID exists in the user database):
     #   if (userID exists in self.whitebox database):
     #       print("User already added to whitebox")
@@ -734,7 +734,7 @@ def addToWhiteBox(UserID):
     # else:
     #   print("The user you are trying to whitelist doesn't exist")
 
-def addToBlackBox(userID):
+def addToBlackBox():
     #if (userID exists in the user database):
     #   if (userID exists in self.blackbox database):
     #       print("User already to blackbox")
