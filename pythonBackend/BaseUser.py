@@ -65,7 +65,7 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
             inviteeData[3] = groupList
             cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
             cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
-            
+
             cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
             groupData = list(cursor.fetchone())
             memberData = json.loads(groupData[5])
@@ -85,7 +85,7 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
             return jsonify({
                 "Message": "Your invitation has been automatically accepted!"
             })
-    
+
     invitations = json.loads(inviteeData[6])
     invitations.append({
         "fullname": inviterFullname,
@@ -106,15 +106,15 @@ def inviteToGroup(senderUserID, groupName, recipientUserID):
 @app.route('/handleGroupInvite', methods = ["POST"])
 def handleGroupInvite():
     jsonData = request.json
- 
+
     inviter = jsonData["inviterEmail"].lower()
     inviterFullname = jsonData["inviterFullname"]
     groupName = jsonData["groupName"]
     invitee = jsonData["inviteeEmail"].lower()
     message = jsonData["message"]
     response = jsonData["response"]
- 
- 
+
+
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE [email] = ?"(invitee,))
@@ -134,7 +134,7 @@ def handleGroupInvite():
         cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
         cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
         connection.commit()
- 
+
         #user databas, add group to invitee list
         cursor.execute("SELECT * FROM users where [email] = ?",(invitee,))
         inviteeData = list(cursor.fetchone())
@@ -145,7 +145,7 @@ def handleGroupInvite():
         cursor.execute("DELETE FROM users WHERE [email] = ?",(invitee,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
         connection.commit()
- 
+
         #user database, add message to inviter inbox
         cursor.execute("SELECT * FROM users where [email] = ?",(inviter,))
         inviterData = list(cursor.fetchone())
@@ -209,7 +209,7 @@ def createMeetupPoll():
     pollData["voters"] = voters
     pollData["result"] = None
 
-     
+
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
@@ -260,7 +260,7 @@ def createWarningPoll():
     pollData["voters"] = voters
     pollData["result"] = None
 
-     
+
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
@@ -311,7 +311,7 @@ def createPraisePoll():
     pollData["voters"] = voters
     pollData["result"] = None
 
-     
+
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
@@ -363,7 +363,7 @@ def createKickPoll():
     pollData["voters"] = voters
     pollData["result"] = None
 
-     
+
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
@@ -410,7 +410,7 @@ def createCloseGroupPoll():
     pollData["voters"] = voters
     pollData["result"] = None
 
-     
+
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
@@ -450,7 +450,7 @@ def issueMeetupVote(pollName, UserID, decision):
         if poll["uuid"] == pollUUID:
             poll["voters"].append(pollResponder)
             pollVoteOptions = poll["pollVoteOptions"]
-            pollVoteOptions[pollResponse] += 1 
+            pollVoteOptions[pollResponse] += 1
             poll["pollVoteOptions"] = pollVoteOptions
             groupPolls[index] = poll
             break
@@ -519,11 +519,11 @@ def issueWarningVote(pollName, UserID, decision):
         if poll["uuid"] == pollUUID:
             poll["voters"].append(pollResponder)
             pollVoteOptions = poll["pollVoteOptions"]
-            pollVoteOptions[pollResponse] += 1 
+            pollVoteOptions[pollResponse] += 1
             poll["pollVoteOptions"] = pollVoteOptions
             memberPolls[index] = poll
             break
-    
+
 
     memberPolls = json.dumps(memberPolls)
     groupData[3] = memberPolls
@@ -555,7 +555,7 @@ def issueWarningVote(pollName, UserID, decision):
                 poll["pollStatus"] = "CLOSED"
                 memberPolls[index] = poll
                 break
-        
+
         if maxResponseCount == totalMembers-1:
             memberPolls = json.dumps(memberPolls)
             groupData[3] = memberPolls
@@ -590,11 +590,11 @@ def issuePraiseVote(pollName, UserID, decision):
         if poll["uuid"] == pollUUID:
             poll["voters"].append(pollResponder)
             pollVoteOptions = poll["pollVoteOptions"]
-            pollVoteOptions[pollResponse] += 1 
+            pollVoteOptions[pollResponse] += 1
             poll["pollVoteOptions"] = pollVoteOptions
             memberPolls[index] = poll
             break
-    
+
 
     memberPolls = json.dumps(memberPolls)
     groupData[3] = memberPolls
@@ -626,7 +626,7 @@ def issuePraiseVote(pollName, UserID, decision):
                 poll["pollStatus"] = "CLOSED"
                 memberPolls[index] = poll
                 break
-        
+
         if maxResponseCount == totalMembers-1:
             memberPolls = json.dumps(memberPolls)
             groupData[3] = memberPolls
@@ -634,7 +634,7 @@ def issuePraiseVote(pollName, UserID, decision):
             cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
         connection.commit()
     connection.close()
-    
+
     ####HELPER
 
     return (jsonify({
@@ -661,11 +661,11 @@ def issueKickVote(pollName, UserID, decision):
         if poll["uuid"] == pollUUID:
             poll["voters"].append(pollResponder)
             pollVoteOptions = poll["pollVoteOptions"]
-            pollVoteOptions[pollResponse] += 1 
+            pollVoteOptions[pollResponse] += 1
             poll["pollVoteOptions"] = pollVoteOptions
             memberPolls[index] = poll
             break
-    
+
 
     memberPolls = json.dumps(memberPolls)
     groupData[3] = memberPolls
@@ -697,7 +697,7 @@ def issueKickVote(pollName, UserID, decision):
                 poll["pollStatus"] = "CLOSED"
                 memberPolls[index] = poll
                 break
-        
+
         if maxResponseCount == totalMembers-1:
             memberPolls = json.dumps(memberPolls)
             groupData[3] = memberPolls
@@ -726,7 +726,7 @@ def addToWhiteBox(UserID):
     #if (userID exists in the user database):
     #   if (userID exists in self.whitebox database):
     #       print("User already added to whitebox")
-    #   
+    #
     #   else:
     #        add user to the self.whitebox database
     #        print("User added to your blackbox")
@@ -738,7 +738,7 @@ def addToBlackBox(userID):
     #if (userID exists in the user database):
     #   if (userID exists in self.blackbox database):
     #       print("User already to blackbox")
-    #   
+    #
     #   else:
     #        add user to the self.blackbox database
     #        print("User banned")
