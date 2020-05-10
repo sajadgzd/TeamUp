@@ -73,6 +73,7 @@ def inviteToGroup():
                 "member": invitee,
                 "warnings": 0,
                 "praises": 0,
+                "kicks": 0,
                 "taskscompleted":0
             })
             memberData = json.dumps(memberData)
@@ -497,23 +498,10 @@ def issueMeetupVote():
     }))
 
 
-@app.route('/issueWarningVote', methods = ["POST"])
-def issueWarningVote():
+###HELPER FUNCTIONS###
 
-    #GET DATA FROM FRONT END
-    jsonData = request.json
-    pollResponse = jsonData["pollResponse"] #Option they selected
-    pollResponder = jsonData["voterEmail"]
-    pollUUID = jsonData["pollUUID"]
-    pollTargetedMemberEmail = jsonData["targetedMemberEmail"]
-    groupName = jsonData["groupName"]
-    #
-
-    #SQL CONNECTION
-    connection = sqlite3.connect(r"./database.db")
-    cursor = connection.cursor()
-
-    #REGISTER VOTE INTO POLL
+# REGISTER VOTE #
+def registerVote(cursor,groupName,connection,pollUUID):
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
     memberPolls = json.loads(groupData[3])
@@ -530,9 +518,9 @@ def issueWarningVote():
     cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
     cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
     connection.commit()
-    #
 
-    #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
+# HANDLE POLL CLOSURE #
+def handleWarningPraiseClosure(cursor,groupName,pollType,connection,pollUUID,pollTargetedMemberEmail):
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
     memberPolls = json.loads(groupData[3])
@@ -562,8 +550,8 @@ def issueWarningVote():
             memberList = json.loads(groupData[5])
             for member in memberList:
                 if member["member"] == pollTargetedMemberEmail:
-                    member["warnings"] += 1
-            groupData[5] = json.dumps(memberList) #update member warning
+                    member[pollType] += 1
+            groupData[5] = json.dumps(memberList)
         cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
         cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
         connection.commit()
@@ -578,6 +566,29 @@ def issueWarningVote():
         cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
         cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
         connection.commit()
+
+@app.route('/issueWarningVote', methods = ["POST"])
+def issueWarningVote():
+
+    #GET DATA FROM FRONT END
+    jsonData = request.json
+    pollResponse = jsonData["pollResponse"] #Option they selected
+    pollResponder = jsonData["voterEmail"]
+    pollUUID = jsonData["pollUUID"]
+    pollTargetedMemberEmail = jsonData["targetedMemberEmail"]
+    groupName = jsonData["groupName"]
+    #
+
+    #SQL CONNECTION
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+
+    #REGISTER VOTE INTO POLL
+    registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID)
+    #
+
+    #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
+    handleWarningPraiseClosure(cursor = cursor,groupName= groupName,pollType = "warnings",connection = connection,pollUUID=pollUUID,pollTargetedMemberEmail=pollTargetedMemberEmail)
     
     #Check the warning count for members and kick out if necessary
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
@@ -603,7 +614,6 @@ def issueWarningVote():
     cursor.execute("SELECT * FROM users WHERE [email] = ?"(pollTargetedMemberEmail,))
     userData = cursor.fetchone()
     userData = list(inviteeData)
-
     if adjustMember:
         #Deduct points
         userData[4] -= 5
@@ -623,7 +633,7 @@ def issueWarningVote():
         cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     
-    #Close Database connection
+    #Close Database connection and notify use that their vote has been registered
     connection.close()
     return (jsonify({
         "Message": "Your vote has been submitted."
@@ -631,142 +641,138 @@ def issueWarningVote():
 
 @app.route('/issuePraiseVote', methods = ["POST"])
 def issuePraiseVote():
-   jsonData = request.json
-
+    #GET DATA FROM FRONT END
+    jsonData = request.json
     pollResponse = jsonData["pollResponse"] #Option they selected
-    pollResponder = jsonData["email"]
+    pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
+    pollTargetedMemberEmail = jsonData["targetedMemberEmail"]
     groupName = jsonData["groupName"]
+    #
 
-
+    #SQL CONNECTION
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
+
+    #REGISTER VOTE INTO POLL
+    registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID)
+    #
+
+    #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
+    handleWarningPraiseClosure(cursor = cursor,groupName= groupName,pollType = "praises",connection = connection,pollUUID=pollUUID,pollTargetedMemberEmail=pollTargetedMemberEmail)
+    
+    #Check the warning count for members and kick out if necessary
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
-
     groupData = list(cursor.fetchone())
-    memberPolls = json.loads(groupData[3])
-    for index,poll in enumerate(memberPolls):
-        if poll["uuid"] == pollUUID:
-            poll["voters"].append(pollResponder)
-            pollVoteOptions = poll["pollVoteOptions"]
-            pollVoteOptions[pollResponse] += 1
-            poll["pollVoteOptions"] = pollVoteOptions
-            memberPolls[index] = poll
-            break
-
-
-    memberPolls = json.dumps(memberPolls)
-    groupData[3] = memberPolls
-    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
-    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
-    connection.commit()
-
-    memberPolls = json.loads(memberPolls)
-    sumVotes = 0
-    for index,poll in enumerate(memberPolls):
-        if poll["uuid"] == pollUUID:
-            pollVoteOptions = poll["pollVoteOptions"]
-            for option,voteCount in pollVoteOptions.items():
-                sumVotes += voteCount
-            break
-    totalMembers = len(groupData[5])
-
-    maxResponseCount = 0
-    answer = None
-    if sumVotes == totalMembers-1:
-        for index,poll in enumerate(memberPolls):
-            if poll["uuid"] == pollUUID:
-                pollVoteOptions = poll["pollVoteOptions"]
-                for option,voteCount in pollVoteOptions.items():
-                    if voteCount > maxResponseCount:
-                        maxResponseCount = voteCount
-                        answer = option
-                poll["result"] = answer
-                poll["pollStatus"] = "CLOSED"
-                memberPolls[index] = poll
+    memberList = json.loads(groupData[5])
+    adjustMember = False
+    memberIndex = None
+    for index,member in enumerate(memberList):
+        if member["member"] == pollTargetedMemberEmail:
+            if member["praises"] >= 3: #User needs to be kicked out and points deducted
+                memberIndex = index
+                adjustMember = True
                 break
-
-        if maxResponseCount == totalMembers-1:
-            memberPolls = json.dumps(memberPolls)
-            groupData[3] = memberPolls
-            cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
-            cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+    if adjustMember:
+        memberList[memberIndex]["praises"] = 0
+        groupData[5] = json.dumps(memberList) #update member praise
+        cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+        cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
         connection.commit()
+    #
+
+    #Adjust the user's points and notify them that they've received a praise
+    cursor.execute("SELECT * FROM users WHERE [email] = ?"(pollTargetedMemberEmail,))
+    userData = cursor.fetchone()
+    userData = list(inviteeData)
+    if adjustMember:
+        #Deduct points
+        userData[4] += 5
+
+        #Notify member
+        inboxList = json.loads(userData[10])
+        inboxList.append({
+            "sender": groupName,
+            "message": "You've received 3 praises from {} and was granted a 5 point increase! Congrats! Keep up the great work!".format(groupName)
+        })
+        userData[10] = json.dumps(inboxList)
+        cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
+    
+    #Close Database connection and notify use that their vote has been registered
     connection.close()
-
-    ####HELPER
-
     return (jsonify({
         "Message": "Your vote has been submitted."
     }))
 
 @app.route('/issueKickVote', methods = ["POST"])
 def issueKickVote():
-   jsonData = request.json
-
+    
+    #GET DATA FROM FRONT END
+    jsonData = request.json
     pollResponse = jsonData["pollResponse"] #Option they selected
-    pollResponder = jsonData["email"]
+    pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
+    pollTargetedMemberEmail = jsonData["targetedMemberEmail"]
     groupName = jsonData["groupName"]
+    #
 
-
+    #SQL CONNECTION
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
+
+    #REGISTER VOTE INTO POLL
+    registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID)
+    #
+
+    #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
+    handleWarningPraiseClosure(cursor = cursor,groupName= groupName,pollType = "kicks",connection = connection,pollUUID=pollUUID,pollTargetedMemberEmail=pollTargetedMemberEmail)
+    
+    #Check the warning count for members and kick out if necessary
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
-
     groupData = list(cursor.fetchone())
-    memberPolls = json.loads(groupData[3])
-    for index,poll in enumerate(memberPolls):
-        if poll["uuid"] == pollUUID:
-            poll["voters"].append(pollResponder)
-            pollVoteOptions = poll["pollVoteOptions"]
-            pollVoteOptions[pollResponse] += 1
-            poll["pollVoteOptions"] = pollVoteOptions
-            memberPolls[index] = poll
-            break
-
-
-    memberPolls = json.dumps(memberPolls)
-    groupData[3] = memberPolls
-    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
-    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
-    connection.commit()
-
-    memberPolls = json.loads(memberPolls)
-    sumVotes = 0
-    for index,poll in enumerate(memberPolls):
-        if poll["uuid"] == pollUUID:
-            pollVoteOptions = poll["pollVoteOptions"]
-            for option,voteCount in pollVoteOptions.items():
-                sumVotes += voteCount
-            break
-    totalMembers = len(groupData[5])
-
-    maxResponseCount = 0
-    answer = None
-    if sumVotes == totalMembers-1:
-        for index,poll in enumerate(memberPolls):
-            if poll["uuid"] == pollUUID:
-                pollVoteOptions = poll["pollVoteOptions"]
-                for option,voteCount in pollVoteOptions.items():
-                    if voteCount > maxResponseCount:
-                        maxResponseCount = voteCount
-                        answer = option
-                poll["result"] = answer
-                poll["pollStatus"] = "CLOSED"
-                memberPolls[index] = poll
+    memberList = json.loads(groupData[5])
+    adjustMember = False
+    memberIndex = None
+    for index,member in enumerate(memberList):
+        if member["member"] == pollTargetedMemberEmail:
+            if member["kicks"] >= 1: #User needs to be kicked out and points deducted
+                memberIndex = index
+                adjustMember = True
                 break
-
-        if maxResponseCount == totalMembers-1:
-            memberPolls = json.dumps(memberPolls)
-            groupData[3] = memberPolls
-            cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
-            cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+    if adjustMember:
+        del memberList[memberIndex]
+        groupData[5] = json.dumps(memberList) #update member warning
+        cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+        cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
         connection.commit()
+    #
+
+    #Adjust the user's points and notify them about being kicked out
+    cursor.execute("SELECT * FROM users WHERE [email] = ?"(pollTargetedMemberEmail,))
+    userData = cursor.fetchone()
+    userData = list(inviteeData)
+    if adjustMember:
+        #Deduct points
+        userData[4] -= 10
+
+        #Remove from group
+        groupList = json.loads(userData[3])
+        groupList.remove(groupName)
+        userData[3] = json.dumps(groupList)
+
+        #Notify member
+        inboxList = json.loads(userData[10])
+        inboxList.append({
+            "sender": groupName,
+            "message": "You have been kicked from {} and incurred a 10 point deduction.".format(groupName)
+        })
+        userData[10] = json.dumps(inboxList)
+        cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
+    
+    #Close Database connection and notify use that their vote has been registered
     connection.close()
-
-    ####HELPER
-
     return (jsonify({
         "Message": "Your vote has been submitted."
     }))
