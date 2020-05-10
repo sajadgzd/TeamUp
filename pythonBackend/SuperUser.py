@@ -16,38 +16,75 @@ def handleApplication():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM signup WHERE [email] = ?"(applicantEmail,))
 
-    userData = cursor.fetchone() #fetching the row from signup
-    userData = json.loads(userData) #convert that string into a python list
-    fullname = userData[0]
-    email = userData[0]
+    signupUserData = cursor.fetchone() #fetching the row from signup
+    signupUserData = list(signupUserData) #convert that string into a python list
 
+    #data for the user table
+    email = signupUserData[1]
+    fullname = signupUserData[0]
+    password = ""
+    groupList = []
+    reputationScore = ""
+    status = signupUserData[6]
+    invitations = []
+    blacklist = []
+    whitelist = []
+    complimentsorcomplaints = []
+    inbox = []
+
+    rowData = []
+    rowData.append(email)
+    rowData.append(fullname)
+    rowData.append(password)
+    rowData.append(groupList)
+    rowData.append(reputationScore)
+    rowData.append(status)
+    rowData.append(invitations)
+    rowData.append(blacklist)
+    rowData.append(whitelist)
+    rowData.append(complimentsorcomplaints)
+    rowData.append(inbox)
+
+    # rowData = json.dumps(rowData)
 
     # accept the invite
-
     if response.lower() == "accepted":
-        cursor.execute("INSERT INTO users (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(rowData))
+        #first update the signup row for this user and change user status
+        cursor.execute("SELECT * FROM  signup WHERE [email] = ?"(email,))
+        
+        row = list(cursor.fetchone())
 
+        cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+        userData[6] = "ORDINARY"
+        cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(row))
+
+        # add the user to the user database
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES(?,?,?,?,?,?,?,?,?,?,?)",tuple(rowData))
+        connection.commit()
+        connection.close()
+        return (jsonify({"Success" : "Your invitation has been accepted"}))
 
     #decline the invite
+    elif response.lower() == "declined":
+        cursor.execute("SELECT * FROM  signup WHERE [email] = ?"(email,))
+        
+        row = list(cursor.fetchone())
+        
+        cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+        userData[6] = "DECLINED"
+        cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(row))
+        connection.commit()
+        connection.close()
 
-
-    # input UserID
-    # if (UserID exists in the pending application database):
-    #   if (decision == accept):
-    #       remove the user from PendingUser Database
-    #       add the user to the User Database
-    #       print("User Registered Successfully")
-    #   
-    #   elif (decision == deny):
-    #       if(number_of_times_denied > 1):
-    #           add to blacklist
-    #        
-    #       number_of_times_denied += 1
-    #       print("User Registration denied")
+        return jsonify({
+            "Message": "Sorry, your request to signup has been declined."
+        })
 
 @app.route('/blacklistFromServer', methods = ["POST"])
 def blacklistFromServer():
     jsonData = request.json
+
+    blacklistUser = jsonData["blacklist"]
 
 
     # input UserID
@@ -62,13 +99,26 @@ def reverseReputationDeduction():
     #   currentUser.reputationpoint += 5
     #   print("Reputation Deduction is reversed")
 
+
 @app.route('/shutDownGroup', methods = ["POST"])
 def shutDownGroup():
-    # input groupName
-    # if(groupName exist in the Groups Database):
-    #   GroupsDatabase.remove(groupName)
-    #   print("Group was shutdown successfully")
-    #
+    jsonData = request.json
+
+    groupName = jsonData['groupName']
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM groups WHERE [groupName] = ?", (groupName,))
+
+    groupData = cursor.fetchone()
+
+    connection.commit()
+    connection.close()
+
+    return (jsonify({
+        "Message": "The group has been deleted."
+    }))
+
 @app.route('/issuePointDeduction', methods = ["POST"])
 def issuePointDeduction():
     # if (userID exists in the user database):
@@ -83,6 +133,13 @@ def issuePointIncrement():
 
 @app.route('/banUser', methods = ["POST"])
 def banUser():
+    # change user status to banned in the signup
+    # delete user from the user database
+
+
+
+
+
     # if (userID exists in the user database):
     #   if (userID exists in blacklist database):
     #       print("User already banned")
