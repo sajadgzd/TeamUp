@@ -499,11 +499,7 @@ def issueMeetupVote():
 
 @app.route('/issueWarningVote', methods = ["POST"])
 def issueWarningVote():
-<<<<<<< HEAD
     jsonData = request.json
-=======
-   jsonData = request.json
->>>>>>> ca49df1a3f9b6405ea5f2c65dc2733db0ab11589
 
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["email"]
@@ -562,13 +558,8 @@ def issueWarningVote():
                 poll["pollStatus"] = "CLOSED"
                 memberPolls[index] = poll
                 break
-<<<<<<< HEAD
-        
-        if maxResponseCount == totalMembers-1: #Uanimous decision handle it. 
-=======
 
         if maxResponseCount == totalMembers-1:
->>>>>>> ca49df1a3f9b6405ea5f2c65dc2733db0ab11589
             memberPolls = json.dumps(memberPolls)
             groupData[3] = memberPolls
             cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
