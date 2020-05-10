@@ -558,8 +558,13 @@ def issueWarningVote():
                 poll["pollStatus"] = "CLOSED"
                 memberPolls[index] = poll
                 break
+<<<<<<< HEAD
 
         if maxResponseCount == totalMembers-1:
+=======
+        
+        if maxResponseCount == totalMembers-1: #Uanimous decision handle it. 
+>>>>>>> f4e64c2190236681dc837f3dd7d00c245ad904d5
             memberPolls = json.dumps(memberPolls)
             groupData[3] = memberPolls
             cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))

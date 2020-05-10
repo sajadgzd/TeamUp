@@ -53,3 +53,23 @@ if "groups" not in tableList:
                               members              TEXT);"
                     )
      connection.commit()
+
+if "moderationRequests" not in tableList:
+
+     """
+     subject: subject of request (can be self, another user, or group)
+     message: accompanying message for request
+     type: REP_APPEAL, SIGNUP_APPEAL, REPORT
+     status: OPEN, CLOSED
+     number: sequential number of request
+     """
+     
+     cursor.execute("CREATE TABLE moderationRequests  (\
+                              subject             TEXT,\
+                              message             TEXT,\
+                              type                TEXT,\
+                              status              TEXT,\
+                              number              INTEGER PRIMARY KEY);"
+                    )
+
+     connection.commit()

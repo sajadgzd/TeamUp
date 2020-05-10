@@ -5,6 +5,32 @@ import uuid
 
 @app.route('/handleApplication', methods = ["POST"])
 def handleApplication():
+
+    jsonData = request.json
+
+    response = jsonData["response"]
+    responder = jsonData["responder"]
+    applicantEmail = jsonData["applicantEmail"].lower()
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM signup WHERE [email] = ?"(applicantEmail,))
+
+    userData = cursor.fetchone() #fetching the row from signup
+    userData = json.loads(userData) #convert that string into a python list
+    fullname = userData[0]
+    email = userData[0]
+
+
+    # accept the invite
+
+    if response.lower() == "accepted":
+        cursor.execute("INSERT INTO users (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(rowData))
+
+
+    #decline the invite
+
+
     # input UserID
     # if (UserID exists in the pending application database):
     #   if (decision == accept):
