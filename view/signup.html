@@ -55,13 +55,10 @@
 
         <div class="row ">
             <br><br>
-            <div class="col s6 m6 info" style="margin-left: 25%">
-              <h5 class="center-align register">Sign up for a free account</h5>
-              <br>
-            </div>
         </div>
         <div class="row">
-            <form class="col s6 m6" id="reg-form" style="margin-left: 25%">
+            <form class="col s12 m5" id="reg-form" style="">
+              <h5 class="center-align register">Sign up for a free account</h5> <br>
                 <div class="input-field col s6">
                   <input id="first_name" type="text" class="validate" required>
                   <label for="first_name">First Name</label>
@@ -94,10 +91,24 @@
                   <label for="referringMember">Referring Member</label>
                 </div>
                 <div class="input-field col s6">
-                    <a href="#" id="signup-button" class="btn waves-effect waves-light light-blue accent-4">Sign up
+                    <a href="#" id="signup-button" class="btn waves-effect waves-light light-blue accent-4">Submit
                         <i class="material-icons right">done</i>
                     </a>
                 </div>
+            </form>
+
+            <div class="col s2 m2 info center-align" style="">
+            </div>
+
+            <form class="col s12 m5" id="checkStatus-form" style="">
+              <h5 class="center-align register">If already applied, Check your status</h5>
+              <div class="input-field col s12">
+                <input id="checkStatusEmail" type="email" class="validate" required>
+                <label for="email">Email</label>
+              </div>
+              <div class="input-field col s6" id="lastItemForm" >
+                  <a href="" id="checkStatus-button" class="btn waves-effect waves-light light-blue accent-4">Check Status</a> <br><br>
+              </div>
             </form>
         </div>
 
