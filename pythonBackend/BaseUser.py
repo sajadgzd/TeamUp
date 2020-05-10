@@ -499,19 +499,22 @@ def issueMeetupVote():
 
 @app.route('/issueWarningVote', methods = ["POST"])
 def issueWarningVote():
-    jsonData = request.json
 
+    #GET DATA FROM FRONT END
+    jsonData = request.json
     pollResponse = jsonData["pollResponse"] #Option they selected
-    pollResponder = jsonData["email"]
+    pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
     pollTargetedMemberEmail = jsonData["targetedMemberEmail"]
     groupName = jsonData["groupName"]
+    #
 
-
+    #SQL CONNECTION
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
 
+    #REGISTER VOTE INTO POLL
+    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
     memberPolls = json.loads(groupData[3])
     for index,poll in enumerate(memberPolls):
@@ -522,42 +525,39 @@ def issueWarningVote():
             poll["pollVoteOptions"] = pollVoteOptions
             memberPolls[index] = poll
             break
-
-
     memberPolls = json.dumps(memberPolls)
     groupData[3] = memberPolls
     cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
     cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
     connection.commit()
+    #
 
-    #CHECK IF POLL IS COMPLETE
-    memberPolls = json.loads(memberPolls)
-    sumVotes = 0
+    #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
+    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
+    groupData = list(cursor.fetchone())
+    memberPolls = json.loads(groupData[3])
+    
+    sumVotes = 0 #Count of the total sum of votes
+    totalMembers = len(groupData[5]) # Cross checks to see if all votes have been registered
+    maxResponseCount = 0 # Checks to see if it's actually unanimous
+    answer = None #Answer field
     for index,poll in enumerate(memberPolls):
         if poll["uuid"] == pollUUID:
             pollVoteOptions = poll["pollVoteOptions"]
             for option,voteCount in pollVoteOptions.items():
                 sumVotes += voteCount
+                if voteCount > maxResponseCount:
+                    maxResponseCount = voteCount
+                    answer = option
             break
-    totalMembers = len(groupData[5])
-
-    maxResponseCount = 0
-    answer = None
-    if sumVotes == totalMembers-1: #ALL VOTES CASTED IN
+    if sumVotes == (totalMembers -1) == maxResponseCount: #We have all votes, and they were unanimous
         for index,poll in enumerate(memberPolls):
             if poll["uuid"] == pollUUID:
-                pollVoteOptions = poll["pollVoteOptions"]
-                for option,voteCount in pollVoteOptions.items():
-                    if voteCount > maxResponseCount:
-                        maxResponseCount = voteCount
-                        answer = option
-                if maxResponseCount == totalMembers -1: #UNANIMOUS
-                    poll["result"] = answer
-                else:
-                    poll["result"] = "Not unanimous"
+                poll["result"] = answer
                 poll["pollStatus"] = "CLOSED"
                 memberPolls[index] = poll
                 break
+<<<<<<< HEAD
 <<<<<<< HEAD
 
         if maxResponseCount == totalMembers-1:
@@ -617,15 +617,76 @@ def issueWarningVote():
             cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
             connection.commit()
 
+=======
+        groupData[3] = json.dumps(memberPolls) #update member polls
+        if answer.lower() == "yes": 
+            memberList = json.loads(groupData[5])
+            for member in memberList:
+                if member["member"] == pollTargetedMemberEmail:
+                    member["warnings"] += 1
+            groupData[5] = json.dumps(memberList) #update member warning
+        cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+        cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+        connection.commit()
+    elif sumVotes == (totalMembers - 1): #We have all votes, and they were not unanimous
+        for index,poll in enumerate(memberPolls):
+            if poll["uuid"] == pollUUID:
+                poll["result"] = "Not unanimous"
+                poll["pollStatus"] = "CLOSED"
+                memberPolls[index] = poll
+                break
+        groupData[3] = json.dumps(memberPolls) #update member polls
+        cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+        cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+        connection.commit()
+>>>>>>> b4320875efe69d54dc9563def6fc779000426e54
     
+    #Check the warning count for members and kick out if necessary
+    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
+    groupData = list(cursor.fetchone())
+    memberList = json.loads(groupData[5])
+    adjustMember = False
+    memberIndex = None
+    for index,member in enumerate(memberList):
+        if member["member"] == pollTargetedMemberEmail:
+            if member["warnings"] >= 3: #User needs to be kicked out and points deducted
+                memberIndex = index
+                adjustMember = True
+                break
+    if adjustMember:
+        del memberList[memberIndex]
+        groupData[5] = json.dumps(memberList) #update member warning
+        cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+        cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+        connection.commit()
+    #
+
+    #Adjust the user's points and notify them about being kicked out
+    cursor.execute("SELECT * FROM users WHERE [email] = ?"(pollTargetedMemberEmail,))
+    userData = cursor.fetchone()
+    userData = list(inviteeData)
+
+    if adjustMember:
+        #Deduct points
+        userData[4] -= 5
+
+        #Remove from group
+        groupList = json.loads(userData[3])
+        groupList.remove(groupName)
+        userData[3] = json.dumps(groupList)
+
+        #Notify member
+        inboxList = json.loads(userData[10])
+        inboxList.append({
+            "sender": groupName,
+            "message": "You've received 3 warnings from {} and incurred a 5 point deduction.".format(groupName)
+        })
+        userData[10] = json.dumps(inboxList)
+        cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
+    
+    #Close Database connection
     connection.close()
-
-    ####HELPER
-
-    #Deduct score
-    #Kick from gropu
-    #Inbox you've been kicked
-
     return (jsonify({
         "Message": "Your vote has been submitted."
     }))
