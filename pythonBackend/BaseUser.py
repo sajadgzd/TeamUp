@@ -545,6 +545,67 @@ def handleWarningPraiseClosure(cursor,groupName,pollType,connection,pollUUID,pol
                 poll["pollStatus"] = "CLOSED"
                 memberPolls[index] = poll
                 break
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+        if maxResponseCount == totalMembers-1:
+=======
+        
+        if maxResponseCount == totalMembers-1: #Uanimous decision handle it. 
+>>>>>>> f4e64c2190236681dc837f3dd7d00c245ad904d5
+            memberPolls = json.dumps(memberPolls)
+            groupData[3] = memberPolls
+            cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+            cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+            connection.commit()
+            deleteMember = False #Now do another check to see if a member needs to be deleted
+            deleteIndex = None
+            if answer == "Yes":
+
+                cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
+                groupData = list(cursor.fetchone())
+                memberData = json.loads(groupData[5])
+                for index,member in enumerate(memberData):
+                    if member["member"] == pollTargetedMemberEmail:
+                        member["warnings"] += 1
+                        memberData[index] = member
+                        if member["warnings"] >= 3:
+                            deleteMember = True
+                            deleteIndex = index
+                        break
+                if deleteMember:
+                    del memberData[deleteIndex]
+                    cursor.execute("SELECT * FROM users WHERE [email] = ?"(pollTargetedMemberEmail,))
+                    userData = list(cursor.fetchone())
+                    userData[4] -= 5
+                    groupList = json.loads(userData[3])
+                    groupList.remove(groupName)
+                    groupList = json.dumps(groupList)
+                    userData[3] = groupList
+                    inboxList = json.loads(userData[10])
+                    inbox.append({
+                        "sender": "Team Up"
+                        "message": "You've been kicked from {}. If you'd like to appeal the point deduction - please let the Super Users know.".format(groupName)
+                    })
+                    inboxList = json.dumps(inboxList)
+                    userData[10] = inboxList
+                    cursor.execute("DELETE FROM users WHERE [email] = ?",(pollTargetedMemberEmail,))
+                    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(pollTargetedMemberEmail))
+
+                memberData = json.dumps(memberData)
+                groupData[5] = memberData
+
+                cursor.execute("DELETE * FROM groups WHERE [groupName] = ?",(groupName,))
+                cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+                connection.commit()
+        else: #Not unanimous handle it.
+            memberPolls = json.dumps(memberPolls)
+            groupData[3] = memberPolls
+            cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+            cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+            connection.commit()
+
+=======
         groupData[3] = json.dumps(memberPolls) #update member polls
         if answer.lower() == "yes": 
             memberList = json.loads(groupData[5])
@@ -566,6 +627,7 @@ def handleWarningPraiseClosure(cursor,groupName,pollType,connection,pollUUID,pol
         cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
         cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
         connection.commit()
+<<<<<<< HEAD
 
 @app.route('/issueWarningVote', methods = ["POST"])
 def issueWarningVote():
@@ -589,6 +651,9 @@ def issueWarningVote():
 
     #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
     handleWarningPraiseClosure(cursor = cursor,groupName= groupName,pollType = "warnings",connection = connection,pollUUID=pollUUID,pollTargetedMemberEmail=pollTargetedMemberEmail)
+=======
+>>>>>>> b4320875efe69d54dc9563def6fc779000426e54
+>>>>>>> a26392780eff00cd97a469ef2a957d184a52f87b
     
     #Check the warning count for members and kick out if necessary
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
