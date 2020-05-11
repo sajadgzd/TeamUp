@@ -117,17 +117,17 @@ $(document).ready(function() {
 
   $("#addSchedule-button").click(function(){
     numOfChoices++;
-    $(".datechoices").append( `<div data-number=${numOfChoices}>` +
+    $(".datechoices").append( `<div data-number='${numOfChoices}'>` +
                                 '<div class="input-field col s4">' +
-                                  '<input type="text" class="datepicker">' +
+                                  `<input type="text" class="datepicker" id="meetingDateChoice" data-numberDate=${numOfChoices}>` +
                                   '<label for="postText">Date</label>' +
                                 '</div>' +
                                 '<div class="input-field col s4">' +
-                                  '<input type="text" class="timepicker">' +
+                                  `<input type="text" class="timepicker" id="meetingFromTimeChoice" data-numberFromTime=${numOfChoices}>` +
                                   '<label for="postText">From Time</label>' +
                                 '</div>' +
                                 '<div class="input-field col s4">' +
-                                  '<input type="text" class="timepicker">' +
+                                  `<input type="text" class="timepicker" id="meetingToTimeChoice" data-numberToTime=${numOfChoices}>` +
                                   '<label for="postText">To Time</label>' +
                                 '</div>' +
                                 '</div>')
@@ -141,39 +141,32 @@ $(document).ready(function() {
 
   $(document.body).on("click", "#schedule-button", function(event) {
     event.preventDefault();
-    var text = $("#scheduleText").val().trim()
-    // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
-    console.log("text value:", text);
 
-    let pollTitle = $("#scheduleTitle")
-    let pollPrompt = $("#scheduleText")
+    let pollTitle = $("#scheduleTitle").val().trim()
+    let pollPrompt = $("#scheduleText").val().trim()
     let pollType = ""
     let pollVoteOptions = []
 
-    let date = $("#meetingDateChoice").val()
-    let time1 = $("#meetingFromTimeChoice").val()
-    let time2 = $("#meetingToTimeChoice").val()
-    let pollVoteChoice = date + " From " + time1 + " to " + time2
+    let date = ""
+    let time1 = ""
+    let time2 = ""
+    let pollVoteChoice = ""; 
 
-    console.log("POLL MEETUP CHOICE:\t",pollVoteChoice)
-
-
-    for(let i=0; i<numOfChoices.length; i++){
-
-
+    console.log(numOfChoices)
+    for(let i=1; i<= numOfChoices; i++){
+      date = $(`div[data-number='${i}'] input[id='meetingDateChoice']`).val()
+      time1 = $(`div[data-number='${i}'] input[id='meetingFromTimeChoice']`).val()
+      time2 = $(`div[data-number='${i}'] input[id='meetingToTimeChoice']`).val()
+      pollVoteChoice = date + " From " + time1 + " to " + time2;
+      console.log("POLL MEETUP CHOICE:\t", i , "- ", pollVoteChoice)
       pollVoteOptions.push(pollVoteChoice)
     }
 
-    var listItems = $("#productList li");
-    listItems.each(function(idx, li) {
-        var product = $(li);
-
-        // and the rest of your code
-    });
-
     var meetupPollData = {
-      textmsg: text,
-      choices: choices
+      pollTitle: pollTitle,
+      pollPrompt: pollPrompt,
+      pollType: pollType,
+      pollVoteOptions: pollVoteOptions
     }
 
     $.post("/createMeetupPoll", meetupPollData)
@@ -185,7 +178,7 @@ $(document).ready(function() {
   });
 
 
-    // function getData() {
+  // function getData() {
   //   $.ajax({
   //       url: "/test1",
   //       method: "GET"
