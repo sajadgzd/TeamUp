@@ -4,6 +4,8 @@ from flask import Flask, jsonify, render_template, request, send_from_directory
 import uuid
 
 
+
+
 @app.route('/login', methods = ["POST"])
 def login():
     jsonData = request.json
@@ -25,7 +27,7 @@ def login():
 
     if userData is not None:
         return jsonify({
-            "data": userData
+            "Sucess": "Welcome to Team Up!"
         })
     else:
         return jsonify({
@@ -184,6 +186,7 @@ def handleGroupInvite():
             "message": "You have declined your invitation to the group {} and your response has been sent to your inviter.".format(groupName)
         }))
 
+### CREATE VOTES SECTION ###
 @app.route('/createMeetupPoll', methods = ["POST"])
 def createMeetupPoll():
     jsonData = request.json
@@ -499,9 +502,9 @@ def issueMeetupVote():
     }))
 
 
-###HELPER FUNCTIONS###
+### ISSUE VOTES SECTION ###
 
-# REGISTER VOTE #
+# REGISTER VOTE #~HELPER
 def registerVote(cursor,groupName,connection,pollUUID):
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
@@ -520,7 +523,7 @@ def registerVote(cursor,groupName,connection,pollUUID):
     cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
     connection.commit()
 
-# HANDLE POLL CLOSURE #
+# HANDLE POLL CLOSURE #~HELPER
 def handleWarningPraiseClosure(cursor,groupName,pollType,connection,pollUUID,pollTargetedMemberEmail):
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
@@ -633,7 +636,7 @@ def issueWarningVote():
         userData[10] = json.dumps(inboxList)
         cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
-    
+        connection.commit()
     #Close Database connection and notify use that their vote has been registered
     connection.close()
     return (jsonify({
@@ -699,7 +702,7 @@ def issuePraiseVote():
         userData[10] = json.dumps(inboxList)
         cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
-    
+        connection.commit()
     #Close Database connection and notify use that their vote has been registered
     connection.close()
     return (jsonify({
@@ -771,7 +774,7 @@ def issueKickVote():
         userData[10] = json.dumps(inboxList)
         cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
-    
+        connection.commit()
     #Close Database connection and notify use that their vote has been registered
     connection.close()
     return (jsonify({
@@ -780,34 +783,96 @@ def issueKickVote():
 
 @app.route('/issueComplimentVote', methods = ["POST"])
 def issueCompliment():
-    #if (userID exists in the user database):
-    #   print(UserID.complimentDatabase.append(UserId, complimentComment))
-    #   return success status
+    #GET DATA FROM FRONT END
+    jsonData = request.json
+    complimentReceiverEmail = jsonData["complimentReceiverEmail"]
     #
-    #else:
-    #   print("The user you are trying to issue a compliment to, doesnt't exist")
-    pass
 
+    #SQL CONNECTION
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+
+    #Increase Compliments/Score
+    cursor.execute("SELECT * FROM users WHERE [email] = ?"(complimentReceiverEmail,))
+    userData = cursor.fetchone()
+    userData = list(inviteeData)
+    userData[9] += 1
+    if userData[9] >= 3:
+        userData[9] = 0
+        userData[4] += 5
+        inboxList = json.loads(userData[10])
+        inboxList.append({
+            "sender": groupName,
+            "message": "You've received 3 compliments and a 5 point increase!".format(groupName)
+        })
+        userData[10] = json.dumps(inboxList)
+        cursor.execute("DELETE * FROM users WHERE [email] = ?", (complimentReceiverEmail,))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
+        connection.commit()
+    connection.close()
+
+    #Return
+    return (jsonify({
+        "Message": "Your compliment has been sent!"
+    }))
+
+###END ISSUE VOTES SECTION###
+
+
+### ADD TO WHITEBOX/BLACKBOX SECTION ###
+
+# ADD TO AUTOBOX #~HELPER
+def addtoAutoBox(cursor,connection,userEmail,emailAddition,index):
+    #Add user to autoBox
+    cursor.execute("SELECT * FROM users WHERE [email] = ?"(userEmail,))
+    userData = cursor.fetchone()
+    userData = list(userData)
+    autoBox = userData[index]
+    autoBox = json.loads(autoBox)
+    if emailAddition not in autoBox:
+        autoBox.append(emailAddition)
+    autoBox = json.dumps(autoBox)
+    userData[index] = autoBox
+    cursor.execute("DELETE * FROM users WHERE [email] = ?", (userEmail,))
+    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
+    connection.commit()
+
+@app.route('/addToWhiteBox', methods = ["POST"])
 def addToWhiteBox():
-    #if (userID exists in the user database):
-    #   if (userID exists in self.whitebox database):
-    #       print("User already added to whitebox")
+    #GET DATA FROM FRONT END
+    jsonData = request.json
+    emailAddition = jsonData["emailAddition"]
+    userEmail = jsonData["userEmail"]
     #
-    #   else:
-    #        add user to the self.whitebox database
-    #        print("User added to your blackbox")
-    #
-    # else:
-    #   print("The user you are trying to whitelist doesn't exist")
+
+    #SQL CONNECTION
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+
+    #Add user to autoBox
+    addtoAutoBox(cursor = cursor, connection = connection,userEmail=userEmail ,emailAddition=emailAddition,index = 8)
+    connection.close()
+    #Return
+    return (jsonify({
+        "Message": "The user has been registered to your whitebox.".format(emailAddition)
+    }))
 
 def addToBlackBox():
-    #if (userID exists in the user database):
-    #   if (userID exists in self.blackbox database):
-    #       print("User already to blackbox")
+    #GET DATA FROM FRONT END
+    jsonData = request.json
+    emailAddition = jsonData["emailAddition"]
+    userEmail = jsonData["userEmail"]
     #
-    #   else:
-    #        add user to the self.blackbox database
-    #        print("User banned")
-    #
-    # else:
-    #   print("The user you are trying to ban doesn't exist")
+
+    #SQL CONNECTION
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+
+    #Add user to autoBox
+    addtoAutoBox(cursor = cursor, connection = connection,userEmail=userEmail ,emailAddition=emailAddition,index = 7)
+    connection.close()
+    #Return
+    return (jsonify({
+        "Message": "{} has been registered to your blackbox.".format(emailAddition)
+    }))
+### END ADD TO WHITEBOX/BLACKBOX SECTION ###
