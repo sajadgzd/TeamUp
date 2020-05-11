@@ -5,6 +5,67 @@ import uuid
 
 
 
+# ADJUST USER STATUS #~HELPER
+def managePointStatus(email):
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE [email] = ?",(email,))
+    userData = cursor.fetchone()
+    userData = list(userData)
+
+    status = userData[5]
+    points = userData[4]
+
+    if status == "VIP":
+        if points < 25:
+            userData[5] = "OU"
+    elif status == "OU":
+        if points > 30:
+            userData[5] = "VIP"
+    cursor.execute("DELETE * FROM users WHERE [email] = ?", (email,))
+    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
+    connection.commit()
+    connnection.close()
+
+@app.route('/getUserData', methods = ["POST"])
+def getUserData():
+    jsonData = request.json
+    email = jsonData["email"]
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE [email] = ?",(email,))
+    userData = cursor.fetchone()
+    userData = list(userData)
+    userData[3] = json.loads(userData[3]) #grouplist
+    userData[6] = json.loads(userData[6]) #invitations
+    userData[7] = json.loads(userData[7]) #blacklist
+    userData[8] = json.loads(userData[8]) #whitelist
+    userData[10] = json.loads(userData[10]) #inbox
+    userData[11] = json.loads(userData[11]) #referredUsers
+    return (jsonify({
+        "userData": userData
+    }))
+
+@app.route('/getGroupData', methods = ["POST"])
+def getGroupData():
+    jsonData = request.json
+    groupName = jsonData["groupName"]
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE [groupName] = ?",(groupName,))
+    groupData = cursor.fetchone()
+    groupData = list(groupData)
+
+    groupData[2] = json.loads(groupData[2]) #posts
+    groupData[3] = json.loads(groupData[3]) #member polls
+    groupData[4] = json.loads(groupData[4]) #group polls
+    groupData[5] = json.loads(groupData[5]) #member list
+
+    return (jsonify({
+        "groupData": groupData
+    }))
 
 @app.route('/login', methods = ["POST"])
 def login():
@@ -15,15 +76,9 @@ def login():
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE [email] = ? AND [credentials] = ?"(jsonData["email"].lower(),credentials))
+    cursor.execute("SELECT * FROM users WHERE [email] = ? AND [credentials] = ?",(jsonData["email"],))
     userData = cursor.fetchone()
     userData = list(userData)
-    userData[3] = json.loads(userData[3]) #grouplist
-    userData[6] = json.loads(userData[6]) #invitations
-    userData[7] = json.loads(userData[7]) #blacklist
-    userData[8] = json.loads(userData[8]) #whitelist
-    userData[10] = json.loads(userData[10]) #inbox
-    userData[11] = json.loads(userData[11]) #referredUsers
 
     if userData is not None:
         return jsonify({
@@ -36,6 +91,8 @@ def login():
 
 @app.route('/inviteToGroup', methods = ["POST"])
 def inviteToGroup():
+
+    #GET JSON DAT
     jsonData = request.json
 
     inviter = jsonData["inviterEmail"].lower()
@@ -43,12 +100,12 @@ def inviteToGroup():
     groupName = jsonData["groupName"]
     invitee = jsonData["inviteeEmail"].lower()
 
+    #CONNECT TO DATABASE
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE [email] = ?"(invitee,))
 
     inviteeData = cursor.fetchone()
-
     inviteeData = list(inviteeData)
 
     blackList = json.loads(inviteeData[7])
@@ -62,13 +119,16 @@ def inviteToGroup():
     whiteList = json.loads(inviteeData[8])
     for autoAccept in whiteList:
         if autoAccept["email"] == inviter:
+            #Add group to invitee list
             groupList = json.loads(inviteeData[3])
             groupList.append(groupName)
             groupList = json.dumps(groupList)
             inviteeData[3] = groupList
             cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
             cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+            connection.commit()
 
+            #Add invitee to group member list
             cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
             groupData = list(cursor.fetchone())
             memberData = json.loads(groupData[5])
@@ -92,7 +152,7 @@ def inviteToGroup():
 
     invitations = json.loads(inviteeData[6])
     invitations.append({
-        "fullname": inviterFullname,
+        "inviterFullName": inviterFullname,
         "inviterEmail" :inviter,
         "groupName": groupName
     })
@@ -114,7 +174,7 @@ def handleGroupInvite():
     jsonData = request.json
 
     inviter = jsonData["inviterEmail"]
-    inviterFullname = jsonData["inviterFullname"]
+    inviterFullname = jsonData["inviterFullName"]
     groupName = jsonData["groupName"]
     invitee = jsonData["inviteeEmail"]
     message = jsonData["message"]
@@ -675,6 +735,7 @@ def issuePraiseVote():
         connection.commit()
     #Close Database connection and notify use that their vote has been registered
     connection.close()
+    managePointStatus(pollTargetedMemberEmail)
     return (jsonify({
         "Message": "Your vote has been submitted."
     }))
@@ -747,6 +808,7 @@ def issueKickVote():
         connection.commit()
     #Close Database connection and notify use that their vote has been registered
     connection.close()
+    managePointStatus(pollTargetedMemberEmail)
     return (jsonify({
         "Message": "Your vote has been submitted."
     }))
@@ -781,6 +843,7 @@ def issueCompliment():
         connection.commit()
     connection.close()
 
+    managePointStatus(complimentReceiverEmail)
     #Return
     return (jsonify({
         "Message": "Your compliment has been sent!"
