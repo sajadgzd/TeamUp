@@ -2,6 +2,11 @@ import sqlite3
 import json
 from flask import Flask, jsonify, render_template, request, send_from_directory
 
+
+
+########## ORDINARY USER CODE ##########
+
+# CREATING MOD REQUEST #~HELPER
 def sendModRequest(target, message, request_type):
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
@@ -9,40 +14,45 @@ def sendModRequest(target, message, request_type):
     connection.commit()
     connection.close()
 
-# SENDING REPORTS/APPEALS
+### SENDING REPORTS/APPEALS ###
 
 @app.route('/appealReputation', methods = ["POST"])
 def appealReputation():
+    #GET FRONT END DATA
     jsonData = request.json
-    userEmail = jsonData["email"].lower() # email of the user appealing
+    userEmail = jsonData["email"] # email of the user appealing
     appealMessage = jsonData["appealMessage"]
+
     sendModRequest(userEmail, appealMessage, "REP_APPEAL")
     return jsonify({"Success: appeal has been submitted."})
 
 @app.route('/reportUser', methods = ["POST"])
 def reportUser():
+    #GET FRONT END DATA
     jsonData = request.json
-    targetEmail = jsonData["email"].lower()
+    targetEmail = jsonData["email"] #email of the user being reported
     reportMessage = jsonData["reportMessage"]
     sendModRequest(targetEmail, reportMessage, "REPORT")
     return jsonify({"Success: report has been submitted."})
 
 @app.route('/reportGroup', methods = ["POST"])
 def reportGroup():
+    #GET FRONT END DATA
     jsonData = request.json
-    groupName = jsonData["groupName"]
+    groupName = jsonData["groupName"] #name of the group being reported
     reportMessage = jsonData["reportMessage"]
     sendModRequest(groupName, reportMessage, "REPORT")
     return jsonify({"Success: report has been submitted."})
 
-# END REPORTS/APPEALS
+### END SENDING REPORTS/APPEALS ###
 
-# ALTER REPUTATION
+### ALTER REPUTATION ###
 @app.route('/referenceReputation', methods = ["POST"])
 def referenceReputation():
+    #GET FRONT END DATA
     jsonData = request.json
-    referredUserEmail = jsonData["referredUser"]
-    referringUserEmail = jsonData["referringUser"]
+    referredUserEmail = jsonData["referredUser"] #The new guy
+    referringUserEmail = jsonData["referringUser"] #The OG
     points = jsonData["points"] # num of points user wants to add to referred user
     
     connection = sqlite3.connect(r"./database.db")
@@ -53,21 +63,31 @@ def referenceReputation():
     cursor.execute("SELECT * FROM  users WHERE [email] = ?", (referringUserEmail,))
     referringUserData = list(cursor.fetchone())
 
-    if points > 10 and referringUserData[5] != "VIP":
-        return jsonify({"Error": "Only VIPs can give more than 10 points to their referred user."})
-
-    elif points > 20:
-        return jsonify({"Error": "VIPs can only award 0-20 points."})
-
+    if referringUserData[5] == "VIP":
+        referredUserData[4] += points
     else:
         referredUserData[4] += points
-        cursor.execute("DELETE * FROM users WHERE [email] = ?", (referredUserEmail,))
-        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(referredUserData))
-        connection.commit()
-        connection.close()
-        return jsonify({"Success" : "points awarded to referred user"})
+    
+    cursor.execute("DELETE * FROM users WHERE [email] = ?", (referredUserEmail,))
+    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(referredUserData))
+    connection.commit()
 
 
+    referredUsersList = json.loads(referringUserData[11])
+    referredUsersList.remove(referredUserEmail)
+    referredUsersList = json.dumps(referredUsersList)
+    referringUserData[11] = referredUsersList
+    
+    cursor.execute("DELETE * FROM users WHERE [email] = ?", (referringUserEmail,))
+    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(referringUserData))
+    connection.commit()
+    connection.close()
+    managePointStatus(referredUserEmail)
+    return (jsonify({
+        "Message": "Points have been submitted to the new user."
+    }))
+
+########## END ORDINARY USER CODE ##########
 
 
 
