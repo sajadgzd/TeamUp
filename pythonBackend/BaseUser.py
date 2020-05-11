@@ -21,6 +21,7 @@ def login():
     userData[7] = json.loads(userData[7]) #blacklist
     userData[8] = json.loads(userData[8]) #whitelist
     userData[10] = json.loads(userData[10]) #inbox
+    userData[11] = json.loads(userData[11]) #referredUsers
 
     if userData is not None:
         return jsonify({
@@ -64,7 +65,7 @@ def inviteToGroup():
             groupList = json.dumps(groupList)
             inviteeData[3] = groupList
             cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
-            cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+            cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
 
             cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
             groupData = list(cursor.fetchone())
@@ -96,7 +97,7 @@ def inviteToGroup():
 
     invitations = json.dumps(invitations)
     cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
-    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
     connection.commit()
     connection.close()
     return jsonify({
@@ -144,7 +145,7 @@ def handleGroupInvite():
         groupList = json.dumps(groupList)
         inviteeData[3] =groupList
         cursor.execute("DELETE FROM users WHERE [email] = ?",(invitee,))
-        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
         connection.commit()
 
         #user database, add message to inviter inbox
@@ -158,7 +159,7 @@ def handleGroupInvite():
         inboxList = json.dumps(inboxList)
         inviterData[10] =inboxList
         cursor.execute("DELETE FROM users WHERE [email] = ?",(inviter,))
-        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviterData))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviterData))
         connection.commit()
         connection.close()
         return (jsonify({
@@ -176,7 +177,7 @@ def handleGroupInvite():
         inboxList = json.dumps(inboxList)
         inviterData[10] =inboxList
         cursor.execute("DELETE FROM users WHERE [email] = ?",(inviter,))
-        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(inviterData))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviterData))
         connection.commit()
         connection.close()
         return (jsonify({
@@ -631,7 +632,7 @@ def issueWarningVote():
         })
         userData[10] = json.dumps(inboxList)
         cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
-        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     
     #Close Database connection and notify use that their vote has been registered
     connection.close()
@@ -697,7 +698,7 @@ def issuePraiseVote():
         })
         userData[10] = json.dumps(inboxList)
         cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
-        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     
     #Close Database connection and notify use that their vote has been registered
     connection.close()
@@ -769,7 +770,7 @@ def issueKickVote():
         })
         userData[10] = json.dumps(inboxList)
         cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
-        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     
     #Close Database connection and notify use that their vote has been registered
     connection.close()
