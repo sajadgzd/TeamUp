@@ -3,37 +3,48 @@ import json
 from flask import Flask, jsonify, render_template, request, send_from_directory
 import uuid
 
+
+########## SUPER USER CODE ##########
+
 @app.route('/handleApplication', methods = ["POST"])
 def handleApplication():
 
     #------Get Data from Front-end-----#
     jsonData = request.json
 
-    response = jsonData["response"] #get the response from the user
-    responderEmail = jsonData["responderEmail"] #get the email of the responder
+    response = jsonData["response"] #ACCEPT or DECLINE
+    # responderEmail = jsonData["responderEmail"] #get the email of the responder
     applicantEmail = jsonData["applicantEmail"].lower() #get the email of the applicant
 
 
     #-----Database Connection------#
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM signup WHERE [email] = ?"(applicantEmail,))
+    cursor.execute("SELECT * FROM signup WHERE [email] = ?",(applicantEmail,))
 
-    signupUserData = cursor.fetchone() #fetching the row from signup
-    signupUserData = list(signupUserData) #convert that string into a python list
+    signUpUserData = cursor.fetchone() #fetching the row from signup
+    signUpUserData = list(signUpUserData) #convert that string into a python list
 
     #data for the user table
-    fullname = signupUserData[0]
-    email = signupUserData[1]
-    password = ""
+    fullname = signUpUserData[0]
+    email = signUpUserData[1]
+    password = signUpUserData[3]
     groupList = []
-    reputationScore = ""
-    status = signupUserData[6]
+    groupList = json.dumps(groupList)
+    reputationScore = 0
+    status = None
     invitations = []
+    invitations = json.dumps(invitations)
     blacklist = []
+    blacklist = json.dumps(blacklist)
     whitelist = []
-    complimentsorcomplaints = []
+    whitelist = json.dumps(whitelist)
+    compliments = []
+    compliments = json.dumps(compliments)
     inbox = []
+    inbox = json.dumps(inbox)
+    referredUsers = []
+    referredUsers = json.dumps(referredUsers)
 
     rowData = []
     rowData.append(email)
@@ -45,51 +56,46 @@ def handleApplication():
     rowData.append(invitations)
     rowData.append(blacklist)
     rowData.append(whitelist)
-    rowData.append(complimentsorcomplaints)
+    rowData.append(compliments)
     rowData.append(inbox)
+    rowData.append(referredUsers)
 
-    # rowData = json.dumps(rowData)
 
     # accept the invite
     if response.lower() == "accepted":
         #first update the signup row for this user and change user status
-        cursor.execute("SELECT * FROM  signup WHERE [email] = ?"(email,))
+        rowData[5] = "OU"
         
-        row = list(cursor.fetchone())
+        signUpUserData[6] = "USER"
+        
 
         cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
-        userData[6] = "ORDINARY"
-        cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(row))
+        cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(signUpUserData))
+        connection.commit()
 
         # add the user to the user database
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",tuple(rowData))
         connection.commit()
         connection.close()
-        return (jsonify({"Success" : "Your invitation has been accepted"}))
+        return (jsonify({"Message" : "{} is now registered to Team Up.".format(email)}))
 
     #decline the invite
     elif response.lower() == "declined":
-        #find the user in signup table
-        cursor.execute("SELECT * FROM  signup WHERE [email] = ?"(email,))
-        #take out the row of that user
-        row = list(cursor.fetchone())
 
+        signUpUserData[6] = "REJECTED"
         #modify the row
         cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
-        userData[6] = "DECLINED"
-        cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(row))
+        cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(signUpUserData))
         connection.commit()
         connection.close()
-
         return jsonify({
-            "Message": "Sorry, your request to signup has been declined."
+            "Message": "{} will be notified that their application has been rejected.".format(email)
         })
 
 @app.route('/blacklistFromServer', methods = ["POST"])
 def blacklistFromServer():
     jsonData = request.json
 
-    userName = jsonData["userName"]
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -101,8 +107,8 @@ def blacklistFromServer():
     visitorData = list(cursor.fetchone())
 
     #modify the visitor signup row
+    visitorData[6] = "BLACKLISTED"
     cursor.execute("DELETE * FROM signup WHERE [email] = ?", (userEmail,))
-    visitorData[6] = "BLACKLIST"
     cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
     connection.commit()
     connection.close()
@@ -116,10 +122,7 @@ def blacklistFromServer():
 @app.route('/reverseReputationDeduction', methods = ["POST"])
 def reverseReputationDeduction():
     jsonData = request.json
-
-    userName = jsonData["userName"]
     userEmail = jsonData["userEmail"]
-    points = jsonData["points"] #the points that were previously deducted
 
     #------Connection-----#
     connection = sqlite3.connect(r"./database.db")
@@ -129,15 +132,14 @@ def reverseReputationDeduction():
     cursor.execute("SELECT * FROM users where [email] = ?",(userEmail,))
     userData = list(cursor.fetchone())
 
+    userData[4] += 5 #
     cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
-    userData[4] += points #add the points that were previously deducted
-
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     connection.commit()
     connection.close()
 
     return (jsonify({
-        "Message": "The points deduction has been done."
+        "Message": "{}'s point deducation has been reversed.".format(userEmail)
     }))
 
 
@@ -154,21 +156,23 @@ def shutDownGroup():
     cursor = connection.cursor()
 
     #------Delete the row-----#
-    cursor.execute("DELETE FROM groups WHERE [groupName] = ?", (groupName,))
-
+    cursor.execute("SELECT * FROM users WHERE [groupName] = ?",(groupName,))
+    groupData = cursor.fetchone()
+    groupData = list(groupData)
+    groupData[1] = "CLOSED"
+    cursor.execute("DELETE * FROM groups WHERE [groupName] = ?",(groupName,))
+    cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
     connection.close()
 
     return (jsonify({
-        "Message": "The group has been deleted."
+        "Message": "{} has been closed.".format(groupName)
     }))
 
 @app.route('/issuePointDeduction', methods = ["POST"])
 def issuePointDeduction():
 
     jsonData = request.json
-
-    userName = jsonData["userName"]
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -178,25 +182,22 @@ def issuePointDeduction():
     #------Get the user information-----#
     cursor.execute("SELECT * FROM users where [email] = ?",(userEmail,))
     userData = list(cursor.fetchone())
-
-    cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
     userData[4] -= 5
-
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     connection.commit()
     connection.close()
 
+    managePointStatus(userEmail)
     return (jsonify({
-        "Message": "The points deduction has been done."
+        "Message": "{} has 5 points deducted from their score.".format(userEmail)
     }))
 
 
 @app.route('/issuePointIncrement', methods = ["POST"])
 def issuePointIncrement():
-
+    
     jsonData = request.json
-
-    userName = jsonData["userName"]
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -206,53 +207,52 @@ def issuePointIncrement():
     #------Get the user information-----#
     cursor.execute("SELECT * FROM users where [email] = ?",(userEmail,))
     userData = list(cursor.fetchone())
-
-    cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
     userData[4] += 5
-
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     connection.commit()
     connection.close()
 
+    managePointStatus(userEmail)
     return (jsonify({
-        "Message": "The points increment has been done."
+        "Message": "{} has 5 points added from their score.".format(userEmail)
     }))
 
 @app.route('/banUser', methods = ["POST"])
 def banUser():
 
     jsonData = request.json
-
-    userName = jsonData["userName"]
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
 
-    #------Get the visitor information-----#
+    #------Get the signup information-----#
     cursor.execute("SELECT * FROM signup where [email] = ?",(userEmail,))
     visitorData = list(cursor.fetchone())
 
-    #modify the visitor signup row
+    #modify the signup row
+    visitorData[6] = "BLACKLISTED"
     cursor.execute("DELETE * FROM signup WHERE [email] = ?", (userEmail,))
-    visitorData[6] = "BLACKLIST"
     cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
 
 
 
-    #modify the user row
-    cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
+    #Get the users information
+    cursor.execute("SELECT * FROM users WHERE [email] = ?", (userEmail,))
     userData = list(cursor.fetchone())
 
     #modify the user row
+    userData[5] = "BLACKLISTED"
     cursor.execute("DELETE * FROM users WHERE [email] = ?", (userEmail,))
-    userData[5] = "BLACKLIST"
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
 
     connection.commit()
     connection.close()
 
     return (jsonify({
-        "Message": "The user has been banned from Signup and Users table."
+        "Message": "{} has been blacklisted from Signup and Users table.".format(userEmail)
     }))
+
+########## END SUPER USER CODE ##########

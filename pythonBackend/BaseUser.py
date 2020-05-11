@@ -298,16 +298,16 @@ def createMeetCloseHelper(pollType):
 def createMeetupPoll():
 
     createMeetCloseHelper(pollType="MEETUP")
-    return (jsonify{
+    return (jsonify({
         "Message": "Your Meetup poll has been created."
-    })
+    }))
 
 @app.route('/createCloseGroupPoll', methods = ["POST"])
 def createCloseGroupPoll():
     createMeetCloseHelper(pollType="CLOSE")
-    return (jsonify{
+    return (jsonify({
         "Message": "Your Close Group poll has been created."
-    })
+    }))
 
 # CREATE WARNPRAISEKICK POLL #~Helper
 def createWarnPraiseKickHelper(pollType):
@@ -351,9 +351,9 @@ def createWarnPraiseKickHelper(pollType):
 @app.route('/createWarningPoll', methods = ["POST"])
 def createWarningPoll():
     createWarnPraiseKickHelper(pollType="WARNING")
-    return (jsonify{
+    return (jsonify({
         "Message": "Your warning poll has been created."
-    })
+    }))
 
 @app.route('/createPraisePoll', methods = ["POST"])
 def createPraisePoll():
