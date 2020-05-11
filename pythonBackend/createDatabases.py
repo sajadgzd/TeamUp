@@ -72,5 +72,12 @@ if "moderationRequests" not in tableList:
                               status              TEXT,\
                               number              INTEGER PRIMARY KEY);"
                     )
+if "democraticSU" not in tableList:
+     
+     cursor.execute("CREATE TABLE democraticSU  (\
+                              poll                TEXT,\
+                              userexists          INTEGER,\
+                              pollexists          INTEGER);"
+                    )
 
      connection.commit()
