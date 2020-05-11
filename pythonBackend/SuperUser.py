@@ -89,13 +89,27 @@ def handleApplication():
 def blacklistFromServer():
     jsonData = request.json
 
-    blacklistUser = jsonData["blacklist"]
+    userName = jsonData["userName"]
+    userEmail = jsonData["userEmail"]
 
+    #------Connection-----#
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
 
-    # input UserID
-    # if (UserID exists in the User Database):
-    #   if (User already not exists in BlackList database):
-    #       BlackList_Database.append(UserID)
+    #------Get the visitor information-----#
+    cursor.execute("SELECT * FROM signup where [email] = ?",(userEmail,))
+    visitorData = list(cursor.fetchone())
+
+    #modify the visitor signup row
+    cursor.execute("DELETE * FROM signup WHERE [email] = ?", (userEmail,))
+    visitorData[6] = "BLACKLIST"
+    cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
+    connection.commit()
+    connection.close()
+
+    return jsonify({
+            "Message": "The visitor has been added to blacklist."
+        })
 
 
 
@@ -206,20 +220,39 @@ def issuePointIncrement():
 
 @app.route('/banUser', methods = ["POST"])
 def banUser():
-    # change user status to banned in the signup
-    # delete user from the user database
+
+    jsonData = request.json
+
+    userName = jsonData["userName"]
+    userEmail = jsonData["userEmail"]
+
+    #------Connection-----#
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+
+    #------Get the visitor information-----#
+    cursor.execute("SELECT * FROM signup where [email] = ?",(userEmail,))
+    visitorData = list(cursor.fetchone())
+
+    #modify the visitor signup row
+    cursor.execute("DELETE * FROM signup WHERE [email] = ?", (userEmail,))
+    visitorData[6] = "BLACKLIST"
+    cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
 
 
 
+    #modify the user row
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
+    userData = list(cursor.fetchone())
 
+    #modify the user row
+    cursor.execute("DELETE * FROM users WHERE [email] = ?", (userEmail,))
+    userData[5] = "BLACKLIST"
+    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
 
-    # if (userID exists in the user database):
-    #   if (userID exists in blacklist database):
-    #       print("User already banned")
-    #   
-    #   else:
-    #        add user to the blacklist database
-    #
-    # else:
-    #   print("The user you are trying to ban doesn't exist")
-    #   
+    connection.commit()
+    connection.close()
+
+    return (jsonify({
+        "Message": "The user has been banned from Signup and Users table."
+    }))
