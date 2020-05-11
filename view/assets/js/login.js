@@ -37,29 +37,37 @@ $(document).ready(function() {
     $.post("/login", userlogin)
     .then(function(data) {
       console.log("login POST call worked");
+      if(true){
+        localStorage.setItem('userEmail', 'e@gmail.com');
+        let printStorage = localStorage.getItem('userEmail');
+        console.log(printStorage);
+        localStorage.removeItem('userEmail')
+        printStorage = localStorage.getItem('userEmail');
+        console.log(printStorage);
+      }
     });
 
-    loginFirstTime = true;
-    if(loginFirstTime){
-      instance.open();
+    // loginFirstTime = true;
+    // if(loginFirstTime){
+    //   instance.open();
 
-      let newEmail = $("#newEmail").val().trim()
-      let newPassword = $("#newPassword").val().trim()
-      // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
-      // console.log("text value:", text)
+    //   let newEmail = $("#newEmail").val().trim()
+    //   let newPassword = $("#newPassword").val().trim()
+    //   // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
+    //   // console.log("text value:", text)
   
-      var userlogin = {
-        newEmail: newEmail,
-        newPassword: newPassword 
-      }
+    //   var userlogin = {
+    //     newEmail: newEmail,
+    //     newPassword: newPassword 
+    //   }
 
-      $.post("/newPassword", newPassword)
-      .then(function(data) {
-        console.log("new pass POST call worked");
-      });
+    //   $.post("/newPassword", newPassword)
+    //   .then(function(data) {
+    //     console.log("new pass POST call worked");
+    //   });
 
-      loginFirstTime = false
-    }
+    //   loginFirstTime = false
+    // }
 
     
 

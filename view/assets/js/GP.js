@@ -30,6 +30,13 @@ $(document).ready(function() {
  
   let numOfChoices = 2;
 
+  // localStorage.setItem('userEmail', 'e@gmail.com');
+  // let printStorage = localStorage.getItem('userEmail');
+  // console.log(printStorage);
+  // localStorage.removeItem('userEmail')
+  // printStorage = localStorage.getItem('userEmail');
+  // console.log(printStorage);
+
   $("#polls-button").click(function(){
     let createrEmail = "X@gmail.com"
 
