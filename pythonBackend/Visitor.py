@@ -3,6 +3,7 @@ import json
 from flask import Flask, jsonify, render_template, request, send_from_directory
 
 
+########## VISITOR USER CODE ##########
 
 @app.route('/signup', methods = ["POST"])
 def signUp():
@@ -13,14 +14,13 @@ def signUp():
     rowData.append(jsonData["email"].lower())
     rowData.append(jsonData["interests"])
     rowData.append(jsonData["credentials"])
-    rowData.append(jsonData["reference"].lower())
+    rowData.append(jsonData["reference"])
     rowData.append("")                      # appeal (does not exist on initial sign up)
     rowData.append("PENDING")
      
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM signup WHERE [email] = ?",(jsonData["email"].lower(),))
-
     userData = cursor.fetchone()
 
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(jsonData["reference"].lower(),))
@@ -31,13 +31,6 @@ def signUp():
         return (jsonify({
             "Message": "Sorry, an account with this email already exists. Please check your application status instead."
         }))
-
-    elif referrerData is None:
-        connection.close()
-        return jsonify({
-            "Message": "Sorry, the referrer you have entered does not exist in the system."
-        })
-        
     else:
         cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(rowData))
 
@@ -120,3 +113,4 @@ def appealRejection():
     connection.close()
     return (jsonify({"Success" : "appeal has been submitted."}))
         
+########## END VISITOR USER CODE ##########

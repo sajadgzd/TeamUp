@@ -95,18 +95,23 @@ def createGroup():
 
     groupName = jsonData["groupName"]
     creator = jsonData["email"] # email of creator
-    status = "OPEN"
+    status = "ACTIVE"
     posts = json.dumps([])
     memberPolls = json.dumps([])
     groupPolls = json.dumps([])
-    members = json.dumps([{"member": creator, "warnings": 0, "praises" : 0}])
-
-    groupData = list.extend([groupName, creator, status, posts, memberPolls, groupPolls, members])
+    members = json.dumps([{
+        "member": creator,
+        "warnings": 0,
+        "praises": 0,
+        "kicks": 0,
+        "taskscompleted":0}])
+    groupData = []
+    groupData.extend([groupName, status, posts, memberPolls, groupPolls, members])
 
     # add new group to DB
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members,groupPolls,members) VALUES(?,?,?,?,?,?,?)",tuple(groupData))
+    cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
     connection.close()
     return jsonify({"Message" : "Group successfully created."})
