@@ -28,11 +28,11 @@ $(document).ready(function() {
   var selectElems = document.querySelectorAll('select');
   var selectInstances = M.FormSelect.init(selectElems);
  
-  
-
   let numOfChoices = 2;
 
   $("#polls-button").click(function(){
+    let createrEmail = "X@gmail.com"
+
     let pollTitle = $("#pollTitle").val().trim()
     let pollPrompt = $("#pollDescription").val().trim()
     let pollType = $('#pollSelect').val()
@@ -40,9 +40,9 @@ $(document).ready(function() {
     console.log(pollPrompt)
     console.log("poll Type:   ", pollType)
 
-    let targetedMember = $("#targetedMember").val().trim()
+    let targetedMember = $("#targetedMemberEmail").val().trim()
     let pollStatus = "ACTIVE"
-    let pollVoteChoice = $("#targetedMember").val()
+    let pollVoteChoice = "yes"
     let pollVoteChoiceVal = 0;
     let pollVoteChoiceValComplement = 1;
 
@@ -53,7 +53,6 @@ $(document).ready(function() {
 
     let votersArray = []
 
-
     var pollData = {
       pollTitle: pollTitle,
       pollPrompt: pollPrompt,
@@ -62,10 +61,16 @@ $(document).ready(function() {
       pollStatus: pollStatus,
       pollVoteOptions: {
         yes: pollVoteChoiceVal,
-        no: pollVoteChoiceVal
+        no: pollVoteChoiceValComplement
       },
-      voters: votersArray
+      voters: createrEmail
     };
+
+    $.post("/createPoll", pollData)
+    .then(function(data) {
+      console.log("got data back from POST call", JSON.stringify(data));
+      alert("POST worked...");
+    });
 
   
   });
@@ -75,7 +80,7 @@ $(document).ready(function() {
   $("#radiobtn").click(function(){
     var radioValue = $("input[name='group1']:checked").val();
     if(radioValue){
-        alert("Your chose " + radioValue);
+        alert("Your chose herew" + radioValue);
     }
   });
   $("#addSchedule-button").click(function(){
@@ -151,7 +156,7 @@ $(document).ready(function() {
 
     $.post("/postText", msg)
     .then(function(data) {
-      console.log("got data back from POST call", data.textmsg);
+      console.log("got data back from POST call");
       alert("POST worked...");
     });
 
