@@ -44,6 +44,7 @@ def reportGroup():
     sendModRequest(groupName, reportMessage, "REPORT")
     return jsonify({"Success: report has been submitted."})
 
+
 ### END SENDING REPORTS/APPEALS ###
 
 ### ALTER REPUTATION ###
@@ -86,6 +87,30 @@ def referenceReputation():
     return (jsonify({
         "Message": "Points have been submitted to the new user."
     }))
+
+
+@app.route('/createGroup', methods=["POST"])
+def createGroup():
+    jsonData = request.json
+
+    groupName = jsonData["groupName"]
+    creator = jsonData["email"] # email of creator
+    status = "OPEN"
+    posts = json.dumps([])
+    memberPolls = json.dumps([])
+    groupPolls = json.dumps([])
+    members = json.dumps([{"member": creator, "warnings": 0, "praises" : 0}])
+
+    groupData = list.extend([groupName, creator, status, posts, memberPolls, groupPolls, members])
+
+    # add new group to DB
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members,groupPolls,members) VALUES(?,?,?,?,?,?,?)",tuple(groupData))
+    connection.commit()
+    connection.close()
+    return jsonify({"Message" : "Group successfully created."})
+
 
 ########## END ORDINARY USER CODE ##########
 
