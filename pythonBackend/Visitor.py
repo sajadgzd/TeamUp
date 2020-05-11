@@ -13,8 +13,8 @@ def signUp():
     rowData.append(jsonData["email"].lower())
     rowData.append(jsonData["interests"])
     rowData.append(jsonData["credentials"])
-    rowData.append(jsonData["reference"])
-    rowData.append("")
+    rowData.append(jsonData["reference"].lower())
+    rowData.append("")                      # appeal (does not exist on initial sign up)
     rowData.append("PENDING")
      
     connection = sqlite3.connect(r"./database.db")
@@ -23,15 +23,33 @@ def signUp():
 
     userData = cursor.fetchone()
 
+    cursor.execute("SELECT * FROM users WHERE [email] = ?",(jsonData["reference"].lower(),))
+    referrerData = cursor.fetchone()
+
     if userData is not None:
         connection.close()
         return (jsonify({
             "Message": "Sorry, an account with this email already exists. Please check your application status instead."
         }))
+
+    elif referrerData is None:
+        connection.close()
+        return jsonify({
+            "Message": "Sorry, the referrer you have entered does not exist in the system."
+        })
+        
     else:
         cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(rowData))
+
+        # add new user to inviter's list of referred users
+        referrerData = list(referrerData)
+        referredUserList = json.loads(referrerData[11])
+        referredUserList.append(jsonData["email"].lower())
+        referrerData[11] = json.dumps(referredUserList)
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (referrerData[0]))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(referrerData))
         connection.commit()
-    connection.close()
+        connection.close()
     #
     return (jsonify({
         "Message": "Thank you for registering! Your application is pending approval."
@@ -94,6 +112,10 @@ def appealRejection():
     row[5] = appealMessage
     row[6] = "APPEALED"
     cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(row))
+
+    # add appeal to SU moderation queue
+    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(email,appealMessage,"SIGNUP_APPEAL","OPEN",None))
+
     connection.commit()
     connection.close()
     return (jsonify({"Success" : "appeal has been submitted."}))
