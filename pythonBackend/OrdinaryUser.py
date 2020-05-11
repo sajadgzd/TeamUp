@@ -2,17 +2,21 @@ import sqlite3
 import json
 from flask import Flask, jsonify, render_template, request, send_from_directory
 
+def sendModRequest(target, message, request_type):
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(target,message,request_type,"OPEN",None))
+    connection.commit()
+    connection.close()
+
+# SENDING REPORTS/APPEALS
+
 @app.route('/appealReputation', methods = ["POST"])
 def appealReputation():
     jsonData = request.json
-    userEmail = jsonData["email"].lower()
+    userEmail = jsonData["email"].lower() # email of the user appealing
     appealMessage = jsonData["appealMessage"]
-
-    connection = sqlite3.connect(r"./database.db")
-    cursor = connection.cursor()
-    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(userEmail,appealMessage,"REP_APPEAL","OPEN",None))
-    connection.commit()
-    connection.close()
+    sendModRequest(userEmail, appealMessage, "REP_APPEAL")
     return jsonify({"Success: appeal has been submitted."})
 
 @app.route('/reportUser', methods = ["POST"])
@@ -20,12 +24,7 @@ def reportUser():
     jsonData = request.json
     targetEmail = jsonData["email"].lower()
     reportMessage = jsonData["reportMessage"]
-
-    connection = sqlite3.connect(r"./database.db")
-    cursor = connection.cursor()
-    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(targetEmail,reportMessage,"REPORT","OPEN",None))
-    connection.commit()
-    connection.close()
+    sendModRequest(targetEmail, reportMessage, "REPORT")
     return jsonify({"Success: report has been submitted."})
 
 @app.route('/reportGroup', methods = ["POST"])
@@ -33,14 +32,12 @@ def reportGroup():
     jsonData = request.json
     groupName = jsonData["groupName"]
     reportMessage = jsonData["reportMessage"]
-
-    connection = sqlite3.connect(r"./database.db")
-    cursor = connection.cursor()
-    cursor.execute("INSERT INTO moderationRequests (subject,message,type,status) VALUES(?,?,?,?,?)",(groupName,reportMessage,"REPORT","OPEN",None))
-    connection.commit()
-    connection.close()
+    sendModRequest(groupName, reportMessage, "REPORT")
     return jsonify({"Success: report has been submitted."})
 
+# END REPORTS/APPEALS
+
+# ALTER REPUTATION
 @app.route('/referenceReputation', methods = ["POST"])
 def referenceReputation():
     jsonData = request.json
