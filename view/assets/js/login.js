@@ -41,9 +41,9 @@ $(document).ready(function() {
         localStorage.setItem('userEmail', 'e@gmail.com');
         let printStorage = localStorage.getItem('userEmail');
         console.log(printStorage);
-        localStorage.removeItem('userEmail')
-        printStorage = localStorage.getItem('userEmail');
-        console.log(printStorage);
+        // localStorage.removeItem('userEmail')
+        // printStorage = localStorage.getItem('userEmail');
+        // console.log(printStorage);
       }
     });
 

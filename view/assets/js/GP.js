@@ -30,12 +30,36 @@ $(document).ready(function() {
  
   let numOfChoices = 2;
 
+  let email = ""
+  let groupName = ""
+
   // localStorage.setItem('userEmail', 'e@gmail.com');
   // let printStorage = localStorage.getItem('userEmail');
   // console.log(printStorage);
   // localStorage.removeItem('userEmail')
   // printStorage = localStorage.getItem('userEmail');
   // console.log(printStorage);
+  $("#closingPoll-button").click(function(){
+
+    let pollTitle = $("#closingPollTitle").val().trim()
+    let pollPrompt = $("#closingPollDescription").val().trim()
+
+    let closingPollData = {
+      groupName: groupName,
+      pollTitle: pollTitle,
+      pollPrompt: pollPrompt
+    }
+
+    $.post("/createCloseGroupPoll", closingPollData)
+    .then(function(data) {
+      console.log("got data back from POST call", JSON.stringify(data));
+      alert("POST worked...");
+    });
+
+
+  });
+
+
 
   $("#polls-button").click(function(){
     let createrEmail = "X@gmail.com"
@@ -90,51 +114,26 @@ $(document).ready(function() {
         alert("Your chose herew" + radioValue);
     }
   });
+
   $("#addSchedule-button").click(function(){
-    $(".datechoices").append('<div class="input-field col s4">' +
-                                                  '<input type="text" class="datepicker">' +
-                                                  '<label for="postText">Date</label>' +
-                                                '</div>' +
-                                                '<div class="input-field col s4">' +
-                                                  '<input type="text" class="timepicker">' +
-                                                  '<label for="postText">From Time</label>' +
-                                                '</div>' +
-                                                '<div class="input-field col s4">' +
-                                                  '<input type="text" class="timepicker">' +
-                                                  '<label for="postText">To Time</label>' +
-                                                '</div>')
     numOfChoices++;
+    $(".datechoices").append( `<div data-number=${numOfChoices}>` +
+                                '<div class="input-field col s4">' +
+                                  '<input type="text" class="datepicker">' +
+                                  '<label for="postText">Date</label>' +
+                                '</div>' +
+                                '<div class="input-field col s4">' +
+                                  '<input type="text" class="timepicker">' +
+                                  '<label for="postText">From Time</label>' +
+                                '</div>' +
+                                '<div class="input-field col s4">' +
+                                  '<input type="text" class="timepicker">' +
+                                  '<label for="postText">To Time</label>' +
+                                '</div>' +
+                                '</div>')
+   
     $('.datepicker').datepicker({format: "mm/dd/yyyy"});
     $('.timepicker').timepicker();                                          
-
-  });
-
-  function getData() {
-    $.ajax({
-        url: "/test1",
-        method: "GET"
-    }).then(function(response) {
-        console.log("GET root worked fine\n",response);
-        $("#test1").append("<p style='font-weight: bold'> Type: " + response.tasks[0].description + "</p><br>");
-    });
-  };
-  getData();
-
-  $(document.body).on("click", "#post-button", function(event) {
-    event.preventDefault();
-    var text = $("#postText").val().trim()
-    // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
-    console.log("text value:", text)
-
-    var msg = {
-      textmsg: text 
-    }
-
-    $.post("/postText", msg)
-    .then(function(data) {
-      console.log("got data back from POST call", data.textmsg);
-      alert("POST worked...");
-    });
 
   });
 
@@ -146,27 +145,73 @@ $(document).ready(function() {
     // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
     console.log("text value:", text);
 
-    let date = ""
-    let time1 = ""
-    let time2 = ""
+    let pollTitle = $("#scheduleTitle")
+    let pollPrompt = $("#scheduleText")
+    let pollType = ""
+    let pollVoteOptions = []
 
-    let choices = []
+    let date = $("#meetingDateChoice").val()
+    let time1 = $("#meetingFromTimeChoice").val()
+    let time2 = $("#meetingToTimeChoice").val()
+    let pollVoteChoice = date + " From " + time1 + " to " + time2
+
+    console.log("POLL MEETUP CHOICE:\t",pollVoteChoice)
+
 
     for(let i=0; i<numOfChoices.length; i++){
-      choices.push(date + " From " + time1 + " to " + time2)
+
+
+      pollVoteOptions.push(pollVoteChoice)
     }
 
-    var schedule = {
+    var listItems = $("#productList li");
+    listItems.each(function(idx, li) {
+        var product = $(li);
+
+        // and the rest of your code
+    });
+
+    var meetupPollData = {
       textmsg: text,
       choices: choices
     }
 
-    $.post("/postText", msg)
+    $.post("/createMeetupPoll", meetupPollData)
     .then(function(data) {
       console.log("got data back from POST call");
       alert("POST worked...");
     });
 
   });
+
+
+    // function getData() {
+  //   $.ajax({
+  //       url: "/test1",
+  //       method: "GET"
+  //   }).then(function(response) {
+  //       console.log("GET root worked fine\n",response);
+  //       $("#test1").append("<p style='font-weight: bold'> Type: " + response.tasks[0].description + "</p><br>");
+  //   });
+  // };
+  // getData();
+
+  // $(document.body).on("click", "#post-button", function(event) {
+  //   event.preventDefault();
+  //   var text = $("#postText").val().trim()
+  //   // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
+  //   console.log("text value:", text)
+
+  //   var msg = {
+  //     textmsg: text 
+  //   }
+
+  //   $.post("/postText", msg)
+  //   .then(function(data) {
+  //     console.log("got data back from POST call", data.textmsg);
+  //     alert("POST worked...");
+  //   });
+
+  // });
 
 });

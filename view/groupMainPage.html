@@ -60,50 +60,53 @@
         </div>
 
         <div class="row ">
-          <div class="col s12 m8 info" style="margin-left: 1%">
+          <div class="col s12 m12 info" style="margin-left: 1%">
             <div class="row">
   
-              <form class="col s6 m6" id="reg-form">
+              <form class="col s6 m3" id="reg-form">
                   <div class="col s6 m12 info">
                       <h5 class="left-align register" style="margin-left: 0px">Create a Meeting Poll</h5>
-                    </div>
+                  </div>
+                  <div class="input-field col s12">
+                    <input id="scheduleTitle" type="text" class="validate" required>
+                    <label for="scheduleTitle">Title</label>
+                  </div>
                   <div class="input-field col s12">
                     <input id="scheduleText" type="text" class="validate" required>
                     <label for="scheduleText">Description</label>
                   </div>
-                  <div class="datechoices">
-                    <div class="input-field col s4">
-                        <!-- <input id="postText" type="text" class="validate" required> -->
-                        <input type="text" class="datepicker">
-                        <label for="postText">Date</label>
+                  
+                  <div class="datechoices" data-number="0">
+                    <div data-number="1">
+                      <div class="input-field col s4">
+                          <input type="text" class="datepicker" id="meetingDateChoice">
+                          <label for="postText">Date</label>
+                      </div>
+                      <div class="input-field col s4">
+                          <input type="text" class="timepicker" id="meetingFromTimeChoice">
+                          <label for="postText">From Time</label>
+                      </div>
+                      <div class="input-field col s4">
+                        <input type="text" class="timepicker" id="meetingToTimeChoice">
+                        <label for="postText">To Time</label>
+                      </div>
                     </div>
-                    <div class="input-field col s4">
-                        <!-- <input id="postText" type="text" class="validate" required> -->
-                        <input type="text" class="timepicker">
-                        <label for="postText">From Time</label>
-                    </div>
-                    <div class="input-field col s4">
-                      <!-- <input id="postText" type="text" class="validate" required> -->
-                      <input type="text" class="timepicker">
-                      <label for="postText">To Time</label>
-                    </div>
-                    <div class="input-field col s4">
-                      <!-- <input id="postText" type="text" class="validate" required> -->
-                      <input type="text" class="datepicker">
-                      <label for="postText">Date</label>
-                    </div>
-                    <div class="input-field col s4">
-                        <!-- <input id="postText" type="text" class="validate" required> -->
-                        <input type="text" class="timepicker">
-                        <label for="postText">From Time</label>
-                    </div>
-                    <div class="input-field col s4">
-                      <!-- <input id="postText" type="text" class="validate" required> -->
-                      <input type="text" class="timepicker">
-                      <label for="postText">To Time</label>
+                    <div data-number="2">
+                      <div class="input-field col s4">
+                          <input type="text" class="datepicker" id="meetingDateChoice">
+                          <label for="postText">Date</label>
+                      </div>
+                      <div class="input-field col s4">
+                          <input type="text" class="timepicker" id="meetingFromTimeChoice">
+                          <label for="postText">From Time</label>
+                      </div>
+                      <div class="input-field col s4">
+                        <input type="text" class="timepicker" id="meetingToTimeChoice">
+                        <label for="postText">To Time</label>
+                      </div>
                     </div>
                   </div>
-                  <div class="input-field col s4">
+                  <div class="input-field col s6">
                       <a href="#" id="addSchedule-button" class="btn waves-effect waves-light light-blue accent-4">Add Choice
                           <i class="material-icons right">add</i>
                       </a>
@@ -115,7 +118,7 @@
                   </div>
               </form>
 
-              <form class="col s6 m6" id="reg-form">
+              <form class="col s6 m3" id="reg-form">
                 <div class="col s6 m12 info">
                     <h5 class="left-align register" style="margin-left: 0px">Create a Member Poll</h5>
                   </div>
@@ -140,26 +143,31 @@
                   <input id="targetedMemberEmail" type="text" class="validate" required>
                   <label for="targetedMemberEmail">Targeted Member Email</label>
                 </div>
-                <!-- <form style="margin-left: 2%">
-                  <p>
-                    <label>
-                      <input name="group1" type="radio" checked />
-                      <span>Yes</span>
-                    </label>
-                  </p>
-                  <p>
-                    <label>
-                      <input name="group1" type="radio" />
-                      <span>No</span>
-                    </label>
-                  </p>
-                </form> -->
                 <div class="input-field col s6 left-align">
                     <a href="#" id="polls-button" class="btn waves-effect waves-light light-blue accent-4">Post
                         <i class="material-icons right">done</i>
                     </a>
                 </div>
-            </form>
+              </form>
+
+              <form class="col s6 m3" id="reg-form">
+                <div class="col s6 m12 info">
+                    <h5 class="left-align register" style="margin-left: 0px">Create a Closing Poll</h5>
+                  </div>
+                <div class="input-field col s12">
+                  <input id="closingPollTitle" type="text" class="validate" required>
+                  <label for="closingPollTitle">Title</label>
+                </div>
+                <div class="input-field col s12">
+                  <input id="closingPollDescription" type="text" class="validate" required>
+                  <label for="closingPollDescription">Description</label>
+                </div>
+                <div class="input-field col s6 left-align">
+                    <a href="#" id="closingPoll-button" class="btn waves-effect waves-light light-blue accent-4">Post
+                        <i class="material-icons right">done</i>
+                    </a>
+                </div>
+              </form>
 
               <form class="col s6 m6" id="reg-form">
                 <div class="col s6 m6 info">
@@ -220,11 +228,6 @@
                 </form>
                   <br>
                   <br>
-                  <form action="#" style="border: 1px;">
-                    <h6>Ahsan posted an update</h6>
-                    <h6>Hey guys, please try to get here on time.</h6>
-                    <h6>The meeting will start at the exact time.</h6>
-                  </form>
 
               </div>
             </div>
