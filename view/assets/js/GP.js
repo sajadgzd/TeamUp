@@ -25,7 +25,52 @@ $(document).ready(function() {
   var timeelems = document.querySelectorAll('.timepicker');
   var timeinstances = M.Timepicker.init(timeelems, {});
 
+  var selectElems = document.querySelectorAll('select');
+  var selectInstances = M.FormSelect.init(selectElems);
+ 
+  
+
   let numOfChoices = 2;
+
+  $("#polls-button").click(function(){
+    let pollTitle = $("#pollTitle").val().trim()
+    let pollPrompt = $("#pollDescription").val().trim()
+    let pollType = $('#pollSelect').val()
+    console.log(pollTitle)
+    console.log(pollPrompt)
+    console.log("poll Type:   ", pollType)
+
+    let targetedMember = $("#targetedMember").val().trim()
+    let pollStatus = "ACTIVE"
+    let pollVoteChoice = $("#targetedMember").val()
+    let pollVoteChoiceVal = 0;
+    let pollVoteChoiceValComplement = 1;
+
+    if (pollVoteChoice == "yes"){
+      pollVoteChoiceVal = 1
+      pollVoteChoiceValComplement = 0;
+    }
+
+    let votersArray = []
+
+
+    var pollData = {
+      pollTitle: pollTitle,
+      pollPrompt: pollPrompt,
+      pollType: pollType,
+      targetedMember: targetedMember,
+      pollStatus: pollStatus,
+      pollVoteOptions: {
+        yes: pollVoteChoiceVal,
+        no: pollVoteChoiceVal
+      },
+      voters: votersArray
+    };
+
+  
+  });
+
+
 
   $("#radiobtn").click(function(){
     var radioValue = $("input[name='group1']:checked").val();

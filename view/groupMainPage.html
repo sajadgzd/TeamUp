@@ -64,8 +64,8 @@
             <div class="row">
   
               <form class="col s6 m6" id="reg-form">
-                  <div class="col s6 m6 info">
-                      <h5 class="left-align register" style="margin-left: 0px">Create Meeting Schedule</h5>
+                  <div class="col s6 m12 info">
+                      <h5 class="left-align register" style="margin-left: 0px">Create a Meeting Poll</h5>
                     </div>
                   <div class="input-field col s12">
                     <input id="scheduleText" type="text" class="validate" required>
@@ -114,6 +114,48 @@
                       </a>
                   </div>
               </form>
+
+              <form class="col s6 m6" id="reg-form">
+                <div class="col s6 m12 info">
+                    <h5 class="left-align register" style="margin-left: 0px">Create a Member Poll</h5>
+                  </div>
+                <div class="input-field col s12">
+                    <select id="pollSelect">
+                      <option value="" disabled selected>Choose your Poll Type</option>
+                      <option value="Warning">Warning</option>
+                      <option value="Praise">Praise</option>
+                      <option value="Kickout">Kickout</option>
+                    </select>
+                    <label>Poll Type</label>
+                </div>
+                <div class="input-field col s12">
+                  <input id="pollTitle" type="text" class="validate" required>
+                  <label for="pollTitle">Title</label>
+                </div>
+                <div class="input-field col s12">
+                  <input id="pollDescription" type="text" class="validate" required>
+                  <label for="pollDescription">Description</label>
+                </div>
+                <div style="margin-left: 2%">
+                  <p>
+                    <label>
+                      <input name="group1" type="radio" checked />
+                      <span>Yes</span>
+                    </label>
+                  </p>
+                  <p>
+                    <label>
+                      <input name="group1" type="radio" />
+                      <span>No</span>
+                    </label>
+                  </p>
+                </div>
+                <div class="input-field col s6 left-align">
+                    <a href="#" id="polls-button" class="btn waves-effect waves-light light-blue accent-4">Post
+                        <i class="material-icons right">done</i>
+                    </a>
+                </div>
+            </form>
 
               <form class="col s6 m6" id="reg-form">
                 <div class="col s6 m6 info">
@@ -183,11 +225,10 @@
   
           </div>
 
-          <div class="col s12 m3 info" style="margin-left: 4%">
+          <!-- <div class="col s12 m3 info" style="margin-left: 4%">
             <ul class="collection with-header">
-              <!-- <a href="#" id="closeGroup-button" class="btn waves-effect waves-light light-blue accent-4 right-align right" style="margin: 0">Close Group</a> -->
               <li><a id="closeGroup-button" class="btn waves-effect waves-light light-blue accent-4 right-align right modal-trigger" href="#modal1">Close Group</a></li>
-              <!-- Modal Structure -->
+
               <div id="modal1" class="modal">
                 <div class="modal-content">
                   <h4>Closing Assesment</h4>
@@ -289,7 +330,7 @@
                 </div>
               </li>
             </ul>
-          </div>
+          </div> -->
 
 
         </div>  
