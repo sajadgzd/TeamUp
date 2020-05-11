@@ -109,37 +109,44 @@ def inviteToGroup():
 
 @app.route('/handleGroupInvite', methods = ["POST"])
 def handleGroupInvite():
+
+    #GET JSON DATA
     jsonData = request.json
 
-    inviter = jsonData["inviterEmail"].lower()
+    inviter = jsonData["inviterEmail"]
     inviterFullname = jsonData["inviterFullname"]
     groupName = jsonData["groupName"]
-    invitee = jsonData["inviteeEmail"].lower()
+    invitee = jsonData["inviteeEmail"]
     message = jsonData["message"]
     response = jsonData["response"]
 
 
+    #SQLITE CONNECTION
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
+
     cursor.execute("SELECT * FROM users WHERE [email] = ?"(invitee,))
+
+    #If they accept the invitation
     if response.lower() == "accepted":
-        #group data base add user
+        #Add the invitee to the group list
         cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
         groupData= list(cursor.fetchone())
         memberData = json.loads(groupData[5])
-            memberData.append({
+        memberData.append({
                 "member": invitee,
                 "warnings": 0,
                 "praises": 0,
+                "kicks": 0,
                 "taskscompleted":0
             })
-            memberData = json.dumps(memberData)
+        memberData = json.dumps(memberData)
         groupData[5] = memberList
         cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
         cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
         connection.commit()
 
-        #user databas, add group to invitee list
+        #Add the group to the invitee's group list
         cursor.execute("SELECT * FROM users where [email] = ?",(invitee,))
         inviteeData = list(cursor.fetchone())
         groupList = json.loads(inviteeData[3])
@@ -150,13 +157,13 @@ def handleGroupInvite():
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
         connection.commit()
 
-        #user database, add message to inviter inbox
+        #Notify the inviter that they have accepted the invitation
         cursor.execute("SELECT * FROM users where [email] = ?",(inviter,))
         inviterData = list(cursor.fetchone())
         inboxList = json.loads(inviteeData[10])
         inboxList.append({
             "sender": inviter,
-            "message": message
+            "message": "Your invitation has been accepted by {}.".format(invitee)
         })
         inboxList = json.dumps(inboxList)
         inviterData[10] =inboxList
@@ -168,7 +175,7 @@ def handleGroupInvite():
             "message": "You've been added to the group {} and your response has been sent to your inviter.".format(groupName)
         }))
     elif response.lower() == "declined":
-        #user database, add message to inviter inbox
+        #Notify the inviter that their invitation has been declined
         cursor.execute("SELECT * FROM users where [email] = ?",(inviter,))
         inviterData = list(cursor.fetchone())
         inboxList = json.loads(inviteeData[10])
@@ -186,37 +193,34 @@ def handleGroupInvite():
             "message": "You have declined your invitation to the group {} and your response has been sent to your inviter.".format(groupName)
         }))
 
-### CREATE VOTES SECTION ###
-@app.route('/createMeetupPoll', methods = ["POST"])
-def createMeetupPoll():
-    jsonData = request.json
-    groupName = jsonData["groupName"]
-    pollCreator = jsonData["creator"]
-    pollTitle = jsonData["pollTitle"]
-    pollData["uuid"] = str(uuid.uuid4())
-    pollPrompt = jsonData["pollPrompt"]
-    pollType = "MEETUP"
-    pollStatus = "ACTIVE"
-    pollOptions = jsonData["pollVoteOptions"]
-    pollVoteOptions = {}
-    for option in pollOptions:
-        pollVoteOptions[option] = 0
-    voters = []
+### CREATE POLLS SECTION ###
 
+# CREATE MEETUP/CLOSE POLL #~Helper
+def createMeetCloseHelper(pollType):
+    
+    jsonData =request.json
+    #GET DATA FROM FRONT END#
+    groupName = jsonData["groupName"]
     pollData = {}
-    pollData["pollCreator"] = pollCreator
-    pollData["pollTitle"] = pollTitle
-    pollData["pollPrompt"] = pollPrompt
+    pollData["pollCreator"] = jsonData["creatorFullName"]
+    pollData["pollTitle"] = jsonData["pollTitle"]
+    pollData["pollPrompt"] = jsonData["pollPrompt"]
     pollData["pollType"] = pollType
     pollData["uuid"] = str(uuid.uuid4())
-    pollData["pollStatus"] = pollStatus
+    pollData["pollStatus"] = "ACTIVE"
+    
+    pollVoteOptions = {}
+    for option in jsonData["pollVoteOptions"]:
+        pollVoteOptions[option] = 0
     pollData["pollVoteOptions"] = pollVoteOptions
-    pollData["voters"] = voters
+    pollData["voters"] = []
     pollData["result"] = None
+    #
 
-
+    #SQL CONNECTION
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
+
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
 
@@ -230,225 +234,103 @@ def createMeetupPoll():
     connection.commit()
     connection.close()
 
+@app.route('/createMeetupPoll', methods = ["POST"])
+def createMeetupPoll():
+
+    createMeetCloseHelper(pollType="MEETUP")
     return (jsonify{
-        "Message": "Your Create Meetup poll has been created."
+        "Message": "Your Meetup poll has been created."
     })
 
-@app.route('/createWarningPoll', methods = ["POST"])
-def createWarningPoll():
-    jsonData = request.json
+@app.route('/createCloseGroupPoll', methods = ["POST"])
+def createCloseGroupPoll():
+    createMeetCloseHelper(pollType="CLOSE")
+    return (jsonify{
+        "Message": "Your Close Group poll has been created."
+    })
+
+# CREATE WARNPRAISEKICK POLL #~Helper
+def createWarnPraiseKickHelper(pollType):
+    jsonData =request.json
+    #GET DATA FROM FRONT END#
     groupName = jsonData["groupName"]
-    pollCreator = jsonData["pollCreator"]
-    targetedMemberEmail = jsonData["email"]
-    targetedMemberName = jsonData["fullname"]
-    pollTitle = jsonData["pollTitle"]
-    pollData["uuid"] = str(uuid.uuid4())
-    pollPrompt = jsonData["pollPrompt"]
-    pollType = "WARNING"
-    pollStatus = "ACTIVE"
-    pollOptions = jsonData["pollVoteOptions"]
-    pollVoteOptions = {}
-    for option in pollOptions:
-        pollVoteOptions[option] = 0
-    voters = []
-
     pollData = {}
-    pollData["pollCreator"] = pollCreator
-    pollData["targetedMemberEmail"] = targetedMemberEmail
-    pollData["targetedMemberName"] = targetedMemberName
-    pollData["pollTitle"] = pollTitle
-    pollData["uuid"] = str(uuid.uuid4())
-    pollData["pollPrompt"] = pollPrompt
+    pollData["pollCreator"] = jsonData["creatorFullName"]
+    pollData["targetedMemberEmail"] = jsonData["targetedMemberEmail"]
+    pollData["targetedMemberName"] = jsonData["targetedMemberName"]
+    pollData["pollTitle"] = jsonData["pollTitle"]
+    pollData["pollPrompt"] = jsonData["pollPrompt"]
     pollData["pollType"] = pollType
-    pollData["pollStatus"] = pollStatus
+    pollData["uuid"] = str(uuid.uuid4())
+    pollData["pollStatus"] = "ACTIVE"
+    pollVoteOptions = {}
+    for option in jsonData["pollVoteOptions"]:
+        pollVoteOptions[option] = 0
     pollData["pollVoteOptions"] = pollVoteOptions
-    pollData["voters"] = voters
+    pollData["voters"] = []
     pollData["result"] = None
+    #
 
-
+    #SQL CONNECTION
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
+
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
 
-    groupPolls = json.loads(groupName[3])
-    groupPolls.append(pollData)
-    groupPolls = json.dumps(groupPolls)
-    groupData[3] = groupPolls
+    memberPolls = json.loads(groupName[3])
+    memberPolls.append(pollData)
+    memberPolls = json.dumps(memberPolls)
+    groupData[3] = memberPolls
 
     cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
     cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
     connection.commit()
     connection.close()
 
+@app.route('/createWarningPoll', methods = ["POST"])
+def createWarningPoll():
+    createWarnPraiseKickHelper(pollType="WARNING")
     return (jsonify{
         "Message": "Your warning poll has been created."
     })
 
 @app.route('/createPraisePoll', methods = ["POST"])
 def createPraisePoll():
-    jsonData = request.json
-    groupName = jsonData["groupName"]
-    pollCreator = jsonData["pollCreator"]
-    targetedMemberEmail = jsonData["email"]
-    targetedMemberName = jsonData["fullname"]
-    pollTitle = jsonData["pollTitle"]
-    pollData["uuid"] = str(uuid.uuid4())
-    pollPrompt = jsonData["pollPrompt"]
-    pollType = "PRAISE"
-    pollStatus = "ACTIVE"
-    pollOptions = jsonData["pollVoteOptions"]
-    pollVoteOptions = {}
-    for option in pollOptions:
-        pollVoteOptions[option] = 0
-    voters = []
-
-    pollData = {}
-    pollData["pollCreator"] = pollCreator
-    pollData["targetedMemberEmail"] = targetedMemberEmail
-    pollData["targetedMemberName"] = targetedMemberName
-    pollData["pollTitle"] = pollTitle
-    pollData["uuid"] = str(uuid.uuid4())
-    pollData["pollPrompt"] = pollPrompt
-    pollData["pollType"] = pollType
-    pollData["pollStatus"] = pollStatus
-    pollData["pollVoteOptions"] = pollVoteOptions
-    pollData["voters"] = voters
-    pollData["result"] = None
-
-
-    connection = sqlite3.connect(r"./database.db")
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
-    groupData = list(cursor.fetchone())
-
-    groupPolls = json.loads(groupName[3])
-    groupPolls.append(pollData)
-    groupPolls = json.dumps(groupPolls)
-    groupData[3] = groupPolls
-
-    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
-    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
-    connection.commit()
-    connection.close()
-
+    createWarnPraiseKickHelper(pollType="PRAISE")
     return (jsonify{
         "Message": "Your Praise poll has been created."
     })
 
-
 @app.route('/createKickPoll', methods = ["POST"])
 def createKickPoll():
-    jsonData = request.json
-    groupName = jsonData["groupName"]
-    pollCreator = jsonData["pollCreator"]
-    targetedMemberEmail = jsonData["email"]
-    targetedMemberName = jsonData["fullname"]
-    pollTitle = jsonData["pollTitle"]
-    pollData["uuid"] = str(uuid.uuid4())
-    pollPrompt = jsonData["pollPrompt"]
-    pollType = "KICK"
-    pollStatus = "ACTIVE"
-    pollOptions = jsonData["pollVoteOptions"]
-    pollVoteOptions = {}
-    for option in pollOptions:
-        pollVoteOptions[option] = 0
-    voters = []
-
-    pollData = {}
-    pollData["pollCreator"] = pollCreator
-    pollData["targetedMemberEmail"] = targetedMemberEmail
-    pollData["targetedMemberName"] = targetedMemberName
-    pollData["pollTitle"] = pollTitle
-    pollData["uuid"] = str(uuid.uuid4())
-    pollData["pollPromopt"] = pollPrompt
-    pollData["pollType"] = pollType
-    pollData["pollStatus"] = pollStatus
-    pollData["pollVoteOptions"] = pollVoteOptions
-    pollData["voters"] = voters
-    pollData["result"] = None
-
-
-    connection = sqlite3.connect(r"./database.db")
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
-    groupData = list(cursor.fetchone())
-
-    groupPolls = json.loads(groupName[3])
-    groupPolls.append(pollData)
-    groupPolls = json.dumps(groupPolls)
-    groupData[3] = groupPolls
-
-    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
-    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
-    connection.commit()
-    connection.close()
-
+    createMeetCloseHelper(pollType="KICK")
     return (jsonify{
         "Message": "Your Kick poll has been created."
     })
 
-@app.route('/createCloseGroupPoll', methods = ["POST"])
-def createCloseGroupPoll():
-    jsonData = request.json
-    groupName = jsonData["groupName"]
-    pollCreator = jsonData["creator"]
-    pollTitle = jsonData["pollTitle"]
-    pollData["uuid"] = str(uuid.uuid4())
-    pollPrompt = jsonData["pollPrompt"]
-    pollType = "CLOSE"
-    pollStatus = "ACTIVE"
-    pollOptions = jsonData["pollVoteOptions"]
-    pollVoteOptions = {}
-    for option in pollOptions:
-        pollVoteOptions[option] = 0
-    voters = []
+### END CREATE POLLS SECTION ###
 
-    pollData = {}
-    pollData["pollCreator"] = pollCreator
-    pollData["pollTitle"] = pollTitle
-    pollData["uuid"] = str(uuid.uuid4())
-    pollData["pollPrompt"] = pollPrompt
-    pollData["pollType"] = pollType
-    pollData["pollStatus"] = pollStatus
-    pollData["pollVoteOptions"] = pollVoteOptions
-    pollData["voters"] = voters
-    pollData["result"] = None
-
-
-    connection = sqlite3.connect(r"./database.db")
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
-    groupData = list(cursor.fetchone())
-
-    groupPolls = json.loads(groupName[4])
-    groupPolls.append(pollData)
-    groupPolls = json.dumps(groupPolls)
-    groupData[4] = groupPolls
-
-    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
-    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
-    connection.commit()
-    connection.close()
-
-    return (jsonify{
-        "Message": "Your Close Group has been created."
-    })
-
+### ISSUE VOTES SECTION ###
 @app.route('/issueMeetupVote', methods = ["POST"])
 def issueMeetupVote():
+
+    #GET JSON DATA
     jsonData = request.json
 
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["email"]
     pollUUID = jsonData["pollUUID"]
     groupName = jsonData["groupName"]
+    #
 
-
+    #SQL CONNECTION
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
 
+
+    #REGISTER VOTE
+    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
     groupPolls = json.loads(groupData[4])
     for index,poll in enumerate(groupPolls):
@@ -465,6 +347,7 @@ def issueMeetupVote():
     cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
     connection.commit()
 
+    #COUNT TOTAL VOTES
     groupPolls = json.loads(groupPolls)
     sumVotes = 0
     for index,poll in enumerate(groupPolls):
@@ -475,8 +358,10 @@ def issueMeetupVote():
             break
     totalMembers = len(groupData[5])
 
+
     maxResponseCount = 0
     answer = None
+    #IF TOTAL VOTES == TOTAL MEMBERS, CLOSE POLL
     if sumVotes == totalMembers:
         for index,poll in enumerate(groupPolls):
             if poll["uuid"] == pollUUID:
@@ -498,13 +383,98 @@ def issueMeetupVote():
     connection.close()
 
     return (jsonify({
-        "Message": "Your vote has been submitted."
+        "Message": "Your meetup vote has been submitted."
+    }))
+
+@app.route('/issueCloseGroupVote', methods = ["POST"])
+def issueCloseGroupVote():
+
+    #GET JSON DATA
+    jsonData = request.json
+
+    pollResponse = jsonData["pollResponse"] #Option they selected
+    pollResponder = jsonData["email"]
+    pollUUID = jsonData["pollUUID"]
+    groupName = jsonData["groupName"]
+    #
+
+    #SQL CONNECTION
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+
+
+    #REGISTER VOTE
+    cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
+    groupData = list(cursor.fetchone())
+    groupPolls = json.loads(groupData[4])
+    for index,poll in enumerate(groupPolls):
+        if poll["uuid"] == pollUUID:
+            poll["voters"].append(pollResponder)
+            pollVoteOptions = poll["pollVoteOptions"]
+            pollVoteOptions[pollResponse] += 1
+            poll["pollVoteOptions"] = pollVoteOptions
+            groupPolls[index] = poll
+            break
+    groupPolls = json.dumps(groupPolls)
+    groupData[4] = groupPolls
+    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+    cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+    connection.commit()
+
+    #COUNT TOTAL VOTES
+    groupPolls = json.loads(groupPolls)
+    sumVotes = 0
+    for index,poll in enumerate(groupPolls):
+        if poll["uuid"] == pollUUID:
+            pollVoteOptions = poll["pollVoteOptions"]
+            for option,voteCount in pollVoteOptions.items():
+                sumVotes += voteCount
+            break
+    totalMembers = len(groupData[5])
+
+
+    maxResponseCount = 0
+    answer = None
+    #IF TOTAL VOTES == TOTAL MEMBERS, CLOSE POLL
+    if sumVotes == totalMembers:
+        for index,poll in enumerate(groupPolls):
+            if poll["uuid"] == pollUUID:
+                pollVoteOptions = poll["pollVoteOptions"]
+                for option,voteCount in pollVoteOptions.items():
+                    if voteCount > maxResponseCount:
+                        maxResponseCount = voteCount
+                        answer = option
+                if maxResponseCount == totalMembers:
+                    if answer.lower() == "yes":
+                        poll["result"] = answer
+                        poll["pollStatus"] = "CLOSED"
+                        groupPolls[index] = poll
+                         
+                        #NOTIFY SUPER USER THAT GROUP MUST BE CLOSED
+                        reportMessage = "Members have voted to close this group."
+
+                        connection = sqlite3.connect(r"./database.db")
+                        cursor = connection.cursor()
+                        cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(groupName,reportMessage,"CLOSE","OPEN",None))
+                        connection.commit()
+                else:
+                    poll["result"] = answer
+                    poll["pollStatus"] = "CLOSED"
+                    groupPolls[index] = poll
+            break
+        groupPolls = json.dumps(groupPolls)
+        groupData[4] = groupPolls
+        cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
+        cursor.execute("INSERT INTO groups (groupName,status,posts,polls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+        connection.commit()
+    connection.close()
+
+    return (jsonify({
+        "Message": "Your meetup vote has been submitted."
     }))
 
 
-### ISSUE VOTES SECTION ###
-
-# REGISTER VOTE #~HELPER
+# REGISTER MEMBER POLL VOTE #~HELPER
 def registerVote(cursor,groupName,connection,pollUUID):
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
@@ -524,7 +494,7 @@ def registerVote(cursor,groupName,connection,pollUUID):
     connection.commit()
 
 # HANDLE POLL CLOSURE #~HELPER
-def handleWarningPraiseClosure(cursor,groupName,pollType,connection,pollUUID,pollTargetedMemberEmail):
+def handleWarningPraiseKickVote(cursor,groupName,pollType,connection,pollUUID,pollTargetedMemberEmail):
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?"(groupName,))
     groupData = list(cursor.fetchone())
     memberPolls = json.loads(groupData[3])
@@ -857,6 +827,7 @@ def addToWhiteBox():
         "Message": "The user has been registered to your whitebox.".format(emailAddition)
     }))
 
+@app.route('/addToBlackBox', methods = ["POST"])
 def addToBlackBox():
     #GET DATA FROM FRONT END
     jsonData = request.json
