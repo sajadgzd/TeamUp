@@ -25,12 +25,62 @@ $(document).ready(function() {
   var timeelems = document.querySelectorAll('.timepicker');
   var timeinstances = M.Timepicker.init(timeelems, {});
 
+  var selectElems = document.querySelectorAll('select');
+  var selectInstances = M.FormSelect.init(selectElems);
+ 
   let numOfChoices = 2;
+
+  $("#polls-button").click(function(){
+    let createrEmail = "X@gmail.com"
+
+    let pollTitle = $("#pollTitle").val().trim()
+    let pollPrompt = $("#pollDescription").val().trim()
+    let pollType = $('#pollSelect').val()
+    console.log(pollTitle)
+    console.log(pollPrompt)
+    console.log("poll Type:   ", pollType)
+
+    let targetedMember = $("#targetedMemberEmail").val().trim()
+    let pollStatus = "ACTIVE"
+    let pollVoteChoice = "yes"
+    let pollVoteChoiceVal = 0;
+    let pollVoteChoiceValComplement = 1;
+
+    if (pollVoteChoice == "yes"){
+      pollVoteChoiceVal = 1
+      pollVoteChoiceValComplement = 0;
+    }
+
+    let votersArray = []
+
+    var pollData = {
+      pollTitle: pollTitle,
+      pollPrompt: pollPrompt,
+      pollType: pollType,
+      targetedMember: targetedMember,
+      pollStatus: pollStatus,
+      pollVoteOptions: {
+        yes: pollVoteChoiceVal,
+        no: pollVoteChoiceValComplement
+      },
+      voters: createrEmail
+    };
+
+    $.post("/createPoll", pollData)
+    .then(function(data) {
+      console.log("got data back from POST call", JSON.stringify(data));
+      alert("POST worked...");
+    });
+
+  
+  });
+
+
 
   $("#radiobtn").click(function(){
     var radioValue = $("input[name='group1']:checked").val();
     if(radioValue){
-        alert("Your chose " + radioValue);
+        alert("Your chose herew" + radioValue);
     }
   });
   $("#addSchedule-button").click(function(){
@@ -106,7 +156,7 @@ $(document).ready(function() {
 
     $.post("/postText", msg)
     .then(function(data) {
-      console.log("got data back from POST call", data.textmsg);
+      console.log("got data back from POST call");
       alert("POST worked...");
     });
 

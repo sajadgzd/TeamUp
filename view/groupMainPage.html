@@ -64,8 +64,8 @@
             <div class="row">
   
               <form class="col s6 m6" id="reg-form">
-                  <div class="col s6 m6 info">
-                      <h5 class="left-align register" style="margin-left: 0px">Create Meeting Schedule</h5>
+                  <div class="col s6 m12 info">
+                      <h5 class="left-align register" style="margin-left: 0px">Create a Meeting Poll</h5>
                     </div>
                   <div class="input-field col s12">
                     <input id="scheduleText" type="text" class="validate" required>
@@ -116,6 +116,52 @@
               </form>
 
               <form class="col s6 m6" id="reg-form">
+                <div class="col s6 m12 info">
+                    <h5 class="left-align register" style="margin-left: 0px">Create a Member Poll</h5>
+                  </div>
+                <div class="input-field col s12">
+                    <select id="pollSelect">
+                      <option value="" disabled selected>Choose your Poll Type</option>
+                      <option value="Warning">Warning</option>
+                      <option value="Praise">Praise</option>
+                      <option value="Kickout">Kickout</option>
+                    </select>
+                    <label>Poll Type</label>
+                </div>
+                <div class="input-field col s12">
+                  <input id="pollTitle" type="text" class="validate" required>
+                  <label for="pollTitle">Title</label>
+                </div>
+                <div class="input-field col s12">
+                  <input id="pollDescription" type="text" class="validate" required>
+                  <label for="pollDescription">Description</label>
+                </div>
+                <div class="input-field col s12">
+                  <input id="targetedMemberEmail" type="text" class="validate" required>
+                  <label for="targetedMemberEmail">Targeted Member Email</label>
+                </div>
+                <!-- <form style="margin-left: 2%">
+                  <p>
+                    <label>
+                      <input name="group1" type="radio" checked />
+                      <span>Yes</span>
+                    </label>
+                  </p>
+                  <p>
+                    <label>
+                      <input name="group1" type="radio" />
+                      <span>No</span>
+                    </label>
+                  </p>
+                </form> -->
+                <div class="input-field col s6 left-align">
+                    <a href="#" id="polls-button" class="btn waves-effect waves-light light-blue accent-4">Post
+                        <i class="material-icons right">done</i>
+                    </a>
+                </div>
+            </form>
+
+              <form class="col s6 m6" id="reg-form">
                 <div class="col s6 m6 info">
                     <h5 class="left-align register" style="margin-left: 0px">Create Post</h5>
                   </div>
@@ -142,30 +188,32 @@
                   <h6>Hey guys, Meeting is to be scheduled to work on the software engineering group project.</h6>
                   <h6>Please pick the best time and vote for one of the choices below</h6>
                   <br>
-                  <p>
-                    <label>
-                      <input name="group1" type="radio" value="1"/>
-                      <span>05/01/2020 From 10:00 AM to 12:00 AM</span>
-                    </label>
-                  </p>
-                  <p>
-                    <label>
-                      <input name="group1" type="radio" value="2"/>
-                      <span>05/01/2020 From 10:00 AM to 12:00 AM</span>
-                    </label>
-                  </p>
-                  <p>
-                    <label>
-                      <input class="with-gap" name="group1" type="radio"  value="3"/>
-                      <span>05/01/2020 From 12:00 AM to 2:00 PM</span>
-                    </label>
-                  </p>
-                  <p>
-                    <label>
-                      <input name="group1" type="radio" value="4"/>
-                      <span>05/01/2020 From 02:00 PM to 4:00 PM</span>
-                    </label>
-                  </p>
+                  <form action="#">
+                    <p>
+                      <label>
+                        <input name="group1" type="radio" value="1"/>
+                        <span>05/01/2020 From 10:00 AM to 12:00 AM</span>
+                      </label>
+                    </p>
+                    <p>
+                      <label>
+                        <input name="group1" type="radio" value="2"/>
+                        <span>05/01/2020 From 10:00 AM to 12:00 AM</span>
+                      </label>
+                    </p>
+                    <p>
+                      <label>
+                        <input class="with-gap" name="group1" type="radio"  value="3"/>
+                        <span>05/01/2020 From 12:00 AM to 2:00 PM</span>
+                      </label>
+                    </p>
+                    <p>
+                      <label>
+                        <input name="group1" type="radio" value="4"/>
+                        <span>05/01/2020 From 02:00 PM to 4:00 PM</span>
+                      </label>
+                    </p>
+                  </form>
                   <a href="#" id="radiobtn" class="btn waves-effect waves-light light-blue accent-4" style="margin-left: 2%">Submit
                     <i class="material-icons right">done</i>
                   </a>
@@ -183,11 +231,10 @@
   
           </div>
 
-          <div class="col s12 m3 info" style="margin-left: 4%">
+          <!-- <div class="col s12 m3 info" style="margin-left: 4%">
             <ul class="collection with-header">
-              <!-- <a href="#" id="closeGroup-button" class="btn waves-effect waves-light light-blue accent-4 right-align right" style="margin: 0">Close Group</a> -->
               <li><a id="closeGroup-button" class="btn waves-effect waves-light light-blue accent-4 right-align right modal-trigger" href="#modal1">Close Group</a></li>
-              <!-- Modal Structure -->
+
               <div id="modal1" class="modal">
                 <div class="modal-content">
                   <h4>Closing Assesment</h4>
@@ -289,7 +336,7 @@
                 </div>
               </li>
             </ul>
-          </div>
+          </div> -->
 
 
         </div>  
