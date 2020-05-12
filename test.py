@@ -42,6 +42,7 @@ def getUserData():
     userData[6] = json.loads(userData[6]) #invitations
     userData[7] = json.loads(userData[7]) #blacklist
     userData[8] = json.loads(userData[8]) #whitelist
+    userData[9] = json.loads(userData[9]) #compliments
     userData[10] = json.loads(userData[10]) #inbox
     userData[11] = json.loads(userData[11]) #referredUsers
     return (jsonify({
