@@ -1177,8 +1177,8 @@ def handleApplication():
     rowData.append(referredUsers)
 
 
-    # accept the invite
-    if response.lower() == "accepted":
+    # accept the applications
+    if response.lower() == "accept":
         #first update the signup row for this user and change user status
         rowData[5] = "OU"
         
@@ -1194,9 +1194,8 @@ def handleApplication():
         connection.commit()
         connection.close()
         return (jsonify({"Message" : "{} is now registered to Team Up.".format(email)}))
-
-    #decline the invite
-    elif response.lower() == "declined":
+    #decline the application
+    elif response.lower() == "decline":
 
         signUpUserData[6] = "REJECTED"
         #modify the row
@@ -1207,31 +1206,42 @@ def handleApplication():
         return jsonify({
             "Message": "{} will be notified that their application has been rejected.".format(email)
         })
-
-@app.route('/blacklistFromServer', methods = ["POST"])
-def blacklistFromServer():
-    jsonData =json.loads(request.get_data())
-
-    userEmail = jsonData["userEmail"]
-
-    #------Connection-----#
-    connection = sqlite3.connect(r"./database.db")
-    cursor = connection.cursor()
-
-    #------Get the visitor information-----#
-    cursor.execute("SELECT * FROM signup where [email] = ?",(userEmail,))
-    visitorData = list(cursor.fetchone())
-
-    #modify the visitor signup row
-    visitorData[6] = "BLACKLISTED"
-    cursor.execute("DELETE * FROM signup WHERE [email] = ?", (userEmail,))
-    cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
-    connection.commit()
-    connection.close()
-
-    return jsonify({
-            "Message": "The visitor has been added to blacklist."
+    #blacklist the application
+    elif response.lower() == "blacklist":
+        signUpUserData[6] = "BLACKLISTED"
+        #modify the row
+        cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+        cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(signUpUserData))
+        connection.commit()
+        connection.close()
+        return jsonify({
+            "Message": "{} will be notified that their application has been blacklisted.".format(email)
         })
+
+# @app.route('/blacklistFromServer', methods = ["POST"])
+# def blacklistFromServer():
+#     jsonData =json.loads(request.get_data())
+
+#     userEmail = jsonData["userEmail"]
+
+#     #------Connection-----#
+#     connection = sqlite3.connect(r"./database.db")
+#     cursor = connection.cursor()
+
+#     #------Get the visitor information-----#
+#     cursor.execute("SELECT * FROM signup where [email] = ?",(userEmail,))
+#     visitorData = list(cursor.fetchone())
+
+#     #modify the visitor signup row
+#     visitorData[6] = "BLACKLISTED"
+#     cursor.execute("DELETE * FROM signup WHERE [email] = ?", (userEmail,))
+#     cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
+#     connection.commit()
+#     connection.close()
+
+#     return jsonify({
+#             "Message": "The visitor has been added to blacklist."
+#         })
 
 
 
