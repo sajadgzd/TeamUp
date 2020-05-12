@@ -18,10 +18,53 @@ $(document).ready(function() {
   var modalElems = document.querySelectorAll('.modal');
   var modalInstances = M.Modal.init(modalElems, {});
 
+  var selectElems = document.querySelectorAll('select');
+  var selectInstances = M.FormSelect.init(selectElems, {});
+
+  var selectInstance = M.FormSelect.getInstance(selectElems);
+
   let email = localStorage.getItem('email');
   console.log("email logged in:\t", email);
 
   $("#userEmail").text(email);
+
+  $.ajax({
+    url: "/getAllUserEmails",
+    method: "GET"
+  }).then(function(response) {
+      console.log("GOT BACK SOMETHING")
+      console.log("NOW: \n", response.allUsersEmail.length);
+      console.log("Data:\n",response["allUsersEmail"])
+
+      for(let i = 0; i< response.allUsersEmail.length; i++){
+        console.log(response["allUsersEmail"][i])
+        if(response["allUsersEmail"][i] != email){
+          $('#whiteEmailAddition').append(`<option value="${response["allUsersEmail"][i]}"> 
+                                      ${response["allUsersEmail"][i]} 
+                                  </option>`); 
+        }
+          
+      }
+      $('select').formSelect();
+      
+  });
+
+  $(document.body).on("click", "#addWhite-button", function(event) {
+
+    console.log("EMAIL ADDITION: \t", $('#whiteEmailAddition').val())
+    let addWhiteData = {
+      userEmail: email,
+      emailAddition: $('#whiteEmailAddition').val()
+    }
+
+    $.post("/addToWhiteBox", JSON.stringify(addWhiteData))
+    .then(function(response) {
+      console.log("ADD TO WHITEBOX call worked with\t " + JSON.stringify(response));
+      M.toast({html: response["Message"]})
+    });
+
+
+  })
 
 
     emailData = {

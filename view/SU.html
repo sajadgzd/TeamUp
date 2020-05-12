@@ -228,19 +228,21 @@
           <a class="waves-effect waves-light btn modal-trigger" href="#AddWhiteModal">Add to White List</a>
   
           <!-- Modal Structure -->
-          <div id="AddWhiteModal" class="modal">
+          <div id="AddWhiteModal" class="modal" style="height: 400px;">
             <div class="modal-content">
               <h4>Add to your White list</h4>
-              <p>Enter the user name</p>
+              <p>Pick your email</p>
               <form class="col s6 m6" id="reg-form" style="margin-left: 25%">
-                <div class="input-field col s12">
-                  <input id="username" type="text" class="validate" required>
-                  <label for="username">Username</label>
+                <div class="input-field col s12 center">
+                  <select id="whiteEmailAddition">
+                    <option value="" disabled selected>Choose your user</option>
+                  </select>
+                  <label>Choose your user</label>
                 </div>
               </form>
             </div>
             <div class="modal-footer">
-              <a href="#!" class="modal-close waves-effect waves-green btn-flat">Submit</a>
+              <a href="#!" class="modal-close waves-effect waves-green btn-flat" id="addWhite-button">Submit</a>
             </div>
           </div>
   
