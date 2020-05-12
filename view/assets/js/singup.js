@@ -19,7 +19,13 @@ $(document).ready(function() {
         url: "/getAllUserEmails",
         method: "GET"
     }).then(function(response) {
-        console.log("GET root worked fine\n",response);
+        console.log("GET root worked fine\n",response.allUserEmail);
+
+        for(let i = 0; i<response.allUserEmail.length; i++){
+           $('#referMemberSelect').append(`<option value="${response.allUserEmail[i]}"> 
+                                       ${response.allUserEmail[i]} 
+                                  </option>`); 
+        }
 
   // $('#referMemberSelect').append(`<option value="${optionValue}"> 
   //                                      ${optionText} 
