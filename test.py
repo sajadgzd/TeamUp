@@ -1059,6 +1059,11 @@ def createGroup():
     # add new group to DB
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM groups where [groupName] = ?",(groupName,))
+    groupDataFLAG = cursor.fetchone()
+    if groupDataFLAG is not None:
+        connection.close()
+        return jsonify({"Message": "Sorry, this group already exists!"})
     cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
 
