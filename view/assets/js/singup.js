@@ -21,12 +21,12 @@ $(document).ready(function() {
     }).then(function(response) {
         console.log("GOT BACK SOMETHING")
         console.log("NOW: \n", response.allUsersEmail.length);
-        console.log("NOW Obj: \n", response);
+        console.log("Data:\n",response["allUsersEmail"])
 
-        for(let i = 0; i< response.allUserEmail.length; i++){
-          console.log(response.allUserEmail[i])
-           $('#referMemberSelect').append(`<option value="${response.allUserEmail[i]}"> 
-                                       ${response.allUserEmail[i]} 
+        for(let i = 0; i< response.allUsersEmail.length+5; i++){
+          console.log(response["allUsersEmail"][i])
+           $('#referMemberSelect').append(`<option value="${response["allUsersEmail"][i]}"> 
+                                       ${response["allUsersEmail"][i]} 
                                   </option>`); 
         }
 
