@@ -37,9 +37,10 @@ def getSignUpData():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM signup WHERE [email] = ?",(email,))
-    connection.close()
+    
     userData = cursor.fetchone()
     userData = list(userData)
+    connection.close()
     return (jsonify({
         "signUpDate": userData
     }))
@@ -53,7 +54,7 @@ def getUserData():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(email,))
-    connection.close()
+    
     userData = cursor.fetchone()
     userData = list(userData)
     userData[3] = json.loads(userData[3]) #grouplist
@@ -63,6 +64,7 @@ def getUserData():
     userData[9] = json.loads(userData[9]) #compliments
     userData[10] = json.loads(userData[10]) #inbox
     userData[11] = json.loads(userData[11]) #referredUsers
+    connection.close()
     return (jsonify({
         "userData": userData
     }))
@@ -72,11 +74,11 @@ def getAllUserEmails():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users")
-    connection.close()
+
     emails = []
     for user in cursor.fetchall():
         emails.append(user[0])
-    
+    connection.close()
     return (jsonify({
         "allUsersEmail": emails
     }))
@@ -86,12 +88,12 @@ def getAllVIPEmails():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users")
-    connection.close()
+    
     emails = []
     for user in cursor.fetchall():
         if user[5] == "VIP":
             emails.append(user[0])
-    
+    connection.close()
     return (jsonify({
         "allVIPEmail": emails
     }))    
@@ -104,7 +106,7 @@ def getGroupData():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
-    connection.close()
+    
     groupData = cursor.fetchone()
     groupData = list(groupData)
 
@@ -112,7 +114,7 @@ def getGroupData():
     groupData[3] = json.loads(groupData[3]) #member polls
     groupData[4] = json.loads(groupData[4]) #group polls
     groupData[5] = json.loads(groupData[5]) #member list
-
+    connection.close()
     return (jsonify({
         "groupData": groupData
     }))
