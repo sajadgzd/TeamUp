@@ -2,11 +2,11 @@
 $(document).ready(function() {
 
   $('.sidenav').sidenav();
-  var elems = document.querySelectorAll('.chips');
-  var instances = M.Chips.init(elems, {});
+  // var elems = document.querySelectorAll('.chips');
+  // var instances = M.Chips.init(elems, {});
 
-  let elem = $(".chips")
-  var instance = M.Chips.getInstance(elem);
+  // let elem = $(".chips")
+  // var instance = M.Chips.getInstance(elem);
 
   $(document.body).on("click", "#signup-button", function(event) {
     event.preventDefault();
