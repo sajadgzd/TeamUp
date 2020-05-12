@@ -63,8 +63,8 @@ $(document).ready(function() {
 
     $.post("/signupApplication", JSON.stringify(user))
     .then(function(response) {
-      console.log("signup POST wroked with JSON:\t");
-      M.toast({html: 'Signed Up!'})
+      console.log(response["Message"]);
+      M.toast({html: `${response["Message"]}`})
     });
 
   });
