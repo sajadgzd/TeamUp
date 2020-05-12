@@ -24,23 +24,22 @@ $(document).ready(function() {
     event.preventDefault();
     let email = $("#email").val().trim()
     let password = $("#password").val().trim()
-    // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
     // console.log("text value:", text)
 
     var userlogin = {
       email: email,
-      password: password 
+      credentials: password 
     }
 
     console.log("LOGIN FORM COMPLETED:\v", JSON.stringify(userlogin))
 
-    $.post("/login", userlogin)
-    .then(function(data) {
+    $.post("/loginUser", JSON.stringify(userlogin))
+    .then(function(response) {
       console.log("login POST call worked");
-      if(true){
-        localStorage.setItem('userEmail', 'e@gmail.com');
-        let printStorage = localStorage.getItem('userEmail');
-        console.log(printStorage);
+      // if(true){
+      //   localStorage.setItem('userEmail', 'e@gmail.com');
+      //   let printStorage = localStorage.getItem('userEmail');
+      //   console.log(printStorage);
         // localStorage.removeItem('userEmail')
         // printStorage = localStorage.getItem('userEmail');
         // console.log(printStorage);
@@ -62,7 +61,7 @@ $(document).ready(function() {
     //   }
 
     //   $.post("/newPassword", newPassword)
-    //   .then(function(data) {
+    //   .then(function(response) {
     //     console.log("new pass POST call worked");
     //   });
 
