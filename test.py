@@ -35,7 +35,7 @@ def getAllSignUpData():
     signUpData = []
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM signup WHERE [email] = ?",(email,))
+    cursor.execute("SELECT * FROM signup")
     
     for userData in cursor.fetchall():
         signUpData.append(list(userData))
