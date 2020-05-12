@@ -1185,7 +1185,7 @@ def handleApplication():
         signUpUserData[6] = "USER"
         
 
-        cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+        cursor.execute("DELETE FROM signup WHERE [email] = ?", (email,))
         cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(signUpUserData))
         connection.commit()
 
@@ -1199,7 +1199,7 @@ def handleApplication():
 
         signUpUserData[6] = "REJECTED"
         #modify the row
-        cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+        cursor.execute("DELETE FROM signup WHERE [email] = ?", (email,))
         cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(signUpUserData))
         connection.commit()
         connection.close()
@@ -1210,7 +1210,7 @@ def handleApplication():
     elif response.lower() == "blacklist":
         signUpUserData[6] = "BLACKLISTED"
         #modify the row
-        cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+        cursor.execute("DELETE FROM signup WHERE [email] = ?", (email,))
         cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(signUpUserData))
         connection.commit()
         connection.close()
