@@ -48,6 +48,33 @@ def getUserData():
         "userData": userData
     }))
 
+@app.route('/getAllUserEmails',method = ["GET"])
+def getAllUserEmails():
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users")
+    emails = []
+    for user in cursor.fetchall():
+        emails.append(user[0])
+    
+    return (jsonify({
+        "allUsersEmail": emails
+    }))
+
+@app.route('/getAllVIPEmails',method = ["GET"])
+def getAllVIPEmails():
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users")
+    emails = []
+    for user in cursor.fetchall():
+        if user[5] == "VIP":
+            emails.append(user[0])
+    
+    return (jsonify({
+        "allVIPEmail": emails
+    }))    
+
 @app.route('/getGroupData', methods = ["POST"])
 def getGroupData():
     jsonData = request.json

@@ -14,10 +14,22 @@ $(document).ready(function() {
   var selectInstance = M.FormSelect.getInstance(selectElems);
 
 
-  
-  $('#referMemberSelect').append(`<option value="${optionValue}"> 
-                                       ${optionText} 
-                                  </option>`); 
+  function getData() {
+    $.ajax({
+        url: "/getAllUserEmails",
+        method: "GET"
+    }).then(function(response) {
+        console.log("GET root worked fine\n",response);
+
+  // $('#referMemberSelect').append(`<option value="${optionValue}"> 
+  //                                      ${optionText} 
+  //                                 </option>`); 
+        
+    });
+  };
+  getData();
+
+
 
 
   $(document.body).on("click", "#signup-button", function(event) {
@@ -31,10 +43,6 @@ $(document).ready(function() {
     let referringMember = $('#referMemberSelect').val()
 
     let interests = $("#interests").val().trim()
-    // console.log("CHIP 0:\t", instance.chipsData)
-    // for(let i=0; i< instance.chipsData.length; i++){
-    //   interests += instance.chipsData[i].tag
-    // }
 
     let user = {
       fullname: fullname,
