@@ -1527,7 +1527,7 @@ def root():
     # return send_from_directory(app.static_folder, 'landing.html')
 
 
-@app.route('/signup', methods=['GET','POST'])
+@app.route('/signup', methods=['GET'])
 def signup():
     return render_template("signup.html")
     # return send_from_directory(app.static_folder, 'landing.html')
