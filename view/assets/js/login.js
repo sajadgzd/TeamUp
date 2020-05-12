@@ -46,8 +46,13 @@ $(document).ready(function() {
         // printStorage = localStorage.getItem('userEmail');
         // console.log(printStorage);
 
-      });
-      else if (response["Success"])
+      }
+      else if (response["Error"]){
+        console.log(response["Error"]);
+        M.toast({html: `${response["Error"]}`})
+      }
+
+    });
 
     // loginFirstTime = true;
     // if(loginFirstTime){
