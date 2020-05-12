@@ -48,7 +48,7 @@ def getUserData():
         "userData": userData
     }))
 
-@app.route('/getAllUserEmails',method = ["GET"])
+@app.route('/getAllUserEmails',methods = ["GET"])
 def getAllUserEmails():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
@@ -61,7 +61,7 @@ def getAllUserEmails():
         "allUsersEmail": emails
     }))
 
-@app.route('/getAllVIPEmails',method = ["GET"])
+@app.route('/getAllVIPEmails',methods = ["GET"])
 def getAllVIPEmails():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
