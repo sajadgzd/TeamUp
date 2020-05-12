@@ -83,7 +83,7 @@ def getGroupData():
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE [groupName] = ?",(groupName,))
+    cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
     groupData = cursor.fetchone()
     groupData = list(groupData)
 
