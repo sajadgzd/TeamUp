@@ -4,6 +4,19 @@
 
 $(document).ready(function() {
 
+  $('.sidenav').sidenav();
+  $('.tabs').tabs();
+  
+  $('.chips').chips();
+  $('.chips-placeholder').chips({
+    placeholder: 'Enter a username',
+    secondaryPlaceholder: '+User',
+  });
+  let chipElem = $(".chips")
+  var chipInstance = M.Chips.getInstance(chipElem);
+
+  var modalElems = document.querySelectorAll('.modal');
+  var modalInstances = M.Modal.init(modalElems, {});
 
   let email = localStorage.getItem('email');
   console.log("email logged in:\t", email);
