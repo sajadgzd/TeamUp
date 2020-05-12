@@ -89,17 +89,54 @@ $(document).ready(function() {
                                   `</div>` +
                                 `</div>`)
         }
-
-
-
       });
-
-
     }
-
-
-  
   });
+
+
+
+  let signupData = {
+    email: email
+  }
+
+  $.post("/getSignUpData", JSON.stringify(signupData))
+  .then(function(response) {
+    console.log("get SignupData \t " + JSON.stringify(response));
+    // console.log("get SignupData \t " + JSON.stringify(response["groupData"][1]));
+
+    // if((response["groupData"][1]) == "PENDING"){
+
+      // $("#NewRegistrationsTab").append(`<div class="col s12 m4">` +
+      //                                     `<div class="card blue-grey darken-1">` +
+      //                                       `<div class="card-content white-text">` +
+      //                                         `<span class="card-title">New User Name</span>` +
+      //                                       `</div>` +
+      //                                       `<div class="card-action">` +
+      //                                         `<a href="#">Accept</a>` +
+      //                                         `<a href="#">Decline</a>` +
+      //                                       `</div>` +
+      //                                     `</div>` +
+      //                                   `</div>`)
+    // }
+  });
+
+
+
+
+
+
+  // <div class="col s12 m4">
+  // <div class="card blue-grey darken-1">
+  //   <div class="card-content white-text">
+  //     <span class="card-title">New User Name</span>
+  //     <p>This section contains basic information regarding the user.<br></p>
+  //   </div>
+  //   <div class="card-action">
+  //     <a href="#">Accept</a>
+  //     <a href="#">Decline</a>
+  //   </div>
+  // </div>
+  // </div>
 
 
 
