@@ -1069,7 +1069,7 @@ def createGroup():
     groupList = json.loads(userData[3])
     groupList.append(groupName)
     userData[3] = json.dumps(groupList)
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (creator,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (creator,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     connection.commit()
     connection.close()
