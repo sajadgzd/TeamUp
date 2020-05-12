@@ -78,9 +78,11 @@ $(document).ready(function() {
       email : checkStatusEmail
     }
 
-    $.post("/checkStatus", statusEmail)
+    console.log("EMAIL CHECK\t", checkStatusEmail);
+
+    $.post("/checkStatus", JSON.stringify(statusEmail))
     .then(function(data) {
-      console.log("signup POST wroked with JSON:\t" + JSON.stringify(data));
+      console.log("CHECK STATUS POST wroked with JSON:\t" + JSON.stringify(data));
       let form = $("#lastItemForm")
 
       if (data.Status == "PENDING" || data.Status == "USER" || data.Status == "APPEALED" || data.Status == "BLACKLISTED"){
