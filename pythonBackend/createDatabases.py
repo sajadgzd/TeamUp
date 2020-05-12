@@ -20,7 +20,8 @@ if "signup" not in tableList:
                               interests               TEXT,\
                               credentials             TEXT,\
                               reference               TEXT,\
-                              rejectionCount          INTEGER\
+                              appeal                  TEXT,\
+                              status                  TEXT\
                          );"
                          )
      connection.commit()
@@ -33,7 +34,12 @@ if "users" not in tableList:
                               groupList            TEXT,\
                               reputationScore      TEXT,\
                               status               TEXT,\
-                              invitations          TEXT\
+                              invitations          TEXT,\
+                              blacklist            TEXT,\
+                              whitelist            TEXT,\
+                              compliments          TEXT,\
+                              inbox                TEXT,\
+                              referredUsers        TEXT\
                          );"
                          )
      connection.commit()
@@ -43,6 +49,35 @@ if "groups" not in tableList:
                               groupName            TEXT PRIMARY KEY,\
                               status               TEXT,\
                               posts                TEXT,\
-                              polls                TEXT);"
+                              memberPolls          TEXT,\
+                              groupPolls           TEXT,\
+                              members              TEXT);"
                     )
+     connection.commit()
+
+if "moderationRequests" not in tableList:
+
+     """
+     subject: subject of request (can be self, another user, or group)
+     message: accompanying message for request
+     type: REP_APPEAL, SIGNUP_APPEAL, REPORT
+     status: OPEN, CLOSED
+     number: sequential number of request
+     """
+     
+     cursor.execute("CREATE TABLE moderationRequests  (\
+                              subject             TEXT,\
+                              message             TEXT,\
+                              type                TEXT,\
+                              status              TEXT,\
+                              number              INTEGER PRIMARY KEY);"
+                    )
+if "democraticSU" not in tableList:
+     
+     cursor.execute("CREATE TABLE democraticSU  (\
+                              poll                TEXT,\
+                              userexists          INTEGER,\
+                              pollexists          INTEGER);"
+                    )
+
      connection.commit()

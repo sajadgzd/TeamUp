@@ -1409,8 +1409,8 @@ def issueDemocraticSuperUserVote():
 
 ########## VISITOR USER CODE ##########
 
-@app.route('/signupApplication', methods = ["POST"])
-def signUpApplication():
+@app.route('/signup', methods = ["POST"])
+def signUp():
     jsonData = request.json
     #
     rowData = [] #Data to be uploaded to database
@@ -1522,13 +1522,8 @@ def appealRejection():
 
 @app.route('/', methods=['GET'])
 def root():
+    
     return render_template("landing.html")
-    # return send_from_directory(app.static_folder, 'landing.html')
-
-
-@app.route('/signup', methods=['GET'])
-def signup():
-    return render_template("signup.html")
     # return send_from_directory(app.static_folder, 'landing.html')
 
 
