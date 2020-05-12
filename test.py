@@ -1620,7 +1620,7 @@ def appealRejection():
 
     connection.commit()
     connection.close()
-    return (jsonify({"Success" : "appeal has been submitted."}))
+    return (jsonify({"Message" : "Your appeal has been submitted!"}))
         
 ########## END VISITOR USER CODE ##########
 
