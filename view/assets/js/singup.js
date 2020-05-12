@@ -16,10 +16,10 @@ $(document).ready(function() {
     let email = $("#email").val().trim()
     let password = $("#password").val().trim()
     let referringMember = $("#referringMember").val().trim()
-    let interests = []
+    let interests = ""
     // console.log("CHIP 0:\t", instance.chipsData)
     for(let i=0; i< instance.chipsData.length; i++){
-      interests.push(instance.chipsData[i].tag)
+      interests += instance.chipsData[i].tag
     }
 
     let user = {
