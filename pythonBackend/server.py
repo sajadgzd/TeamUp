@@ -1519,5 +1519,13 @@ def appealRejection():
         
 ########## END VISITOR USER CODE ##########
 
+
+@app.route('/', methods=['GET'])
+def root():
+    
+    return render_template("landing.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
