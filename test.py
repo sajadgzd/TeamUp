@@ -1483,7 +1483,7 @@ def signUpApplication():
 
 @app.route('/checkStatus', methods = ["POST"])
 def checkStatus():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
