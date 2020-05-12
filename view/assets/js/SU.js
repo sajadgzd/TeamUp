@@ -4,19 +4,23 @@
 
 $(document).ready(function() {
 
-  // function getData() {
-  //   $.ajax({
-  //       url: "/test1",
-  //       method: "GET"
-  //   }).then(function(response) {
-  //       console.log("GET root worked fine\n",response);
-  //       $("#test1").append("<p style='font-weight: bold'> Type: " + response.tasks[0].description + "</p><br>");
-  //   });
-  // };
-  // getData();
 
-  let printStorage = localStorage.getItem('email');
-  console.log("email logged in:\t", printStorage);
+  let email = localStorage.getItem('email');
+  console.log("email logged in:\t", email);
+
+  $("#userEmail").text(email);
+
+
+    emailData = {
+      email: email
+    }
+    $.post("/getUserData", JSON.stringify(emailData))
+    .then(function(response) {
+      console.log("call worked with\t " + JSON.stringify(response));
+    });
+
+
+
 
   $(document.body).on("click", "#test2btn", function(event) {
     // event.preventDefault();
