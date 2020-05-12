@@ -1411,8 +1411,9 @@ def issueDemocraticSuperUserVote():
 
 @app.route('/signupApplication', methods = ["POST"])
 def signUpApplication():
-    jsonData = request.json
-    print("Can you see this?",jsonData)
+    jsonData =json.loads(request.get_data())
+    print("MY JSON DATA\n",jsonData)
+    # print("@@@@@Can you see this?@@@@@",jsonData)
     #
     rowData = [] #Data to be uploaded to database
     rowData.append(jsonData["fullname"])
@@ -1420,7 +1421,7 @@ def signUpApplication():
     rowData.append(jsonData["interests"])
     rowData.append(jsonData["credentials"])
     rowData.append(jsonData["reference"])
-    rowData.append("")                      # appeal (does not exist on initial sign up)
+    rowData.append("None")                      # appeal (does not exist on initial sign up)
     rowData.append("PENDING")
      
     connection = sqlite3.connect(r"./database.db")
