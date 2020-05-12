@@ -108,8 +108,20 @@ def loginUser():
     userData = cursor.fetchone()
 
     if userData is not None:
+        connection = sqlite3.connect(r"./database.db")
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE [email] = ?",(email,))
+        userData = cursor.fetchone()
+        userData = list(userData)
+        userData[3] = json.loads(userData[3]) #grouplist
+        userData[6] = json.loads(userData[6]) #invitations
+        userData[7] = json.loads(userData[7]) #blacklist
+        userData[8] = json.loads(userData[8]) #whitelist
+        userData[10] = json.loads(userData[10]) #inbox
+        userData[11] = json.loads(userData[11]) #referredUsers
         return jsonify({
-            "Success": "Welcome to Team Up!"
+            "Success": "Welcome to Team Up!",
+            "userData": userData
         })
     else:
         return jsonify({
