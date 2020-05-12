@@ -7,13 +7,13 @@ $(document).ready(function() {
   $('.sidenav').sidenav();
   $('.tabs').tabs();
   
-  $('.chips').chips();
-  $('.chips-placeholder').chips({
-    placeholder: 'Enter a username',
-    secondaryPlaceholder: '+User',
-  });
-  let chipElem = $(".chips")
-  var chipInstance = M.Chips.getInstance(chipElem);
+  // $('.chips').chips();
+  // $('.chips-placeholder').chips({
+  //   placeholder: 'Enter a username',
+  //   secondaryPlaceholder: '+User',
+  // });
+  // let chipElem = $(".chips")
+  // var chipInstance = M.Chips.getInstance(chipElem);
 
   var modalElems = document.querySelectorAll('.modal');
   var modalInstances = M.Modal.init(modalElems, {});
@@ -30,35 +30,28 @@ $(document).ready(function() {
     $.post("/getUserData", JSON.stringify(emailData))
     .then(function(response) {
       console.log("call worked with\t " + JSON.stringify(response));
+      $("#userEmail").text(response["userData"][1]);
+      $("#reputationScore").text(response["userData"][4]);
     });
 
 
+  $(document.body).on("click", "#createGroup-button", function(event) {
+    event.preventDefault();
 
 
-  $(document.body).on("click", "#test2btn", function(event) {
-    // event.preventDefault();
-    // var text = $("#test2txt").val().trim()
-    // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
-    // console.log("text value:", text)
-    // var msg = {
-    //   textmsg: text 
-    // }
-    // let groupName = $("#groupName").val().trim()
-    // let invitees = []
+    let groupName = $("#groupName").val().trim()
 
-    // for(let i=0; i< chipInstance.chipsData.length; i++){
-    //   invitees.push(chipInstance.chipsData[i].tag)
-    // }
+    createGroupData = {
+      groupName: groupName,
+      email: email
+    }
 
-    // let newGroup = {
-    //   groupName : groupName,
-    //   invitees : invitees
-    // }
-
-    // $.post("/createGroup", newGroup)
-    // .then(function(data) {
-    //   console.log("Create Group POST call worked with", JSON.stringify(newGroup));
-    // });
+    // console.log(JSON.stringify(createGroupData))
+    
+    $.post("/createGroup", JSON.stringify(createGroupData))
+    .then(function(response) {
+      console.log("call worked with\t " + JSON.stringify(response));
+    });
 
   });
 
