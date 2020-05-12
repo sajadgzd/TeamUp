@@ -1445,7 +1445,7 @@ def signUpApplication():
         referredUserList = json.loads(referrerData[11])
         referredUserList.append(jsonData["email"].lower())
         referrerData[11] = json.dumps(referredUserList)
-        cursor.execute("DELETE FROM users WHERE [email] = ?", (referrerData[0]))
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (referrerData[0],))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(referrerData))
         connection.commit()
         connection.close()
