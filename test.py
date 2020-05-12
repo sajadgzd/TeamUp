@@ -62,7 +62,7 @@ def getAllUserEmails():
     }))
 
 @app.route('/getAllVIPEmails',method = ["GET"])
-def getAllUserEmails():
+def getAllVIPEmails():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users")
