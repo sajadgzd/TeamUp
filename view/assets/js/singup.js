@@ -26,13 +26,13 @@ $(document).ready(function() {
       fullname: fullname,
       email: email,
       interests: interests,
-      password: password,
+      credentials: password,
       reference: referringMember,
     }
 
     console.log("FORM COMPLETED:\v", JSON.stringify(user))
 
-    $.post("/signup", user)
+    $.post("/signupApplication", user)
     .then(function(data) {
       console.log("signup POST wroked with JSON:\t" + JSON.stringify(data));
       M.toast({html: 'Signed Up!'})
