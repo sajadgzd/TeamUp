@@ -1412,6 +1412,7 @@ def issueDemocraticSuperUserVote():
 @app.route('/signupApplication', methods = ["POST"])
 def signUpApplication():
     jsonData = request.json
+    print("Can you see this?",jsonData)
     #
     rowData = [] #Data to be uploaded to database
     rowData.append(jsonData["fullname"])
@@ -1526,7 +1527,7 @@ def root():
     # return send_from_directory(app.static_folder, 'landing.html')
 
 
-@app.route('/signup', methods=['GET'])
+@app.route('/signup', methods=['GET','POST'])
 def signup():
     return render_template("signup.html")
     # return send_from_directory(app.static_folder, 'landing.html')
