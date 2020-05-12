@@ -64,7 +64,7 @@ $(document).ready(function() {
 
     for(let i=0; i<response["userData"][3].length; i++){
 
-      console.log("LOOOPING")
+      console.log("LOOOPING in GetUserData")
       let groupName = response["userData"][3][i]
 
       groupNameJSON = {
@@ -133,36 +133,64 @@ $(document).ready(function() {
             console.log("LOOOPING \t", response["signUpData"][i][6])
 
             if((response["signUpData"][i][6]) == "PENDING"){
-            $("#NewRegistrationsTab").append(`<div class="col s12 m4">` +
+            $("#NewRegistrationsTab").append(`<div class="col s12 m4 NewDiv" id=${response["signUpData"][i][1]}>` +
                                                 `<div class="card blue-grey darken-1">` +
                                                   `<div class="card-content white-text">` +
                                                     `<span class="card-title">${response["signUpData"][i][0]}</span>` +
+                                                    `<p id="applicantEmail">${response["signUpData"][i][1]}</p>` +
+                                                    `<p>New User Registration Request<br></p>` +
                                                   `</div>` +
                                                   `<div class="card-action">` +
-                                                    `<a href="#">Accept</a>` +
-                                                    `<a href="#">Decline</a>` +
+                                                    `<a href="#" id="handle-button">ACCEPT</a>` +
+                                                    `<a href="#" id="handle-button">DECLINE</a>` +
                                                   `</div>` +
                                                 `</div>` +
                                               `</div>`)
           }
           else if((response["signUpData"][i][6]) == "APPEALED"){
-            $("#NewRegistrationsTab").append(`<div class="col s12 m4">` +
+            $("#NewRegistrationsTab").append(`<div class="col s12 m4 NewDiv" id=${response["signUpData"][i][1]}>` +
                                                 `<div class="card blue-grey darken-1">` +
                                                   `<div class="card-content white-text">` +
                                                     `<span class="card-title">${response["signUpData"][i][0]}</span>` +
+                                                    `<p id="applicantEmail">${response["signUpData"][i][1]}</p>` +
+                                                    `<p>${response["signUpData"][i][5]}</p>` +
                                                   `</div>` +
                                                   `<div class="card-action">` +
-                                                    `<a href="#">Accept</a>` +
-                                                    `<a href="#">Decline</a>` +
+                                                    `<a href="#" id="handle-button">ACCEPT</a>` +
+                                                    `<a href="#" id="handle-button">BLACKLIST</a>` +
                                                   `</div>` +
                                                 `</div>` +
                                               `</div>`)
           }
         }
       }
+
     });
   };
   getData();
+
+
+  $(document.body).on("click", "#handle-button", function(event) {
+
+    console.log("BUTTON TEXT: ", $("#applicantEmail").text())
+
+    let handleAppData = {
+      response: $(this).text(), //acc dec bl
+      applicantEmail: $("#applicantEmail").text()
+    }
+  
+    $.post("/handleApplication", JSON.stringify(handleAppData))
+    .then(function(response) {
+          console.log(response["Message"])
+          M.toast({html: response["Message"]})
+          location.reload()
+        }
+      );
+
+  });
+
+
+
 
 
 
@@ -177,7 +205,7 @@ $(document).ready(function() {
   //   </div>
   //   <div class="card-action">
   //     <a href="#">Accept</a>
-  //     <a href="#">Decline</a>
+  //     <a href="#">DECLINE</a>
   //   </div>
   // </div>
   // </div>
