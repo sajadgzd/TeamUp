@@ -30,7 +30,7 @@ def managePointStatus(email):
 
 @app.route('/getUserData', methods = ["POST"])
 def getUserData():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     email = jsonData["email"]
 
     connection = sqlite3.connect(r"./database.db")
@@ -77,7 +77,7 @@ def getAllVIPEmails():
 
 @app.route('/getGroupData', methods = ["POST"])
 def getGroupData():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     groupName = jsonData["groupName"]
 
     connection = sqlite3.connect(r"./database.db")
@@ -95,9 +95,9 @@ def getGroupData():
         "groupData": groupData
     }))
 
-@app.route('/login', methods = ["POST"])
-def login():
-    jsonData = request.json
+@app.route('/loginUser', methods = ["POST"])
+def loginUser():
+    jsonData =json.loads(request.get_data())
 
     email = jsonData["email"]
     credentials = jsonData["credentials"]
@@ -121,7 +121,7 @@ def login():
 def inviteToGroup():
 
     #GET JSON DAT
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     inviter = jsonData["inviterEmail"].lower()
     inviterFullname = jsonData["inviterFullname"]
@@ -199,7 +199,7 @@ def inviteToGroup():
 def handleGroupInvite():
 
     #GET JSON DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     inviter = jsonData["inviterEmail"]
     inviterFullname = jsonData["inviterFullName"]
@@ -286,7 +286,7 @@ def handleGroupInvite():
 # CREATE MEETUP/CLOSE POLL #~Helper
 def createMeetCloseHelper(pollType):
     
-    jsonData =request.json
+    jsonData =json.loads(request.get_data())
     #GET DATA FROM FRONT END#
     groupName = jsonData["groupName"]
     pollData = {}
@@ -339,7 +339,7 @@ def createCloseGroupPoll():
 
 # CREATE WARNPRAISEKICK POLL #~Helper
 def createWarnPraiseKickHelper(pollType):
-    jsonData =request.json
+    jsonData =json.loads(request.get_data())
     #GET DATA FROM FRONT END#
     groupName = jsonData["groupName"]
     pollData = {}
@@ -404,7 +404,7 @@ def createKickPoll():
 def issueMeetupVote():
 
     #GET JSON DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["email"]
@@ -478,7 +478,7 @@ def issueMeetupVote():
 def issueCloseGroupVote():
 
     #GET JSON DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["email"]
@@ -633,7 +633,7 @@ def handleWarningPraiseKickVote(cursor,groupName,pollType,connection,pollUUID,po
 def issueWarningVote():
 
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
@@ -704,7 +704,7 @@ def issueWarningVote():
 @app.route('/issuePraiseVote', methods = ["POST"])
 def issuePraiseVote():
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
@@ -772,7 +772,7 @@ def issuePraiseVote():
 def issueKickVote():
     
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
@@ -844,7 +844,7 @@ def issueKickVote():
 @app.route('/issueComplimentVote', methods = ["POST"])
 def issueCompliment():
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     complimentReceiverEmail = jsonData["complimentReceiverEmail"]
     #
 
@@ -901,7 +901,7 @@ def addtoAutoBox(cursor,connection,userEmail,emailAddition,index):
 @app.route('/addToWhiteBox', methods = ["POST"])
 def addToWhiteBox():
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     emailAddition = jsonData["emailAddition"]
     userEmail = jsonData["userEmail"]
     #
@@ -921,7 +921,7 @@ def addToWhiteBox():
 @app.route('/addToBlackBox', methods = ["POST"])
 def addToBlackBox():
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     emailAddition = jsonData["emailAddition"]
     userEmail = jsonData["userEmail"]
     #
@@ -957,7 +957,7 @@ def sendModRequest(target, message, request_type):
 @app.route('/appealReputation', methods = ["POST"])
 def appealReputation():
     #GET FRONT END DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     userEmail = jsonData["email"] # email of the user appealing
     appealMessage = jsonData["appealMessage"]
 
@@ -967,7 +967,7 @@ def appealReputation():
 @app.route('/reportUser', methods = ["POST"])
 def reportUser():
     #GET FRONT END DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     targetEmail = jsonData["email"] #email of the user being reported
     reportMessage = jsonData["reportMessage"]
     sendModRequest(targetEmail, reportMessage, "REPORT")
@@ -976,7 +976,7 @@ def reportUser():
 @app.route('/reportGroup', methods = ["POST"])
 def reportGroup():
     #GET FRONT END DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     groupName = jsonData["groupName"] #name of the group being reported
     reportMessage = jsonData["reportMessage"]
     sendModRequest(groupName, reportMessage, "REPORT")
@@ -988,7 +988,7 @@ def reportGroup():
 @app.route('/referenceReputation', methods = ["POST"])
 def referenceReputation():
     #GET FRONT END DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     referredUserEmail = jsonData["referredUser"] #The new guy
     referringUserEmail = jsonData["referringUser"] #The OG
     points = jsonData["points"] # num of points user wants to add to referred user
@@ -1027,7 +1027,7 @@ def referenceReputation():
 
 @app.route('/createGroup', methods=["POST"])
 def createGroup():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     groupName = jsonData["groupName"]
     creator = jsonData["email"] # email of creator
@@ -1060,7 +1060,7 @@ def createGroup():
 def handleApplication():
 
     #------Get Data from Front-end-----#
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     response = jsonData["response"] #ACCEPT or DECLINE
     # responderEmail = jsonData["responderEmail"] #get the email of the responder
@@ -1144,7 +1144,7 @@ def handleApplication():
 
 @app.route('/blacklistFromServer', methods = ["POST"])
 def blacklistFromServer():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     userEmail = jsonData["userEmail"]
 
@@ -1171,7 +1171,7 @@ def blacklistFromServer():
 
 @app.route('/reverseReputationDeduction', methods = ["POST"])
 def reverseReputationDeduction():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -1197,7 +1197,7 @@ def reverseReputationDeduction():
 def shutDownGroup():
 
     #------Get Data from Front-end-----#
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     groupName = jsonData['groupName']
 
@@ -1222,7 +1222,7 @@ def shutDownGroup():
 @app.route('/issuePointDeduction', methods = ["POST"])
 def issuePointDeduction():
 
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -1247,7 +1247,7 @@ def issuePointDeduction():
 @app.route('/issuePointIncrement', methods = ["POST"])
 def issuePointIncrement():
     
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -1271,7 +1271,7 @@ def issuePointIncrement():
 @app.route('/banUser', methods = ["POST"])
 def banUser():
 
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -1312,7 +1312,7 @@ def banUser():
 @app.route('/createDemocraticSuperUserPoll', methods = ["POST"])
 def createDemocraticSuperUserPoll():
 
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     #GET DATA FROM FRONT END#
     pollData = {}
     pollData["pollCreator"] = jsonData["creatorFullName"]
@@ -1361,7 +1361,7 @@ def createDemocraticSuperUserPoll():
 def issueDemocraticSuperUserVote():
 
     #GET JSON DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["email"] # whoever is responding to the poll
 
@@ -1525,7 +1525,7 @@ def checkStatus():
 @app.route("/appealRejection", methods = ["POST"])
 def appealRejection():
  
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     email = jsonData["email"].lower()
     appealMessage = jsonData["appealMessage"]
  
@@ -1558,6 +1558,11 @@ def root():
 @app.route('/signup', methods=['GET'])
 def signup():
     return render_template("signup.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/login', methods=['GET'])
+def login():
+    return render_template("login.html")
     # return send_from_directory(app.static_folder, 'landing.html')
 
 
