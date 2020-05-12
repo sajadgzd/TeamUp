@@ -106,7 +106,6 @@ def loginUser():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE [email] = ? AND [password] = ?",(email,credentials))
     userData = cursor.fetchone()
-    userData = list(userData)
 
     if userData is not None:
         return jsonify({
