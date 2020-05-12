@@ -36,15 +36,18 @@ $(document).ready(function() {
     $.post("/loginUser", JSON.stringify(userlogin))
     .then(function(response) {
       console.log("login POST call worked");
-      // if(true){
-      //   localStorage.setItem('userEmail', 'e@gmail.com');
-      //   let printStorage = localStorage.getItem('userEmail');
-      //   console.log(printStorage);
+      if(response["Success"]){
+        console.log(response["Success"]);
+        M.toast({html: `${response["Success"]}`})
+        // localStorage.setItem('userEmail', 'e@gmail.com');
+        // let printStorage = localStorage.getItem('userEmail');
+        // console.log(printStorage);
         // localStorage.removeItem('userEmail')
         // printStorage = localStorage.getItem('userEmail');
         // console.log(printStorage);
-      }
-    });
+
+      });
+      else if (response["Success"])
 
     // loginFirstTime = true;
     // if(loginFirstTime){

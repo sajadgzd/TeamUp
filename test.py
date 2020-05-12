@@ -110,7 +110,7 @@ def loginUser():
 
     if userData is not None:
         return jsonify({
-            "Sucess": "Welcome to Team Up!"
+            "Success": "Welcome to Team Up!"
         })
     else:
         return jsonify({
