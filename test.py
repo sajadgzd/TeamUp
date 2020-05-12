@@ -104,7 +104,7 @@ def loginUser():
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE [email] = ? AND [credentials] = ?",(email,credentials))
+    cursor.execute("SELECT * FROM users WHERE [email] = ? AND [password] = ?",(email,credentials))
     userData = cursor.fetchone()
     userData = list(userData)
 
