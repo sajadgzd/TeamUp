@@ -14,13 +14,13 @@ $(document).ready(function() {
     let lastname = $("#last_name").val().trim()
     let fullname = firstname + " " + lastname
     let email = $("#email").val().trim()
-    let password = $("#password").val().trim()
+    let password = $("#password").val().trim() 
     let referringMember = $("#referringMember").val().trim()
-    let interests = ""
+    let interests = $("#interests").val().trim()
     // console.log("CHIP 0:\t", instance.chipsData)
-    for(let i=0; i< instance.chipsData.length; i++){
-      interests += instance.chipsData[i].tag
-    }
+    // for(let i=0; i< instance.chipsData.length; i++){
+    //   interests += instance.chipsData[i].tag
+    // }
 
     let user = {
       fullname: fullname,
