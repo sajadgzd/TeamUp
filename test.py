@@ -29,6 +29,22 @@ def managePointStatus(email):
     connection.close()
 
 
+@app.route('/getAllSignUpData', methods = ["GET"])
+def getAllSignUpData():
+
+    signUpData = []
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM signup WHERE [email] = ?",(email,))
+    
+    for userData in cursor.fetchall():
+        signUpData.append(list(userData))
+    connection.close()
+    return (jsonify({
+        "signUpData": signUpData
+    }))
+
+
 @app.route('/getSignUpData', methods = ["POST"])
 def getSignUpData():
     jsonData =json.loads(request.get_data())
@@ -42,7 +58,7 @@ def getSignUpData():
     userData = list(userData)
     connection.close()
     return (jsonify({
-        "signUpDate": userData
+        "signUpData": userData
     }))
 
 
