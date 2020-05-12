@@ -12,6 +12,7 @@ $(document).ready(function() {
     event.preventDefault();
     let firstname = $("#first_name").val().trim()
     let lastname = $("#last_name").val().trim()
+    let fullname = firstname + " " + lastname
     let email = $("#email").val().trim()
     let password = $("#password").val().trim()
     let referringMember = $("#referringMember").val().trim()
@@ -22,12 +23,11 @@ $(document).ready(function() {
     }
 
     let user = {
-      firstname: firstname,
-      lastname: lastname,
+      fullname: fullname,
       email: email,
+      interests: interests,
       password: password,
-      referringMember: referringMember,
-      interests: interests
+      reference: referringMember,
     }
 
     console.log("FORM COMPLETED:\v", JSON.stringify(user))
@@ -35,6 +35,7 @@ $(document).ready(function() {
     $.post("/signup", user)
     .then(function(data) {
       console.log("signup POST wroked with JSON:\t" + JSON.stringify(data));
+      M.toast({html: 'Signed Up!'})
     });
 
   });
