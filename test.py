@@ -1564,6 +1564,31 @@ def login():
     return render_template("login.html")
     # return send_from_directory(app.static_folder, 'landing.html')
 
+@app.route('/groupMainPage', methods=['GET'])
+def groupMainPage():
+    return render_template("groupMainPage.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/OU', methods=['GET'])
+def OU():
+    return render_template("OU.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/SU', methods=['GET'])
+def SU():
+    return render_template("SU.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/surfing', methods=['GET'])
+def surfing():
+    return render_template("surfing.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/vip', methods=['GET'])
+def vip():
+    return render_template("vip.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
