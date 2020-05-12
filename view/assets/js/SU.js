@@ -99,9 +99,9 @@ $(document).ready(function() {
     email: email
   }
 
-  $.post("/getSignUpData", JSON.stringify(signupData))
-  .then(function(response) {
-    console.log("get SignupData \t " + JSON.stringify(response));
+  // $.post("/getAllSignUpData", JSON.stringify(signupData))
+  // .then(function(response) {
+  //   console.log("get SignupData \t " + JSON.stringify(response));
     // console.log("get SignupData \t " + JSON.stringify(response["groupData"][1]));
 
     // if((response["groupData"][1]) == "PENDING"){
@@ -118,7 +118,51 @@ $(document).ready(function() {
       //                                     `</div>` +
       //                                   `</div>`)
     // }
-  });
+  // });
+
+    function getData() {
+    $.ajax({
+        url: "/getAllSignUpData",
+        method: "GET"
+    }).then(function(response) {
+        console.log("GET root worked fine\n",JSON.stringify(response));
+        // $("#test1").append("<p style='font-weight: bold'> Type: " + response.tasks[0].description + "</p><br>");
+
+      for(let i=0; i<response["signUpData"].length; i++){
+        for(let j=0; j<response["signUpData"][i].length; i++){
+            console.log("LOOOPING \t", response["signUpData"][i][6])
+
+            if((response["signUpData"][i][6]) == "PENDING"){
+            $("#NewRegistrationsTab").append(`<div class="col s12 m4">` +
+                                                `<div class="card blue-grey darken-1">` +
+                                                  `<div class="card-content white-text">` +
+                                                    `<span class="card-title">${response["signUpData"][i][0]}</span>` +
+                                                  `</div>` +
+                                                  `<div class="card-action">` +
+                                                    `<a href="#">Accept</a>` +
+                                                    `<a href="#">Decline</a>` +
+                                                  `</div>` +
+                                                `</div>` +
+                                              `</div>`)
+          }
+          else if((response["signUpData"][i][6]) == "APPEALED"){
+            $("#NewRegistrationsTab").append(`<div class="col s12 m4">` +
+                                                `<div class="card blue-grey darken-1">` +
+                                                  `<div class="card-content white-text">` +
+                                                    `<span class="card-title">${response["signUpData"][i][0]}</span>` +
+                                                  `</div>` +
+                                                  `<div class="card-action">` +
+                                                    `<a href="#">Accept</a>` +
+                                                    `<a href="#">Decline</a>` +
+                                                  `</div>` +
+                                                `</div>` +
+                                              `</div>`)
+          }
+        }
+      }
+    });
+  };
+  getData();
 
 
 
