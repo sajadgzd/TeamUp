@@ -8,6 +8,18 @@ $(document).ready(function() {
   // let elem = $(".chips")
   // var instance = M.Chips.getInstance(elem);
 
+  var selectElems = document.querySelectorAll('select');
+  var selectInstances = M.FormSelect.init(selectElems, {});
+
+  var selectInstance = M.FormSelect.getInstance(selectElems);
+
+
+  
+  $('#referMemberSelect').append(`<option value="${optionValue}"> 
+                                       ${optionText} 
+                                  </option>`); 
+
+
   $(document.body).on("click", "#signup-button", function(event) {
     event.preventDefault();
     let firstname = $("#first_name").val().trim()
@@ -15,7 +27,9 @@ $(document).ready(function() {
     let fullname = firstname + " " + lastname
     let email = $("#email").val().trim()
     let password = $("#password").val().trim() 
-    let referringMember = $("#referringMember").val().trim()
+    // let referringMember = $("#referringMember").val().trim()
+    let referringMember = $('#referMemberSelect').val()
+
     let interests = $("#interests").val().trim()
     // console.log("CHIP 0:\t", instance.chipsData)
     // for(let i=0; i< instance.chipsData.length; i++){

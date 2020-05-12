@@ -83,9 +83,16 @@
                   <input id="interests" type="text" class="validate" required>
                   <label for="interests">Interests</label>
                 </div>
-                <div class="input-field col s12">
+                <!-- <div class="input-field col s12">
                   <input id="referringMember" type="text" class="" minlength="6" required>
                   <label for="referringMember">Referring Member</label>
+                </div> -->
+                <div class="input-field col s12">
+                  <select id="referMemberSelect">
+                    <option value="" disabled selected>Choose your reference</option>
+                    <option value="1">Option 1</option>
+                  </select>
+                  <label>Materialize Select</label>
                 </div>
                 <div class="input-field col s6">
                     <button id="signup-button" class="btn waves-effect waves-light light-blue accent-4">Submit
