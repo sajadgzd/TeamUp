@@ -1061,6 +1061,17 @@ def createGroup():
     cursor = connection.cursor()
     cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
+
+    # add group to user's grouplist
+    cursor.execute("SELECT * from users WHERE [email] = ?",(creator,))
+    userData = cursor.fetchone()
+    userData = list(userData)
+    groupList = json.loads(userData[3])
+    groupList.append(groupName)
+    userData[3] = json.dumps(groupList)
+    cursor.execute("DELETE * FROM users WHERE [email] = ?", (creator,))
+    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
+    connection.commit()
     connection.close()
     return jsonify({"Message" : "Group successfully created."})
 
