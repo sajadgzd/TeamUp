@@ -30,7 +30,7 @@ $(document).ready(function() {
       reference: referringMember,
     }
 
-    console.log("FORM COMPLETED:\v", JSON.stringify(user))
+    // console.log("FORM COMPLETED:\v", JSON.stringify(user))
 
     $.post("/signupApplication", user)
     .then(function(data) {
