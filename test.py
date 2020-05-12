@@ -28,6 +28,23 @@ def managePointStatus(email):
     connection.commit()
     connection.close()
 
+
+@app.route('/getSignUpData', methods = ["POST"])
+def getSignUpData():
+    jsonData =json.loads(request.get_data())
+    email = jsonData["email"]
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM signup WHERE [email] = ?",(email,))
+    connection.close()
+    userData = cursor.fetchone()
+    userData = list(userData)
+    return (jsonify({
+        "signUpDate": userData
+    }))
+
+
 @app.route('/getUserData', methods = ["POST"])
 def getUserData():
     jsonData =json.loads(request.get_data())
@@ -36,6 +53,7 @@ def getUserData():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(email,))
+    connection.close()
     userData = cursor.fetchone()
     userData = list(userData)
     userData[3] = json.loads(userData[3]) #grouplist
@@ -54,6 +72,7 @@ def getAllUserEmails():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users")
+    connection.close()
     emails = []
     for user in cursor.fetchall():
         emails.append(user[0])
@@ -67,6 +86,7 @@ def getAllVIPEmails():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users")
+    connection.close()
     emails = []
     for user in cursor.fetchall():
         if user[5] == "VIP":
@@ -84,6 +104,7 @@ def getGroupData():
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
+    connection.close()
     groupData = cursor.fetchone()
     groupData = list(groupData)
 
@@ -120,6 +141,7 @@ def loginUser():
         userData[8] = json.loads(userData[8]) #whitelist
         userData[10] = json.loads(userData[10]) #inbox
         userData[11] = json.loads(userData[11]) #referredUsers
+        connection.close()
         return jsonify({
             "Success": "Welcome to Team Up!",
             "userData": userData
