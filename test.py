@@ -48,6 +48,33 @@ def getUserData():
         "userData": userData
     }))
 
+@app.route('/getAllUserEmails',methods = ["GET"])
+def getAllUserEmails():
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users")
+    emails = []
+    for user in cursor.fetchall():
+        emails.append(user[0])
+    
+    return (jsonify({
+        "allUsersEmail": emails
+    }))
+
+@app.route('/getAllVIPEmails',methods = ["GET"])
+def getAllVIPEmails():
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users")
+    emails = []
+    for user in cursor.fetchall():
+        if user[5] == "VIP":
+            emails.append(user[0])
+    
+    return (jsonify({
+        "allVIPEmail": emails
+    }))    
+
 @app.route('/getGroupData', methods = ["POST"])
 def getGroupData():
     jsonData = request.json
@@ -1411,7 +1438,9 @@ def issueDemocraticSuperUserVote():
 
 @app.route('/signupApplication', methods = ["POST"])
 def signUpApplication():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
+    print("MY JSON DATA\n",jsonData)
+    # print("@@@@@Can you see this?@@@@@",jsonData)
     #
     rowData = [] #Data to be uploaded to database
     rowData.append(jsonData["fullname"])
@@ -1419,7 +1448,7 @@ def signUpApplication():
     rowData.append(jsonData["interests"])
     rowData.append(jsonData["credentials"])
     rowData.append(jsonData["reference"])
-    rowData.append("")                      # appeal (does not exist on initial sign up)
+    rowData.append("None")                      # appeal (does not exist on initial sign up)
     rowData.append("PENDING")
      
     connection = sqlite3.connect(r"./database.db")
@@ -1443,7 +1472,7 @@ def signUpApplication():
         referredUserList = json.loads(referrerData[11])
         referredUserList.append(jsonData["email"].lower())
         referrerData[11] = json.dumps(referredUserList)
-        cursor.execute("DELETE FROM users WHERE [email] = ?", (referrerData[0]))
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (referrerData[0],))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(referrerData))
         connection.commit()
         connection.close()
