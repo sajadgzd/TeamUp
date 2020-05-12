@@ -39,9 +39,20 @@ $(document).ready(function() {
       if(response["Success"]){
         console.log(response["Success"]);
         M.toast({html: `${response["Success"]}`})
-        // localStorage.setItem('userEmail', 'e@gmail.com');
-        // let printStorage = localStorage.getItem('userEmail');
-        // console.log(printStorage);
+        console.log(response["userData"][5])
+        if(response["userData"][5] == "SUPER USER" || response["userData"][5] == "DEMOCRATIC SUPER USER"){
+          window.location = '/SU';
+        }
+        else if(response["userData"][5] == "OU"){
+          window.location = '/OU';
+        }
+        else if(response["userData"][5] == "VIP"){
+          window.location = '/VIP';
+        }
+
+        localStorage.setItem('email', response["userData"][0]);
+        let printStorage = localStorage.getItem('email');
+        console.log("email logged in:\t", printStorage);
         // localStorage.removeItem('userEmail')
         // printStorage = localStorage.getItem('userEmail');
         // console.log(printStorage);

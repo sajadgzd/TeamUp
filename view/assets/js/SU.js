@@ -15,6 +15,9 @@ $(document).ready(function() {
   // };
   // getData();
 
+  let printStorage = localStorage.getItem('email');
+  console.log("email logged in:\t", printStorage);
+
   $(document.body).on("click", "#test2btn", function(event) {
     // event.preventDefault();
     // var text = $("#test2txt").val().trim()
