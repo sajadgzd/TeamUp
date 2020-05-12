@@ -134,6 +134,25 @@ $(document).ready(function() {
         }
       });
     }
+
+    // GERENATE WHITE LIST
+    for(let i=0; i<response["userData"][8].length; i++){
+
+      console.log("LOOOPING in GetUserData for WhiteList", response["userData"][8][i])
+      $("#whiteListDiv").append('<div class="col s4 m2">' +
+                              `<div class="card blue-grey darken-1">` +
+                                `<div class="card-content white-text"> User Email: `  +
+                                  `<span class="card-title">${response["userData"][8][i]}</span>` +
+                                `</div>` +
+                              `</div>` +
+                            `</div>`)
+
+    }
+
+    
+
+
+
   });
 
 
