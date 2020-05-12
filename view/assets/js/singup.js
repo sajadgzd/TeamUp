@@ -21,6 +21,7 @@ $(document).ready(function() {
     }).then(function(response) {
         console.log("GOT BACK SOMETHING")
         console.log("NOW: \n", response.allUsersEmail.length);
+        console.log("NOW Obj: \n", response);
 
         for(let i = 0; i< response.allUserEmail.length; i++){
           console.log(response.allUserEmail[i])
