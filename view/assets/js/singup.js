@@ -32,7 +32,7 @@ $(document).ready(function() {
 
     // console.log("FORM COMPLETED:\v", JSON.stringify(user))
 
-    $.post("/signup/signupApplication", user)
+    $.post("/signupApplication", user)
     .then(function(data) {
       console.log("signup POST wroked with JSON:\t" + JSON.stringify(data));
       M.toast({html: 'Signed Up!'})
