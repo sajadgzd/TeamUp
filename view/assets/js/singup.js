@@ -23,16 +23,14 @@ $(document).ready(function() {
         console.log("NOW: \n", response.allUsersEmail.length);
         console.log("Data:\n",response["allUsersEmail"])
 
-        for(let i = 0; i< response.allUsersEmail.length+5; i++){
+        for(let i = 0; i< response.allUsersEmail.length; i++){
           console.log(response["allUsersEmail"][i])
            $('#referMemberSelect').append(`<option value="${response["allUsersEmail"][i]}"> 
                                        ${response["allUsersEmail"][i]} 
                                   </option>`); 
+            
         }
-
-  // $('#referMemberSelect').append(`<option value="${optionValue}"> 
-  //                                      ${optionText} 
-  //                                 </option>`); 
+        $('select').formSelect();
         
     });
   };
