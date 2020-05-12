@@ -147,6 +147,7 @@ def loginUser():
             "userData": userData
         })
     else:
+        connection.close()
         return jsonify({
             "Error": "Sorry, email or password combination does not exist."
         })
@@ -574,9 +575,6 @@ def issueCloseGroupVote():
                          
                         #NOTIFY SUPER USER THAT GROUP MUST BE CLOSED
                         reportMessage = "Members have voted to close this group."
-
-                        connection = sqlite3.connect(r"./database.db")
-                        cursor = connection.cursor()
                         cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(groupName,reportMessage,"CLOSE","OPEN",None))
                         connection.commit()
                 else:
