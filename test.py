@@ -1610,7 +1610,7 @@ def appealRejection():
     cursor.execute("SELECT * FROM signup WHERE [email] = ?",(email,))
     row = list(cursor.fetchone())
  
-    cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+    cursor.execute("DELETE FROM signup WHERE [email] = ?", (email,))
     row[5] = appealMessage
     row[6] = "APPEALED"
     cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(row))
