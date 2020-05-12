@@ -23,7 +23,7 @@ def managePointStatus(email):
     elif status == "OU":
         if points > 30:
             userData[5] = "VIP"
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (email,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (email,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     connection.commit()
     connection.close()
@@ -205,7 +205,7 @@ def inviteToGroup():
             groupList.append(groupName)
             groupList = json.dumps(groupList)
             inviteeData[3] = groupList
-            cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
+            cursor.execute("DELETE FROM users WHERE [email] = ?", (invitee,))
             cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
             connection.commit()
 
@@ -223,7 +223,7 @@ def inviteToGroup():
             memberData = json.dumps(memberData)
             groupData[5] = memberData
 
-            cursor.execute("DELETE * FROM groups WHERE [groupName] = ?",(groupName,))
+            cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
             cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
             connection.commit()
             connection.close()
@@ -239,7 +239,7 @@ def inviteToGroup():
     })
 
     invitations = json.dumps(invitations)
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (invitee,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
     connection.commit()
     connection.close()
@@ -742,7 +742,7 @@ def issueWarningVote():
             "message": "You've received 3 warnings from {} and incurred a 5 point deduction.".format(groupName)
         })
         userData[10] = json.dumps(inboxList)
-        cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
         connection.commit()
     #Close Database connection and notify use that their vote has been registered
@@ -808,7 +808,7 @@ def issuePraiseVote():
             "message": "You've received 3 praises from {} and was granted a 5 point increase! Congrats! Keep up the great work!".format(groupName)
         })
         userData[10] = json.dumps(inboxList)
-        cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
         connection.commit()
     #Close Database connection and notify use that their vote has been registered
@@ -881,7 +881,7 @@ def issueKickVote():
             "message": "You have been kicked from {} and incurred a 10 point deduction.".format(groupName)
         })
         userData[10] = json.dumps(inboxList)
-        cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
         connection.commit()
     #Close Database connection and notify use that their vote has been registered
@@ -916,7 +916,7 @@ def issueCompliment():
             "message": "You've received 3 compliments and a 5 point increase!"
         })
         userData[10] = json.dumps(inboxList)
-        cursor.execute("DELETE * FROM users WHERE [email] = ?", (complimentReceiverEmail,))
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (complimentReceiverEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
         connection.commit()
     connection.close()
@@ -944,7 +944,7 @@ def addtoAutoBox(cursor,connection,userEmail,emailAddition,index):
         autoBox.append(emailAddition)
     autoBox = json.dumps(autoBox)
     userData[index] = autoBox
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (userEmail,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     connection.commit()
 
@@ -1056,7 +1056,7 @@ def referenceReputation():
     else:
         referredUserData[4] += points
     
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (referredUserEmail,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (referredUserEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(referredUserData))
     connection.commit()
 
@@ -1066,7 +1066,7 @@ def referenceReputation():
     referredUsersList = json.dumps(referredUsersList)
     referringUserData[11] = referredUsersList
     
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (referringUserEmail,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (referringUserEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(referringUserData))
     connection.commit()
     connection.close()
@@ -1234,7 +1234,7 @@ def handleApplication():
 
 #     #modify the visitor signup row
 #     visitorData[6] = "BLACKLISTED"
-#     cursor.execute("DELETE * FROM signup WHERE [email] = ?", (userEmail,))
+#     cursor.execute("DELETE FROM signup WHERE [email] = ?", (userEmail,))
 #     cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
 #     connection.commit()
 #     connection.close()
@@ -1286,7 +1286,7 @@ def shutDownGroup():
     groupData = cursor.fetchone()
     groupData = list(groupData)
     groupData[1] = "CLOSED"
-    cursor.execute("DELETE * FROM groups WHERE [groupName] = ?",(groupName,))
+    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
     cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
     connection.close()
@@ -1360,7 +1360,7 @@ def banUser():
 
     #modify the signup row
     visitorData[6] = "BLACKLISTED"
-    cursor.execute("DELETE * FROM signup WHERE [email] = ?", (userEmail,))
+    cursor.execute("DELETE FROM signup WHERE [email] = ?", (userEmail,))
     cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
 
 
@@ -1371,7 +1371,7 @@ def banUser():
 
     #modify the user row
     userData[5] = "BLACKLISTED"
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (userEmail,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
 
     connection.commit()
