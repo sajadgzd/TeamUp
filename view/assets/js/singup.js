@@ -80,35 +80,59 @@ $(document).ready(function() {
 
     console.log("EMAIL CHECK\t", checkStatusEmail);
 
+
     $.post("/checkStatus", JSON.stringify(statusEmail))
     .then(function(data) {
+     
       console.log("CHECK STATUS POST wroked with JSON:\t" + JSON.stringify(data));
-      let form = $("#lastItemForm")
+      let form = $("#checkResultDiv")
 
-      $("#statusResp").remove()
+      // count++
+
+      $(".statusResp").remove()
+      $(".statusResp").remove()
+      
+      
 
       if (data.Status == "PENDING" || data.Status == "USER" || data.Status == "APPEALED" || data.Status == "BLACKLISTED"){
-        form.append('<div class="col s12 m12 info center-align" id="statusResp" style="">' +
+        form.append('<div class="col s12 m12 info center-align statusResp" id="statusResp" style="">' +
                       data.Message +
                       '</div>')
       }
       else if (data.Status == "REJECTED"){
-        form.append('<div class="col s12 m12 info center-align" id="statusResp" style="">' +
+        form.append('<div class="col s12 m12 info center-align statusResp" id="statusResp" style="">' +
         data.Message +
-        '</div>').append('<form class="col s12 m12" id="appeal-form" style="">' +
+        '</div>').append('<form class="col s12 m12 statusResp" id="appeal-form" style="">' +
                             '<h5 class="center-align register">Write your appeal</h5>' +
                             '<div class="input-field col s12">' +
                               '<input id="appealInput" type="text" class="validate" required>' +
                               '<label for="appealInput">Appeal Message</label>' +
                             '</div>' +
-                            '<div class="input-field col s6" id="lastItemForm" >' +
-                              '<a href="#" id="checkStatus-button" class="btn waves-effect waves-light light-blue accent-4">Submit</a> <br><br>' +
+                            '<div class="input-field col s6" >' +
+                              '<a href="#" id="appeal-button" class="btn waves-effect waves-light light-blue accent-4">Submit</a> <br><br>' +
                             '</div>' +
                           '</form>')
+
+        $(document.body).on("click", "#appeal-button", function(event) {
+            let appealData = {
+              email: $("#checkStatusEmail").val().trim(),
+              appealMessage: $("#appealInput").val().trim()
+            }
+
+            console.log("appealData\t", JSON.stringify(appealData))
+
+            $.post("/appealRejection", JSON.stringify(appealData))
+            .then(function(response) {
+              console.log("DATA BACK FROM APPEAL POST REQ: \t", response)
+              $("#appeal-form").append(`<h6>  ${response["Message"]} </h6>`)
+
+            })
+          })
+
         
       }
       else {
-        form.append('<div class="col s12 m12 info center-align" id="statusResp" style="">' +
+        form.append('<div class="col s12 m12 info center-align statusResp" id="statusResp" style="">' +
         data.Message +
         '</div>')
       }
