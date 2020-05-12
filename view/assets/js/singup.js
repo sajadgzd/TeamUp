@@ -86,12 +86,12 @@ $(document).ready(function() {
       let form = $("#lastItemForm")
 
       if (data.Status == "PENDING" || data.Status == "USER" || data.Status == "APPEALED" || data.Status == "BLACKLISTED"){
-        form.append('<div class="col s2 m2 info center-align" style="">' +
+        form.append('<div class="col s12 m12 info center-align" style="">' +
                       data.Message +
                       '</div>')
       }
       else if (data.Status = "REJECTED"){
-        form.append('<div class="col s2 m2 info center-align" style="">' +
+        form.append('<div class="col s12 m12 info center-align" style="">' +
         data.Message +
         '</div>').append('<form class="col s12 m12" id="appeal-form" style="">' +
                             '<h5 class="center-align register">Write your appeal</h5>' +
@@ -106,7 +106,7 @@ $(document).ready(function() {
         
       }
       else {
-        form.append('<div class="col s2 m2 info center-align" style="">' +
+        form.append('<div class="col s12 m12 info center-align" style="">' +
         data.Message +
         '</div>')
       }
