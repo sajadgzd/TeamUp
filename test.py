@@ -1059,7 +1059,7 @@ def createGroup():
     # add new group to DB
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?,?)",tuple(groupData))
+    cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
     connection.close()
     return jsonify({"Message" : "Group successfully created."})
