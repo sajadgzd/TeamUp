@@ -442,6 +442,7 @@ def createWarnPraiseKickHelper(pollType):
     pollData["pollTitle"] = jsonData["pollTitle"]
     pollData["pollPrompt"] = jsonData["pollPrompt"]
     pollData["pollType"] = pollType
+    pollData["pollVoteOptionsList"] = jsonData["pollVoteOptions"]
     pollData["uuid"] = str(uuid.uuid4())
     pollData["pollStatus"] = "ACTIVE"
     pollVoteOptions = {}
