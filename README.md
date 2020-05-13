@@ -47,7 +47,7 @@ Make sure you have Python 3 or above version installed on your system
 1. Go to the root directory **softwareEngineeringProject**
 2. Run the following commands in your terminal
 
-``python createDatabases.py``
+``python createDatabases.py``\n
 ``python initializeDB.py``
 
 
