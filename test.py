@@ -384,7 +384,7 @@ def createMeetCloseHelper(pollType):
     #GET DATA FROM FRONT END#
     groupName = jsonData["groupName"]
     pollData = {}
-    pollData["pollCreator"] = jsonData["creatorFullName"]
+    pollData["pollCreator"] = jsonData["pollCreator"]
     pollData["pollTitle"] = jsonData["pollTitle"]
     pollData["pollPrompt"] = jsonData["pollPrompt"]
     pollData["pollType"] = pollType
@@ -437,7 +437,7 @@ def createWarnPraiseKickHelper(pollType):
     #GET DATA FROM FRONT END#
     groupName = jsonData["groupName"]
     pollData = {}
-    pollData["pollCreator"] = jsonData["creatorFullName"]
+    pollData["pollCreator"] = jsonData["pollCreator"]
     pollData["targetedMemberEmail"] = jsonData["targetedMemberEmail"]
     pollData["targetedMemberName"] = jsonData["targetedMemberName"]
     pollData["pollTitle"] = jsonData["pollTitle"]
