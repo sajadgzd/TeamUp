@@ -47,14 +47,14 @@ Make sure you have Python 3 or above version installed on your system
 Go to the root directory **softwareEngineeringProject**
 Run the following commands in your terminal
 
-> ``python createDatabases.py``
-> ``python initializeDB.py``
+``python createDatabases.py``
+``python initializeDB.py``
 
 
 ### Step 4: Launch App 
 Via terminal type in these bash command once you are in the Team Up root directory
 
-> ``python server.py``
+``python server.py``
  
 
 Go to your browser and type in the corresponding address you see the app is running `localhost:?000` in your URL bar. Now you should see the application open locally.
