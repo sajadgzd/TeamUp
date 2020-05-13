@@ -45,9 +45,11 @@ Make sure you have Python 3 or above version installed on your system
 ### Step 3: Set up SQL Database
 
 Go to the root directory **softwareEngineeringProject**
+
 Run the following commands in your terminal
 
 ``python createDatabases.py``
+
 ``python initializeDB.py``
 
 
