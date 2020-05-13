@@ -398,7 +398,7 @@ $(document).ready(function() {
   $.ajax({
     url: "/getModerationQueue",
     method: "GET"
-}).then(function(response) {
+  }).then(function(response) {
     console.log("getModerationQueue GET root worked fine\n",JSON.stringify(response));
     // $("#test1").append("<p style='font-weight: bold'> Type: " + response.tasks[0].description + "</p><br>");
 
