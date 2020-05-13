@@ -541,7 +541,8 @@ def issueMeetupVote():
             for option,voteCount in pollVoteOptions.items():
                 sumVotes += voteCount
             break
-    totalMembers = len(groupData[5])
+    memberList = json.loads(groupData[5])
+    totalMembers = len(memberList)
 
 
     maxResponseCount = 0
@@ -618,7 +619,8 @@ def issueCloseGroupVote():
             for option,voteCount in pollVoteOptions.items():
                 sumVotes += voteCount
             break
-    totalMembers = len(groupData[5])
+    memberList = json.loads(groupData[5])
+    totalMembers = len(memberList)
 
 
     maxResponseCount = 0
@@ -666,6 +668,7 @@ def registerVote(cursor,groupName,connection,pollUUID,pollResponder,pollResponse
     memberPolls = json.loads(groupData[3])
     for index,poll in enumerate(memberPolls):
         if poll["uuid"] == pollUUID:
+            print(pollResponder)
             if pollResponder in poll["voters"]:
                 return jsonify({"Message": "You cannot vote more than once!"})
             poll["voters"].append(pollResponder)
@@ -683,12 +686,16 @@ def registerVote(cursor,groupName,connection,pollUUID,pollResponder,pollResponse
 
 # HANDLE POLL CLOSURE #~HELPER
 def handleWarningPraiseKickVote(cursor,groupName,pollType,connection,pollUUID,pollTargetedMemberEmail):
+    print("HELLO?")
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?",(groupName,))
     groupData = list(cursor.fetchone())
     memberPolls = json.loads(groupData[3])
     
     sumVotes = 0 #Count of the total sum of votes
-    totalMembers = len(groupData[5]) # Cross checks to see if all votes have been registered
+    memberList = json.loads(groupData[5])
+    totalMembers = len(memberList)
+    # totalMembers = len(groupData[5]) # Cross checks to see if all votes have been registered
+    
     maxResponseCount = 0 # Checks to see if it's actually unanimous
     answer = None #Answer field
     for index,poll in enumerate(memberPolls):
@@ -700,6 +707,8 @@ def handleWarningPraiseKickVote(cursor,groupName,pollType,connection,pollUUID,po
                     maxResponseCount = voteCount
                     answer = option
             break
+    print("Did it pass?:",sumVotes == (totalMembers -1) == maxResponseCount)
+    print(sumVotes,(totalMembers-1),maxResponseCount)
     if sumVotes == (totalMembers -1) == maxResponseCount: #We have all votes, and they were unanimous
         for index,poll in enumerate(memberPolls):
             if poll["uuid"] == pollUUID:
@@ -752,6 +761,7 @@ def issueWarningVote():
         return flag
     #
 
+
     #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
     handleWarningPraiseKickVote(cursor = cursor,groupName= groupName,pollType = "warnings",connection = connection,pollUUID=pollUUID,pollTargetedMemberEmail=pollTargetedMemberEmail)
     
@@ -801,7 +811,7 @@ def issueWarningVote():
     #Close Database connection and notify use that their vote has been registered
     connection.close()
     return (jsonify({
-        "Message": "Your vote has been submitted."
+        "Message": "Your vote has been submitted." + pollUUID
     }))
 
 @app.route('/issuePraiseVote', methods = ["POST"])
@@ -853,6 +863,7 @@ def issuePraiseVote():
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(pollTargetedMemberEmail,))
     userData = cursor.fetchone()
     userData = list(userData)
+    print("BEFORE:",userData)
     if adjustMember:
         #Deduct points
         userData[4] += 5
@@ -864,6 +875,7 @@ def issuePraiseVote():
             "message": "You've received 3 praises from {} and was granted a 5 point increase! Congrats! Keep up the great work!".format(groupName)
         })
         userData[10] = json.dumps(inboxList)
+        print("AFTER:",userData)
         cursor.execute("DELETE FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
         connection.commit()
