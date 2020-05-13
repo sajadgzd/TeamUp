@@ -406,7 +406,7 @@ def createMeetCloseHelper(pollType):
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?",(groupName,))
     groupData = list(cursor.fetchone())
 
-    groupPolls = json.loads(groupName[4])
+    groupPolls = json.loads(groupData[4])
     groupPolls.append(pollData)
     groupPolls = json.dumps(groupPolls)
     groupData[4] = groupPolls
