@@ -29,6 +29,65 @@ $(document).ready(function() {
   $("#userEmail").text(email);
 
 
+  $(document.body).on("click", "#reportUser-button", function(event) {
+
+    event.preventDefault()
+
+    let userEmail  = $("#reportUserSelect").val()
+    reportUser = {
+      email: userEmail
+    }
+
+    console.log("REPORT USER EMAIL: ", JSON.stringify(reportUser))
+
+
+    $.post("/reportUser", JSON.stringify(reportUser))
+    .then(function(response) {
+      console.log("reportUser call worked with\t " + JSON.stringify(response));
+      M.toast({html: response["Message"]})
+    });
+
+  })
+
+
+  $(document.body).on("click", "#reportGroup-button", function(event) {
+
+    event.preventDefault()
+
+    let groupNameSelected  = $("#reportGroupSelect").val()
+
+    reportGroup = {
+      groupName: groupNameSelected
+    }
+
+    console.log("REPORT groupNameSelected: ", JSON.stringify(reportGroup))
+
+
+    $.post("/reportGroup", JSON.stringify(reportGroup))
+    .then(function(response) {
+      console.log("reportGroup call worked with\t " + JSON.stringify(response));
+      M.toast({html: response["Message"]})
+    });
+
+  })
+  
+  $(document.body).on("click", "#reversePointDeduction-button", function(event) {
+
+    reversePointDeductionData = {
+      email: email
+    }
+
+    console.log("REPORT groupNameSelected: ", JSON.stringify(reversePointDeductionData))
+
+
+    $.post("/appealReputation", JSON.stringify(reversePointDeductionData))
+    .then(function(response) {
+      console.log("reversePointDeductionData call worked with\t " + JSON.stringify(response));
+      M.toast({html: response["Message"]})
+    });
+
+  })
+
 
 
 
@@ -75,13 +134,37 @@ $(document).ready(function() {
                                             </option>`);
           $('#createInviteUserList').append(`<option value="${response["allUsersEmail"][i]}"> 
                                               ${response["allUsersEmail"][i]} 
-                                            </option>`);                           
+                                            </option>`);
+          $("#reportUserSelect").append(`<option value="${response["allUsersEmail"][i]}"> 
+                                          ${response["allUsersEmail"][i]} 
+                                        </option>`);                   
         }
           
       }
       $('select').formSelect();
       
   });
+
+  $.ajax({
+    url: "/getGroupNames",
+    method: "GET"
+  }).then(function(response) {
+      // console.log("GOT BACK SOMETHING")
+      // console.log("NOW: \n", response.allUsersEmail.length);
+      // console.log("Data:\n",response["allUsersEmail"])
+
+      for(let i = 0; i< response["allGroupNames"].length; i++){
+        // console.log(response["allUsersEmail"][i])
+
+          $('#reportGroupSelect').append(`<option value="${response["allGroupNames"][i]}"> 
+                                              ${response["allGroupNames"][i]} 
+                                           </option>`); 
+          
+      }
+      $('select').formSelect();
+      
+  });
+
 
   $(document.body).on("click", "#addWhite-button", function(event) {
 
