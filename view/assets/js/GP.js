@@ -30,6 +30,7 @@ $(document).ready(function() {
 
 
 
+
   $("#closingPoll-button").click(function(){
 
     let pollTitle = $("#closingPollTitle").val().trim()
@@ -135,7 +136,7 @@ $(document).ready(function() {
 
     let pollTitle = $("#scheduleTitle").val().trim()
     let pollPrompt = $("#scheduleText").val().trim()
-    let pollType = ""
+    let pollType = "MEETUP"
     let pollVoteOptions = []
 
     let date = ""
@@ -149,21 +150,25 @@ $(document).ready(function() {
       time1 = $(`div[data-number='${i}'] input[id='meetingFromTimeChoice']`).val()
       time2 = $(`div[data-number='${i}'] input[id='meetingToTimeChoice']`).val()
       pollVoteChoice = date + " From " + time1 + " to " + time2;
-      console.log("POLL MEETUP CHOICE:\t", i , "- ", pollVoteChoice)
+      // console.log("POLL MEETUP CHOICE:\t", i , "- ", pollVoteChoice)
       pollVoteOptions.push(pollVoteChoice)
     }
 
     var meetupPollData = {
+      groupName: groupName,
+      pollCreator: email,
       pollTitle: pollTitle,
       pollPrompt: pollPrompt,
       pollType: pollType,
+      pollStatus: "ACTIVE",
       pollVoteOptions: pollVoteOptions
     }
 
+    // console.log("INPUT for meetupPollData\t", meetupPollData)
+
     $.post("/createMeetupPoll", meetupPollData)
-    .then(function(data) {
-      console.log("got data back from POST call");
-      alert("POST worked...");
+    .then(function(response) {
+      console.log("got data back from createMeetupPoll POST call", JSON.stringify(response));
     });
 
   });
