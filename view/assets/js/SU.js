@@ -28,6 +28,31 @@ $(document).ready(function() {
 
   $("#userEmail").text(email);
 
+  $(document.body).on("click", "#createInvite-button", function(event) {
+    event.preventDefault();
+    let groupName = $("#createInviteGroupList").val()
+    let inviterEmail = email
+    let inviteeEmail = $("#createInviteUserList").val()
+
+    createInviteData = {
+      groupName: groupName,
+      inviterEmail: inviterEmail,
+      inviteeEmail: inviteeEmail
+    }
+
+    console.log("createInviteData input:\t", JSON.stringify(createInviteData))
+
+    $.post("/inviteToGroup", JSON.stringify(createInviteData))
+    .then(function(response) {
+      console.log("inviteToGroup call worked with\t " + JSON.stringify(response));
+    });
+
+
+  });
+
+
+
+
   $.ajax({
     url: "/getAllUserEmails",
     method: "GET"
@@ -44,7 +69,10 @@ $(document).ready(function() {
                                            </option>`); 
           $('#blackEmailAddition').append(`<option value="${response["allUsersEmail"][i]}"> 
                                               ${response["allUsersEmail"][i]} 
-                                            </option>`);                         
+                                            </option>`);
+          $('#createInviteUserList').append(`<option value="${response["allUsersEmail"][i]}"> 
+                                              ${response["allUsersEmail"][i]} 
+                                            </option>`);                           
         }
           
       }
@@ -119,6 +147,7 @@ $(document).ready(function() {
 
   $.post("/getUserData", JSON.stringify(emailData))
   .then(function(response) {
+
     console.log("get User Data GROUPS:\t " + JSON.stringify(response["userData"][3]));
 
     for(let i=0; i<response["userData"][3].length; i++){
@@ -178,6 +207,17 @@ $(document).ready(function() {
                             `</div>`)
 
     }
+
+    // GENERATE Group LIST in options invitations
+    for(let i=0; i<response["userData"][3].length; i++){
+      // console.log("LIST OF ALL GROUPS::", response["userData"][3][i])
+
+    $('#createInviteGroupList').append(`<option value="${response["userData"][3][i]}"> 
+          ${response["userData"][3][i]} 
+        </option>`);
+    }
+    $('select').formSelect();
+
 
 
     
