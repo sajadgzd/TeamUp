@@ -39,12 +39,22 @@ The Team Up project and its files should now be in your project folder.
 
 ### Step 2: Install Dependencies
 
+Make sure you have Python 3 or above version installed on your system
 
-### Step 3: Set up SQL Database 
+
+### Step 3: Set up SQL Database
+
+Go to the root directory #### softwareEngineeringProject
+Run the following commands in your terminal to initialize and run the database
+
+> python createDatabases.py
+> python initializeDB.py
 
 
 ### Step 4: Launch App 
-Via terminal type in these bash command once you are in the Team Up root directory 
+Via terminal type in these bash command once you are in the Team Up root directory
+
+> python server.py
  
 
 Go to your browser and type in the corresponding address you see the app is running `localhost:?000` in your URL bar. Now you should see the application open locally.
