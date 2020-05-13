@@ -316,7 +316,7 @@ def handleGroupInvite():
         inboxList = json.loads(inviteeData[10])
         inboxList.append({
             "sender": inviter,
-            "message": "Your invitation has been accepted by {}.".format(invitee)
+            "Message": "Your invitation has been accepted by {}.".format(invitee)
         })
         inboxList = json.dumps(inboxList)
         inviterData[10] =inboxList
@@ -325,7 +325,7 @@ def handleGroupInvite():
         connection.commit()
         connection.close()
         return (jsonify({
-            "message": "You've been added to the group {} and your response has been sent to your inviter.".format(groupName)
+            "Message": "You've been added to the group {} and your response has been sent to your inviter.".format(groupName)
         }))
     elif response.lower() == "decline":
         #Notify the inviter that their invitation has been declined
@@ -334,7 +334,7 @@ def handleGroupInvite():
         inboxList = json.loads(inviteeData[10])
         inboxList.append({
             "sender": inviter,
-            "message": message
+            "Message": message
         })
         inboxList = json.dumps(inboxList)
         inviterData[10] =inboxList
@@ -343,7 +343,7 @@ def handleGroupInvite():
         connection.commit()
         connection.close()
         return (jsonify({
-            "message": "You have declined your invitation to the group {} and your response has been sent to your inviter.".format(groupName)
+            "Message": "You have declined your invitation to the group {} and your response has been sent to your inviter.".format(groupName)
         }))
 
 ### CREATE POLLS SECTION ###
