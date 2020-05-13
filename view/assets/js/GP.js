@@ -235,23 +235,43 @@ $(document).ready(function() {
 
   });
 
-  // Render List of Members on millde Polls Form 
-  $.ajax({
-    url: "/getAllUserEmails",
-    method: "GET"
-  }).then(function(response) {
-      // console.log("ALLUSEREMAILS Data:\n",response["allUsersEmail"])
-      for(let i = 0; i< response.allUsersEmail.length; i++){
+  $.post("/getGroupData", JSON.stringify(groupNameJSON))
+  .then(function(response) {
 
-        // console.log("To be add to DropDown:\t", response["allUsersEmail"][i])
-        if (response["allUsersEmail"][i] != email){
-          $('#targetedMemberEmail').append(`<option value="${response["allUsersEmail"][i]}"> 
-                                              ${response["allUsersEmail"][i]} 
-                                            </option>`); 
-        }
+    // let memberList = response[i]["member"]
+    // console.log("MEMBERLIST HERE response ", response["groupData"][5])
+    // console.log("MEMBERLIST HERE response 5", response[5])
+    for(let i = 0; i< response["groupData"][5].length; i++){
+      // console.log("MEMBERLIST HERE to be appended ", response["groupData"][5][i]["member"])
+      if (response["groupData"][5][i]["member"] != email){
+        $('#targetedMemberEmail').append(`<option value="${response["groupData"][5][i]["member"]}"> 
+                                            ${response["groupData"][5][i]["member"]} 
+                                          </option>`); 
       }
-      $('select').formSelect();
-  });
+    }
+    $('select').formSelect();
+
+
+  })
+
+
+  // Render List of Members on millde Polls Form 
+  // $.ajax({
+  //   url: "/getAllUserEmails",
+  //   method: "GET"
+  // }).then(function(response) {
+  //     // console.log("ALLUSEREMAILS Data:\n",response["allUsersEmail"])
+  //     for(let i = 0; i< response.allUsersEmail.length; i++){
+
+  //       // console.log("To be add to DropDown:\t", response["allUsersEmail"][i])
+  //       if (response["allUsersEmail"][i] != email){
+  //         $('#targetedMemberEmail').append(`<option value="${response["allUsersEmail"][i]}"> 
+  //                                             ${response["allUsersEmail"][i]} 
+  //                                           </option>`); 
+  //       }
+  //     }
+  //     $('select').formSelect();
+  // });
 
   $("#polls-button").click(function(){
 
