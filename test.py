@@ -69,11 +69,13 @@ def getUserData():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM moderationRequests")
     
-    moderationData = cursor.fetchone()
-    moderationData = list(moderationData)
+    moderationData = cursor.fetchall()
+    send = []
+    for data in moderationData:
+        send.append(list(data))
     connection.close()
     return (jsonify({
-        "moderationData": moderationData
+        "moderationData": send
     }))
 
 
