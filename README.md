@@ -48,9 +48,13 @@ Go to the root directory **softwareEngineeringProject**
 
 Run the following commands in your terminal
 
-``python createDatabases.py``
+```python
+python createDatabases.py
+```
 
-``python initializeDB.py``
+```python
+python initializeDB.py
+```
 
 
 ### Step 4: Launch App 
