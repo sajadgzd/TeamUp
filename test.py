@@ -459,7 +459,7 @@ def createWarnPraiseKickHelper(pollType):
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?",(groupName,))
     groupData = list(cursor.fetchone())
 
-    memberPolls = json.loads(groupName[3])
+    memberPolls = json.loads(groupData[3])
     memberPolls.append(pollData)
     memberPolls = json.dumps(memberPolls)
     groupData[3] = memberPolls
