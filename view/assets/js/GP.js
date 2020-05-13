@@ -70,10 +70,6 @@ $(document).ready(function() {
 
   });
 
-
-
-
-
   $("#closingPoll-button").click(function(){
 
     let pollTitle = $("#closingPollTitle").val().trim()
@@ -102,49 +98,69 @@ $(document).ready(function() {
 
   });
 
+  // Render List of Members on millde Polls Form 
+
+  $.ajax({
+    url: "/getAllUserEmails",
+    method: "GET"
+  }).then(function(response) {
+      // console.log("ALLUSEREMAILS Data:\n",response["allUsersEmail"])
+      for(let i = 0; i< response.allUsersEmail.length; i++){
+
+        // console.log("To be add to DropDown:\t", response["allUsersEmail"][i])
+        $('#targetedMemberEmail').append(`<option value="${response["allUsersEmail"][i]}"> 
+                                            ${response["allUsersEmail"][i]} 
+                                          </option>`); 
+          
+      }
+      $('select').formSelect();
+  });
+
 
 
   $("#polls-button").click(function(){
-    let createrEmail = "X@gmail.com"
 
     let pollTitle = $("#pollTitle").val().trim()
     let pollPrompt = $("#pollDescription").val().trim()
     let pollType = $('#pollSelect').val()
-    console.log(pollTitle)
-    console.log(pollPrompt)
-    console.log("poll Type:   ", pollType)
-
-    let targetedMember = $("#targetedMemberEmail").val().trim()
+    let targetedMember = $("#targetedMemberEmail").val()
     let pollStatus = "ACTIVE"
-    let pollVoteChoice = "yes"
-    let pollVoteChoiceVal = 0;
-    let pollVoteChoiceValComplement = 1;
-
-    if (pollVoteChoice == "yes"){
-      pollVoteChoiceVal = 1
-      pollVoteChoiceValComplement = 0;
-    }
-
-    let votersArray = []
+    let pollVoteOptions = ["Yes", "No"]
 
     var pollData = {
+      pollCreator: email,
+      groupName: groupName,
       pollTitle: pollTitle,
       pollPrompt: pollPrompt,
       pollType: pollType,
-      targetedMember: targetedMember,
+      targetedMemberEmail: targetedMember,
       pollStatus: pollStatus,
-      pollVoteOptions: {
-        yes: pollVoteChoiceVal,
-        no: pollVoteChoiceValComplement
-      },
-      voters: createrEmail
+      pollVoteOptions: pollVoteOptions,
     };
 
-    $.post("/createPoll", pollData)
-    .then(function(data) {
-      console.log("got data back from POST call", JSON.stringify(data));
-      alert("POST worked...");
-    });
+    console.log("INPUT for createPolls POST", JSON.stringify(pollData));
+
+    if(pollType == "WARNING"){
+      $.post("/createWarningPoll", JSON.stringify(pollData))
+      .then(function(response) {
+        console.log("got data back from createWarningPoll POST call", JSON.stringify(response));
+        M.toast({html: response["Message"]})
+      });
+    }
+    else if(pollType == "PRAISE"){
+      $.post("/createPraisePoll", JSON.stringify(pollData))
+      .then(function(response) {
+        console.log("got data back from createPraisePoll POST call", JSON.stringify(response));
+        M.toast({html: response["Message"]})
+      });
+    }
+    else if(pollType == "KICK"){
+      $.post("/createKickPoll", JSON.stringify(pollData))
+      .then(function(response) {
+        console.log("got data back from createKickPoll POST call", JSON.stringify(response));
+        M.toast({html: response["Message"]})
+      });
+    }
 
   
   });

@@ -125,9 +125,9 @@
                 <div class="input-field col s12">
                     <select id="pollSelect">
                       <option value="" disabled selected>Choose your Poll Type</option>
-                      <option value="Warning">Warning</option>
-                      <option value="Praise">Praise</option>
-                      <option value="Kickout">Kickout</option>
+                      <option value="WARNING">WARNING</option>
+                      <option value="PRAISE">PRAISE</option>
+                      <option value="KICK">KICK</option>
                     </select>
                     <label>Poll Type</label>
                 </div>
@@ -139,9 +139,11 @@
                   <input id="pollDescription" type="text" class="validate" required>
                   <label for="pollDescription">Description</label>
                 </div>
-                <div class="input-field col s12">
-                  <input id="targetedMemberEmail" type="text" class="validate" required>
-                  <label for="targetedMemberEmail">Targeted Member Email</label>
+                <div class="input-field col s12 left-align left">
+                  <select id="targetedMemberEmail">
+                    <option value="" disabled selected>Targeted Member Email</option>
+                  </select>
+                  <label>Targeted Member Email</label>
                 </div>
                 <div class="input-field col s6 left-align">
                     <a href="#" id="polls-button" class="btn waves-effect waves-light light-blue accent-4">Post

@@ -20,7 +20,7 @@ $(document).ready(function() {
         method: "GET"
     }).then(function(response) {
         console.log("GOT BACK SOMETHING")
-        console.log("NOW: \n", response.allUsersEmail.length);
+        // console.log("NOW: \n", response.allUsersEmail.length);
         console.log("Data:\n",response["allUsersEmail"])
 
         for(let i = 0; i< response.allUsersEmail.length; i++){
