@@ -439,7 +439,6 @@ def createWarnPraiseKickHelper(pollType):
     pollData = {}
     pollData["pollCreator"] = jsonData["pollCreator"]
     pollData["targetedMemberEmail"] = jsonData["targetedMemberEmail"]
-    pollData["targetedMemberName"] = jsonData["targetedMemberName"]
     pollData["pollTitle"] = jsonData["pollTitle"]
     pollData["pollPrompt"] = jsonData["pollPrompt"]
     pollData["pollType"] = pollType
@@ -829,7 +828,7 @@ def issuePraiseVote():
     #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
     handleWarningPraiseKickVote(cursor = cursor,groupName= groupName,pollType = "praises",connection = connection,pollUUID=pollUUID,pollTargetedMemberEmail=pollTargetedMemberEmail)
     
-    #Check the warning count for members and kick out if necessary
+    #Check the praise count
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?",(groupName,))
     groupData = list(cursor.fetchone())
     memberList = json.loads(groupData[5])
