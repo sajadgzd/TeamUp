@@ -28,6 +28,10 @@ $(document).ready(function() {
 
   $("#userEmail").text(email);
 
+
+
+
+
   $(document.body).on("click", "#createInvite-button", function(event) {
     event.preventDefault();
     let groupName = $("#createInviteGroupList").val()
@@ -50,8 +54,6 @@ $(document).ready(function() {
 
 
   });
-
-
 
 
   $.ajax({
@@ -138,7 +140,7 @@ $(document).ready(function() {
 
     $.post("/createGroup", JSON.stringify(createGroupData))
     .then(function(response) {
-      console.log("CREATE GROUP call worked with\t " + JSON.stringify(response));
+      // console.log("CREATE GROUP call worked with\t " + JSON.stringify(response));
     });
 
     // location.reload();
@@ -163,7 +165,7 @@ $(document).ready(function() {
       $.post("/getGroupData", JSON.stringify(groupNameJSON))
       .then(function(response) {
         // console.log("GroupData ACTIVE AND CLOSED\t " + JSON.stringify(response));
-        console.log("GroupData ACTIVE AND CLOSED\t " + JSON.stringify(response["groupData"][1]));
+        // console.log("GroupData ACTIVE AND CLOSED\t " + JSON.stringify(response["groupData"][1]));
 
         if((response["groupData"][1]) == "ACTIVE"){
 
@@ -220,6 +222,26 @@ $(document).ready(function() {
     $('select').formSelect();
 
 
+    // GENERATE INVITATION CARDS
+    console.log("First Invitation::", response["userData"][6][0]["groupName"])
+    for(let i=0; i<response["userData"][6].length; i++){
+      console.log("LIST OF ALL Invitations::", response["userData"][6][0])
+      $("#showInvitations").append(`<div class="col s12 m4">` +
+                                      `<div class="card blue-grey darken-1">` +
+                                        `<div class="card-content white-text">` +
+                                          `<span class="card-title">${response["userData"][6][i]["groupName"]}</span>` +
+                                          `<p>Invitation Sent From:</p>` +
+                                          `<p>${response["userData"][6][0]["inviterEmail"]}</p>` +
+                                        `</div>` +
+                                        `<div class="card-action">` +
+                                          `<a href="#">Accept</a>` +
+                                          `<a href="#">Decline</a>` +
+                                        `</div>` +
+                                      `</div>` +
+                                    `</div>`)
+    }
+
+
 
     
 
@@ -233,26 +255,6 @@ $(document).ready(function() {
     email: email
   }
 
-  // $.post("/getAllSignUpData", JSON.stringify(signupData))
-  // .then(function(response) {
-  //   console.log("get SignupData \t " + JSON.stringify(response));
-    // console.log("get SignupData \t " + JSON.stringify(response["groupData"][1]));
-
-    // if((response["groupData"][1]) == "PENDING"){
-
-      // $("#NewRegistrationsTab").append(`<div class="col s12 m4">` +
-      //                                     `<div class="card blue-grey darken-1">` +
-      //                                       `<div class="card-content white-text">` +
-      //                                         `<span class="card-title">New User Name</span>` +
-      //                                       `</div>` +
-      //                                       `<div class="card-action">` +
-      //                                         `<a href="#">Accept</a>` +
-      //                                         `<a href="#">Decline</a>` +
-      //                                       `</div>` +
-      //                                     `</div>` +
-      //                                   `</div>`)
-    // }
-  // });
 
     function getData() {
     $.ajax({
@@ -306,7 +308,7 @@ $(document).ready(function() {
 
   $(document.body).on("click", "#handle-button", function(event) {
 
-    console.log("BUTTON TEXT: ", $("#applicantEmail").text())
+    // console.log("BUTTON TEXT: ", $("#applicantEmail").text())
 
     let handleAppData = {
       response: $(this).text(), //acc dec bl
@@ -315,7 +317,7 @@ $(document).ready(function() {
   
     $.post("/handleApplication", JSON.stringify(handleAppData))
     .then(function(response) {
-          console.log(response["Message"])
+          // console.log(response["Message"])
           M.toast({html: response["Message"]})
           location.reload()
         }
@@ -324,25 +326,6 @@ $(document).ready(function() {
   });
 
 
-
-
-
-
-
-
-
-  // <div class="col s12 m4">
-  // <div class="card blue-grey darken-1">
-  //   <div class="card-content white-text">
-  //     <span class="card-title">New User Name</span>
-  //     <p>This section contains basic information regarding the user.<br></p>
-  //   </div>
-  //   <div class="card-action">
-  //     <a href="#">Accept</a>
-  //     <a href="#">DECLINE</a>
-  //   </div>
-  // </div>
-  // </div>
 
 
 
