@@ -485,7 +485,7 @@ def createPraisePoll():
 
 @app.route('/createKickPoll', methods = ["POST"])
 def createKickPoll():
-    createMeetCloseHelper(pollType="KICK")
+    createWarnPraiseKickHelper(pollType="KICK")
     return (jsonify({
         "Message": "Your Kick poll has been created."
     }))
