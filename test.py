@@ -306,6 +306,18 @@ def handleGroupInvite():
         groupList.append(groupName)
         groupList = json.dumps(groupList)
         inviteeData[3] =groupList
+
+        invitationList = json.loads(inviteeData[6])
+        deleteIndex = None
+        for index,invitation in invitationList:
+            if invitation["groupName"] == groupName:
+                deleteIndex = index
+                break
+        if deleteIndex is not None:
+            del invitationList[deleteIndex]
+        invitationList = json.dumps(invitationList)
+        inviteeData[6] = invitationList
+
         cursor.execute("DELETE FROM users WHERE [email] = ?",(invitee,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
         connection.commit()
