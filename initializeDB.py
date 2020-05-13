@@ -36,11 +36,11 @@ def createSuperUser():
     referredUsers = json.dumps(referredUsers)
 
     rowData = []
-    rowData.append("arunajay@email.com")
+    rowData.append("arun@gmail.com")
     rowData.append("Arun Ajay")
     rowData.append("test")
     rowData.append(groupList)
-    rowData.append(50)
+    rowData.append(500)
     rowData.append(status)
     rowData.append(invitations)
     rowData.append(blacklist)
