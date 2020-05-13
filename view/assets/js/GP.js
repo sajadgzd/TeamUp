@@ -2,19 +2,6 @@
 $(document).ready(function() {
 
   $('.sidenav').sidenav();
-  // $('.chips').chips();
-  // $('.chips-placeholder').chips({
-  //   placeholder: 'Enter a username',
-  //   secondaryPlaceholder: '+Interest',
-  // });
-
-  // var chip = {
-  //   tag: 'chip content',
-  //   image: '', //optional
-  // };
-  // var elem = $('.chips')
-  // var instance = M.Chips.getInstance(elem);
-  // instance.selectChip(2); // Select 2nd chip
 
   var modalelems = document.querySelectorAll('.modal');
   var modalinstances = M.Modal.init(modalelems, {});
@@ -30,15 +17,19 @@ $(document).ready(function() {
  
   let numOfChoices = 2;
 
-  let email = ""
-  let groupName = ""
+  let email = localStorage.getItem('email');
+  console.log("email logged in now as:\t", email);
 
-  // localStorage.setItem('userEmail', 'e@gmail.com');
-  // let printStorage = localStorage.getItem('userEmail');
-  // console.log(printStorage);
-  // localStorage.removeItem('userEmail')
-  // printStorage = localStorage.getItem('userEmail');
-  // console.log(printStorage);
+  let groupName = localStorage.getItem('groupName');
+  console.log("determined by localStorage you're in groupName:\t", groupName);
+
+
+  $("#groupName").text(groupName);
+
+
+
+
+
   $("#closingPoll-button").click(function(){
 
     let pollTitle = $("#closingPollTitle").val().trim()

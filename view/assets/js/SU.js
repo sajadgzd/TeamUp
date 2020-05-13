@@ -155,7 +155,7 @@ $(document).ready(function() {
 
     for(let i=0; i<response["userData"][3].length; i++){
 
-      console.log("LOOOPING in GetUserData to show")
+      let emailToPass = localStorage.getItem('email')
       let groupName = response["userData"][3][i]
 
       groupNameJSON = {
@@ -175,10 +175,18 @@ $(document).ready(function() {
                                       `<span class="card-title">${response["groupData"][0]}</span>` +
                                     `</div>` +
                                     `<div class="card-action">` +
-                                      `<a href="/groupMainPage" target=”_blank”>View</a>` +
+                                      `<a href="/groupMainPage">View</a>` +
                                     `</div>` +
                                   `</div>` +
                                 `</div>`)
+
+        localStorage.setItem('groupName', response["groupData"][0]);
+        localStorage.setItem('email', emailToPass);
+        // let printStorage = localStorage.getItem('groupName');
+        // let printEmailToPass = localStorage.getItem('email');
+        // console.log("determined by localStorage you're in groupName:\t", printStorage);
+        // console.log("determined by localStorage you're in EMAIL:\t", printEmailToPass);
+
         }
       });
     }
