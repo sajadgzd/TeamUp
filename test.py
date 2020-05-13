@@ -1094,9 +1094,9 @@ def referenceReputation():
     referringUserData = list(cursor.fetchone())
 
     if referringUserData[5] == "VIP":
-        referredUserData[4] += points
+        referredUserData[4] += 20
     else:
-        referredUserData[4] += points
+        referredUserData[4] += 10
     
     cursor.execute("DELETE FROM users WHERE [email] = ?", (referredUserEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(referredUserData))
