@@ -99,7 +99,6 @@ $(document).ready(function() {
   });
 
   // Render List of Members on millde Polls Form 
-
   $.ajax({
     url: "/getAllUserEmails",
     method: "GET"
@@ -108,15 +107,14 @@ $(document).ready(function() {
       for(let i = 0; i< response.allUsersEmail.length; i++){
 
         // console.log("To be add to DropDown:\t", response["allUsersEmail"][i])
-        $('#targetedMemberEmail').append(`<option value="${response["allUsersEmail"][i]}"> 
-                                            ${response["allUsersEmail"][i]} 
-                                          </option>`); 
-          
+        if (response["allUsersEmail"][i] != email){
+          $('#targetedMemberEmail').append(`<option value="${response["allUsersEmail"][i]}"> 
+                                              ${response["allUsersEmail"][i]} 
+                                            </option>`); 
+        }
       }
       $('select').formSelect();
   });
-
-
 
   $("#polls-button").click(function(){
 
@@ -166,14 +164,6 @@ $(document).ready(function() {
   });
 
 
-
-  $("#radiobtn").click(function(){
-    var radioValue = $("input[name='group1']:checked").val();
-    if(radioValue){
-        alert("Your chose herew" + radioValue);
-    }
-  });
-
   $("#addSchedule-button").click(function(){
     numOfChoices++;
     $(".datechoices").append( `<div data-number='${numOfChoices}'>` +
@@ -197,36 +187,15 @@ $(document).ready(function() {
   });
 
 
+  $("#radiobtn").click(function(){
+    var radioValue = $("input[name='group1']:checked").val();
+    if(radioValue){
+        alert("Your chose herew" + radioValue);
+    }
+  });
 
-  
 
-  // function getData() {
-  //   $.ajax({
-  //       url: "/test1",
-  //       method: "GET"
-  //   }).then(function(response) {
-  //       console.log("GET root worked fine\n",response);
-  //       $("#test1").append("<p style='font-weight: bold'> Type: " + response.tasks[0].description + "</p><br>");
-  //   });
-  // };
-  // getData();
 
-  // $(document.body).on("click", "#post-button", function(event) {
-  //   event.preventDefault();
-  //   var text = $("#postText").val().trim()
-  //   // $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
-  //   console.log("text value:", text)
 
-  //   var msg = {
-  //     textmsg: text 
-  //   }
-
-  //   $.post("/postText", msg)
-  //   .then(function(data) {
-  //     console.log("got data back from POST call", data.textmsg);
-  //     alert("POST worked...");
-  //   });
-
-  // });
 
 });
