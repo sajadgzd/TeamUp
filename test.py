@@ -390,7 +390,7 @@ def createMeetCloseHelper(pollType):
     pollData["pollType"] = pollType
     pollData["uuid"] = str(uuid.uuid4())
     pollData["pollStatus"] = "ACTIVE"
-    
+    pollData["pollVoteOptionsList"] = jsonData["pollVoteOptions"]
     pollVoteOptions = {}
     for option in jsonData["pollVoteOptions"]:
         pollVoteOptions[option] = 0
