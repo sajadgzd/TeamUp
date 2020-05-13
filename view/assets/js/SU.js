@@ -119,9 +119,9 @@ $(document).ready(function() {
     }
     $.post("/getUserData", JSON.stringify(emailData))
     .then(function(response) {
-      // console.log("call worked with\t " + JSON.stringify(response));
+      // console.log("getUserData call worked with\t " + JSON.stringify(response));
       $("#userEmail").text(response["userData"][1]);
-      $("#reputationScore").text(response["userData"][4]);
+      $("#reputationScore").text(response["userData"][5] + " with a Reputation Score of " + response["userData"][4]);
     });
 
 
