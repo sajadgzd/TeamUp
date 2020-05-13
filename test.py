@@ -1136,7 +1136,7 @@ def reportGroup():
     groupName = jsonData["groupName"] #name of the group being reported
     reportMessage = "This group has been reported for acting inappropriately."
     sendModRequest(groupName, reportMessage, "REPORT_GROUP")
-    return jsonify({"Message": "Your report for this group has been submitted.""})
+    return jsonify({"Message": "Your report for this group has been submitted."})
 
 ### END SENDING REPORTS/APPEALS ###
 
