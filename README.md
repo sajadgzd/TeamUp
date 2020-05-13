@@ -62,7 +62,7 @@ python3 initializeDB.py
 Run the following command in your terminal
 
 ```python
-python3 server.py
+python3 test.py
 ```
 
 
