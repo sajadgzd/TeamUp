@@ -93,6 +93,9 @@ $(document).ready(function() {
     let combinedPollList = groupPollList.concat(memberPollList)
 
     for(let i=0; i< combinedPollList.length; i++) {
+      if(combinedPollList[i]["pollStatus"] == "CLOSED"){
+        continue
+      }
       // console.log("EMAIL IN LOOP",i, email)
       // console.log("TARGETED", combinedPollList[i]["targetedMemberEmail"])
       // console.log("POLL TYPE", combinedPollList[i]["pollType"])
