@@ -404,7 +404,7 @@ $(document).ready(function() {
 
     for(let i=0; i<response["moderationData"].length; i++){
 
-                console.log("LOOOPING \t", response["moderationData"][i])
+                console.log("LOOOPING over moderation \t", response["moderationData"][i])
 
                 if((response["moderationData"][i][2]) == "CLOSE"){
                   $("#Moderation").append(`<div class="col s12 m4 NewDiv" id=${response["moderationData"][i][0]}>` +
@@ -412,7 +412,6 @@ $(document).ready(function() {
                                                         `<div class="card-content white-text">` +
                                                           `<span class="card-title">${response["moderationData"][i][1]}</span>` +
                                                           `<p id="applicantEmail">${response["moderationData"][i][0]}</p>` +
-                                                          `<p>New User Registration Request<br></p>` +
                                                         `</div>` +
                                                         `<div class="card-action">` +
                                                           `<a href="#" id="closeGroupHandle-button">CLOSE GROUP</a>` +
@@ -421,21 +420,47 @@ $(document).ready(function() {
                                                       `</div>` +
                                                     `</div>`)
                 }
-                // else if((response["moderationData"][i][2]) == "APPEALED"){
-                //   $("#Moderation").append(`<div class="col s12 m4 NewDiv" id=${response["moderationData"][i][1]}>` +
-                //                                       `<div class="card blue-grey darken-1">` +
-                //                                         `<div class="card-content white-text">` +
-                //                                           `<span class="card-title">${response["moderationData"][i][0]}</span>` +
-                //                                           `<p id="applicantEmail">${response["moderationData"][i][1]}</p>` +
-                //                                           `<p>${response["moderationData"][i][5]}</p>` +
-                //                                         `</div>` +
-                //                                         `<div class="card-action">` +
-                //                                           `<a href="#" id="handle-button">ACCEPT</a>` +
-                //                                           `<a href="#" id="handle-button">BLACKLIST</a>` +
-                //                                         `</div>` +
-                //                                       `</div>` +
-                //                                     `</div>`)
-                // }
+                else if((response["moderationData"][i][2]) == "REP_APPEAL"){
+                  $("#Moderation").append(`<div class="col s12 m4 NewDiv" id=${response["moderationData"][i][0]}>` +
+                                                      `<div class="card blue-grey darken-1">` +
+                                                        `<div class="card-content white-text">` +
+                                                          `<span class="card-title">${response["moderationData"][i][1]}</span>` +
+                                                          `<p id="applicantEmail">${response["moderationData"][i][0]}</p>` +
+                                                        `</div>` +
+                                                        `<div class="card-action">` +
+                                                          `<a href="#" id="reversePDHandle-button">REVERSE POINT DEDUCTION</a>` +
+                                                          `<a href="#" id="declineGroup-button">DECLINE</a>` +
+                                                        `</div>` +
+                                                      `</div>` +
+                                                    `</div>`)
+                }
+                else if((response["moderationData"][i][2]) == "REPORT_USER"){
+                  $("#Moderation").append(`<div class="col s12 m4 NewDiv" id=${response["moderationData"][i][0]}>` +
+                                                      `<div class="card blue-grey darken-1">` +
+                                                        `<div class="card-content white-text">` +
+                                                          `<span class="card-title">${response["moderationData"][i][1]}</span>` +
+                                                          `<p id="applicantEmail">${response["moderationData"][i][0]}</p>` +
+                                                        `</div>` +
+                                                        `<div class="card-action">` +
+                                                          `<a href="#" id="banUserHandle-button">BAN USER</a>` +
+                                                          `<a href="#" id="issuePDGroup-button">ISSUE POINT DEDUCTION</a>` +
+                                                        `</div>` +
+                                                      `</div>` +
+                                                    `</div>`)
+                }
+                else if((response["moderationData"][i][2]) == "REPORT_GROUP"){
+                  $("#Moderation").append(`<div class="col s12 m4 NewDiv" id=${response["moderationData"][i][0]}>` +
+                                                      `<div class="card blue-grey darken-1">` +
+                                                        `<div class="card-content white-text">` +
+                                                          `<span class="card-title">${response["moderationData"][i][1]}</span>` +
+                                                          `<p id="applicantEmail">${response["moderationData"][i][0]}</p>` +
+                                                        `</div>` +
+                                                        `<div class="card-action">` +
+                                                          `<a href="#" id="banUserHandle-button">SHUT DOWN GROUP</a>` +
+                                                          `<a href="#" id="declineGroup-button">DECLINE</a>` +                                                        `</div>` +
+                                                      `</div>` +
+                                                    `</div>`)
+                }
 
 
       }
