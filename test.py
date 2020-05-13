@@ -412,7 +412,7 @@ def createMeetCloseHelper(pollType):
     groupData[4] = groupPolls
 
     cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
-    cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+    cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
     connection.close()
 
