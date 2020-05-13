@@ -518,6 +518,9 @@ def issueMeetupVote():
     groupPolls = json.loads(groupData[4])
     for index,poll in enumerate(groupPolls):
         if poll["uuid"] == pollUUID:
+            if pollResponder in poll["voters"]:
+                connection.close()
+                return jsonify({"Message": "You cannot vote more than once!"})
             poll["voters"].append(pollResponder)
             pollVoteOptions = poll["pollVoteOptions"]
             pollVoteOptions[pollResponse] += 1
@@ -592,6 +595,9 @@ def issueCloseGroupVote():
     groupPolls = json.loads(groupData[4])
     for index,poll in enumerate(groupPolls):
         if poll["uuid"] == pollUUID:
+            if pollResponder in poll["voters"]:
+                connection.close()
+                return jsonify({"Message": "You cannot vote more than once!"})
             poll["voters"].append(pollResponder)
             pollVoteOptions = poll["pollVoteOptions"]
             pollVoteOptions[pollResponse] += 1
@@ -661,6 +667,8 @@ def registerVote(cursor,groupName,connection,pollUUID,pollResponder,pollResponse
     memberPolls = json.loads(groupData[3])
     for index,poll in enumerate(memberPolls):
         if poll["uuid"] == pollUUID:
+            if pollResponder in poll["voters"]:
+                return jsonify({"Message": "You cannot vote more than once!"})
             poll["voters"].append(pollResponder)
             pollVoteOptions = poll["pollVoteOptions"]
             pollVoteOptions[pollResponse] += 1
@@ -672,6 +680,7 @@ def registerVote(cursor,groupName,connection,pollUUID,pollResponder,pollResponse
     cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
     cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
+    return "Success"
 
 # HANDLE POLL CLOSURE #~HELPER
 def handleWarningPraiseKickVote(cursor,groupName,pollType,connection,pollUUID,pollTargetedMemberEmail):
@@ -738,7 +747,10 @@ def issueWarningVote():
     cursor = connection.cursor()
 
     #REGISTER VOTE INTO POLL
-    registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    flag = registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    if flag != "Success":
+        connection.close()
+        return flag
     #
 
     #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
@@ -809,7 +821,10 @@ def issuePraiseVote():
     cursor = connection.cursor()
 
     #REGISTER VOTE INTO POLL
-    registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    flag = registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    if flag != "Success":
+        connection.close()
+        return flag
     #
 
     #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
@@ -877,7 +892,10 @@ def issueKickVote():
     cursor = connection.cursor()
 
     #REGISTER VOTE INTO POLL
-    registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    flag = registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    if flag != "Success":
+        connection.close()
+        return flag
     #
 
     #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
