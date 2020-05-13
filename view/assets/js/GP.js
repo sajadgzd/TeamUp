@@ -38,6 +38,7 @@ $(document).ready(function() {
     let responder = $(this).attr("responder")
     let targetedMemberEmail = $(this).attr("targetedMemberEmail")
     let pollUUID = $(this).attr("uuid")
+    console.log("POLLUUID IS HERE:\t", pollUUID)
 
     dataJSON = {
       voterEmail: responder,
@@ -93,6 +94,9 @@ $(document).ready(function() {
     let combinedPollList = groupPollList.concat(memberPollList)
 
     for(let i=0; i< combinedPollList.length; i++) {
+
+      console.log("POLL POLL UUID IS HERE:\t", combinedPollList[i]["uuid"])
+
       if(combinedPollList[i]["pollStatus"] == "CLOSED"){
         continue
       }
@@ -115,6 +119,8 @@ $(document).ready(function() {
                 `</p>`
       }
 
+      
+
       $("#showAllPolls").append(`<form class="col s12 m12" id="reg-form">` +
       `<h6><b>${combinedPollList[i]["pollCreator"]}</b> posted the following poll</h6>` +
       `<h6>Title: <b>${combinedPollList[i]["pollTitle"]}</b></h6>` +
@@ -124,10 +130,12 @@ $(document).ready(function() {
         pTags +
       `</form>` +
       `<br>` +
-      `<a href="#" id="meetupVoteButton" targetedMemberEmail=${combinedPollList[i]["targetedMemberEmail"]} responder=${email} pollType=${combinedPollList[i]["pollType"]} uuid=${combinedPollList[i]["pollUUID"]} groupName=${groupName} class="btn waves-effect waves-light light-blue accent-4" style="margin-left: 2%">Vote` +
+      `<a href="#" id="meetupVoteButton" targetedMemberEmail=${combinedPollList[i]["targetedMemberEmail"]} responder=${email} pollType=${combinedPollList[i]["pollType"]} uuid=${combinedPollList[i]["uuid"]} groupName=${groupName} class="btn waves-effect waves-light light-blue accent-4" style="margin-left: 2%">Vote` +
         `<i class="material-icons right">done</i>` +
       `</a>` +
       `</form>`)
+
+      
     }
 
 

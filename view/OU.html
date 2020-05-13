@@ -49,285 +49,244 @@
         </div>
     </nav>
 
-
     <div class="row">
       <div class="col s12">
         <ul class="tabs">
-          <li class="tab col s2"><a href="#GroupsTab">Groups</a></li>
+          <li class="tab col s1"><a href="#GroupsTab">Groups</a></li>
+          <!-- <li class="tab col s2"><a href="#NewRegistrationsTab">New Registration</a></li> -->
           <li class="tab col s2"><a href="#InvitationsTab">Invitations</a></li>
-          <li class="tab col s2"><a href="#WhiteListTab">White List</a></li>
+          <li class="tab col s1"><a href="#WhiteListTab">WhiteList</a></li>
           <li class="tab col s2"><a href="#BlackListTab">BlackList</a></li>
-          <li class="tab col s2"><a href="#PendingScoresTab">Pending Scores</a></li>
+          <!-- <li class="tab col s2"><a href="#Moderation">Moderation</a></li> -->
+          <!-- <li class="tab col s2"><a href="#ClosedGroupsTab">Closed Groups</a></li> -->
         </ul>
       </div>
     </div>
 
-    <div class="row">
-      
-          <h5 class="left" style="margin-left: 2%;">Ordinary User name</h5>
-          
 
+    <div class="row">
+      <div class="col l12 m12">
+        <!-- <div class="row"> -->
+          <h5 class="left" style="margin-left: 2%;" id="userEmail">Ordinary User name</h5> 
+        <!-- </div> -->
+        <div class="row right-align">
+         <h5>Reputation Score:  <span><h5 class="" style="margin-left: 2%;" id="reputationScore"> Rep Score</h5></span> </h5>
+          
+        </div>
+      </div>
     </div>
 
     <div class="container">
 
-      <div class="row" id="GroupsTab">
-        <div class="row">
-          <h5 class="left-align register">Create a Group</h5>
-          <form class="col s6 m6" id="reg-form" style="">
-              <div class="input-field col s12">
-                <input id="groupName" type="text" class="validate" required>
-                <label for="groupName">Group Name</label>
+        <div class="row" id="NewRegistrationsTab">
+          <div class="row">
+            <h5 class="left">New Registration Reuqests</h5>
+          </div>
+        </div>
+
+        <div class="row" id="GroupsTab">
+          <div class="row">
+            <h5 class="left-align register">Create a Group</h5>
+            <form class="col s6 m6" id="reg-form" style="">
+                <div class="input-field col s12">
+                  <input id="groupName" type="text" class="validate" required>
+                  <label for="groupName">Group Name</label>
+                </div>
+                <!-- <div class="input-field col s12">
+                  <br>
+                  <div class="chips chips-placeholder"></div>
+                  <label for="Invitees">Invitees' usernames</label>
+                </div> -->
+                <div class="input-field col s6">
+                    <a href="" id="createGroup-button" class="btn waves-effect waves-light light-blue accent-4">Submit
+                        <i class="material-icons right">done</i>
+                    </a>
+                </div>
+            </form>
+          </div>
+          <div class="row" id="groupsDiv">
+            <div class="row">
+              <h5 class="left">Your Current Groups</h5>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row" id="InvitationsTab">
+          <div class="row">
+            <form class="col s12 m5" id="reg-form" style="">
+              <h5 class="left-align register">Invite to Group</h5>
+
+              <div class="input-field col s12 left">
+                <select id="createInviteGroupList">
+                  <option value="" disabled selected>Choose your Group</option>
+                </select>
+                <label>Choose your Group</label>
               </div>
-              <div class="input-field col s12">
-                <br>
-                <div class="chips chips-placeholder"></div>
-                <label for="Invitees">Invitees' usernames</label>
+              <div class="input-field col s12 left">
+                <select id="createInviteUserList">
+                  <option value="" disabled selected>Choose your User</option>
+                </select>
+                <label>Choose your User</label>
               </div>
               <div class="input-field col s6">
-                  <a href="#" id="createGroup-button" class="btn waves-effect waves-light light-blue accent-4">Submit
+                  <a href="" id="createInvite-button" class="btn waves-effect waves-light light-blue accent-4">Invite
                       <i class="material-icons right">done</i>
                   </a>
               </div>
-          </form>
-        </div>
-        <div class="row">
-          <h5 class="left">Your Current Groups</h5>
-        </div>
-        <div class="col s12 m4">
-          <div class="card blue-grey darken-1">
-            <div class="card-content white-text">
-              <span class="card-title">Group Title</span>
-              <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-            </div>
-            <div class="card-action">
-              <a href="#">View</a>
-            </div>
-          </div>
-        </div>
-        <div class="col s12 m4">
-          <div class="card blue-grey darken-1">
-            <div class="card-content white-text">
-              <span class="card-title">Group Title</span>
-              <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-            </div>
-            <div class="card-action">
-              <a href="#">View</a>
-            </div>
-          </div>
-        </div>
-        <div class="col s12 m4">
-          <div class="card blue-grey darken-1">
-            <div class="card-content white-text">
-              <span class="card-title">Group Title</span>
-              <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-            </div>
-            <div class="card-action">
-              <a href="#">View</a>
-            </div>
-          </div>
-        </div>  
-      </div>
-      <div class="row" id="InvitationsTab">
-          <div class="row">
-            <h5 class="left">Your Invitations</h5>
-          </div>
-            <div class="col s12 m4">
-              <div class="card blue-grey darken-1">
-                <div class="card-content white-text">
-                  <span class="card-title">Group Title</span>
-                  <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-                </div>
-                <div class="card-action">
-                  <a href="#">Accept</a>
-                  <a href="#">Decline</a>
-                </div>
-              </div>
-            </div>
-            <div class="col s12 m4">
-              <div class="card blue-grey darken-1">
-                <div class="card-content white-text">
-                  <span class="card-title">Group Title</span>
-                  <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-                </div>
-                <div class="card-action">
-                  <a href="#">Accept</a>
-                  <a href="#">Decline</a>
-                </div>
-              </div>
-            </div>
-            <div class="col s12 m4">
-              <div class="card blue-grey darken-1">
-                <div class="card-content white-text">
-                  <span class="card-title">Group Title</span>
-                  <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-                </div>
-                <div class="card-action">
-                  <a href="#">Accept</a>
-                  <a href="#">Decline</a>
-                </div>
-              </div>
-            </div>  
-      </div>
-      <div class="row" id="WhiteListTab">
-        <div class="row"><h5 class="left">Your White List</h5></div>
-        
-        <!-- Modal Trigger -->
-        <a class="waves-effect waves-light btn modal-trigger" href="#AddWhiteModal">Add to White List</a>
-
-        <!-- Modal Structure -->
-        <div id="AddWhiteModal" class="modal">
-          <div class="modal-content">
-            <h4>Add to your White list</h4>
-            <p>Enter the user name</p>
-            <form class="col s6 m6" id="reg-form" style="margin-left: 25%">
-              <div class="input-field col s12">
-                <input id="username" type="text" class="validate" required>
-                <label for="username">Username</label>
-              </div>
             </form>
           </div>
-          <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Submit</a>
+
+
+          <div class="row" id="showInvitations">
+            <div class="row">
+              <h5 class="left">Your Invitations</h5>
+            </div>
           </div>
+
         </div>
 
-        <div class="row">
-          <div class="col s12 m3">
-            <div class="card blue-grey darken-1">
-              <div class="card-content white-text">
-                <span class="card-title">User name</span>
-                <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-              </div>
-              <div class="card-action">
-                <a href="#">Remove</a>
-              </div>
-            </div>
-          </div>
-          <div class="col s12 m3">
-            <div class="card blue-grey darken-1">
-              <div class="card-content white-text">
-                <span class="card-title">User name</span>
-                <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-              </div>
-              <div class="card-action">
-                <a href="#">Remove</a>
-              </div>
-            </div>
-          </div>
-          <div class="col s12 m3">
-            <div class="card blue-grey darken-1">
-              <div class="card-content white-text">
-                <span class="card-title">User name</span>
-                <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-              </div>
-              <div class="card-action">
-                <a href="#">Remove</a>
-              </div>
-            </div>
-          </div>
-          <div class="col s12 m3">
-            <div class="card blue-grey darken-1">
-              <div class="card-content white-text">
-                <span class="card-title">User name</span>
-                <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-              </div>
-              <div class="card-action">
-                <a href="#">Remove</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="row" id="BlackListTab">
+
+        <div class="row" id="WhiteListTab">
+          <div class="row"><h5 class="left">Your White List</h5></div>
+        
+          <!-- Modal Trigger -->
+          <a class="waves-effect waves-light btn modal-trigger" href="#AddWhiteModal">Add to White List</a>
+  
+          <!-- Modal Structure -->
+          <div id="AddWhiteModal" class="modal" style="height: 400px;">
+            <div class="modal-content">
+              <h4>Add to your White list</h4>
+              <p>Pick your email</p>
+              <form class="col s6 m6" id="reg-form" style="margin-left: 25%">
+                <div class="input-field col s12 center">
+                  <select id="whiteEmailAddition">
+                    <option value="" disabled selected>Choose your user</option>
+                  </select>
+                  <label>Choose your user</label>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <a href="#!" class="modal-close waves-effect waves-green btn-flat" id="addWhite-button">Submit</a>
+            </div>
+          </div>
+  
+          <div class="row" id="whiteListDiv">
+          </div>
+          
+        </div>
+
+
+        <div class="row" id="BlackListTab">
           <div class="row"><h5 class="left">Your Black List</h5></div>
           <!-- <i class="material-icons">add</i> -->
           <!-- Modal Trigger -->
           <a class="waves-effect waves-light btn modal-trigger" href="#AddBlackModal">Add to Black List </a>
 
-          <div class="row">
-            <div class="col s12 m3">
-              <div class="card blue-grey darken-1">
-                <div class="card-content white-text">
-                  <span class="card-title">User name</span>
-                  <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-                </div>
-                <div class="card-action">
-                  <a href="#">Remove</a>
-                </div>
-              </div>
-            </div>
-            <div class="col s12 m3">
-              <div class="card blue-grey darken-1">
-                <div class="card-content white-text">
-                  <span class="card-title">User name</span>
-                  <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-                </div>
-                <div class="card-action">
-                  <a href="#">Remove</a>
-                </div>
-              </div>
-            </div>
-            <div class="col s12 m3">
-              <div class="card blue-grey darken-1">
-                <div class="card-content white-text">
-                  <span class="card-title">User name</span>
-                  <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-                </div>
-                <div class="card-action">
-                  <a href="#">Remove</a>
-                </div>
-              </div>
-            </div>
-            <div class="col s12 m3">
-              <div class="card blue-grey darken-1">
-                <div class="card-content white-text">
-                  <span class="card-title">User name</span>
-                  <p>This section contains basic information regarding the item.<br>The link below takes the user to view the item in more details</p>
-                </div>
-                <div class="card-action">
-                  <a href="#">Remove</a>
-                </div>
-              </div>
-            </div>
+          <div class="row" id="blackListDiv">
           </div>
 
           <!-- Modal Structure -->
-          <div id="AddBlackModal" class="modal">
+          <div id="AddBlackModal" class="modal" style="height: 400px;">
             <div class="modal-content">
               <h4>Add to your Black list</h4>
-              <p>Enter the user name</p>
+              <p>Pick your choice</p>
               <form class="col s6 m6" id="reg-form" style="margin-left: 25%">
-                <div class="input-field col s12">
-                  <input id="username" type="text" class="validate" required>
-                  <label for="username">Username</label>
+                <div class="input-field col s12 center">
+                  <select id="blackEmailAddition">
+                    <option value="" disabled selected>Choose your user</option>
+                  </select>
+                  <label>Choose your user</label>
                 </div>
-            </form>
+              </form>
             </div>
             <div class="modal-footer">
-              <a href="#!" class="modal-close waves-effect waves-green btn-flat">Submit</a>
+              <a href="" class="modal-close waves-effect waves-green btn-flat" id="addBlack-button">Submit</a>
             </div>
           </div>
-      </div>
+        </div>
 
 
-      <div class="row " id="PendingScoresTab">
+        <!-- <div class="row " id="Moderation">
           <br><br>
           <div class="col s12 m12 info">
-            <h5 class="left-align register">Pending Initial Scores</h5>
+            <h5 class="left-align register">New Compliments and Complains</h5>
+            <div class="col s12 m4">
+              <div class="card blue-grey darken-1">
+                <div class="card-content white-text">
+                  <span class="card-title">Compliment</span>
+                  <h6>Username Mike33 received 3 compliments</h6>
+                  <p>This section contains basic information regarding the item.<br></p>
+                </div>
+                <div class="card-action">
+                  <a class="waves-effect waves-light btn modal-trigger" href="#modal2">Respond</a> -->
+
+                  <!-- Modal Structure -->
+                  <!-- <div id="modal2" class="modal">
+                    <div class="modal-content">
+                      <h5>Manage User</h5>
+                      <ul class="collection">
+                        <li class="collection-item avatar">
+                          <span class="title">Mike33</span>
+                          <p>VIP user<br>
+                             Score: 50
+                          </p>
+                          <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+                        </li>
+                      <form class="col s6 m6" id="reg-form" style="margin-left: 3%">
+                        <div class="input-field col s12">
+                          <input id="username" type="text" class="validate" required>
+                          <label for="username">Enter the updated score</label>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Submit Score</a>
+                      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Block user from System</a>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div class="col s12 m4">
+              <div class="card blue-grey darken-1">
+                <div class="card-content white-text">
+                  <span class="card-title">Complain</span>
+                  <h6>Username Mike33 received a compliments</h6>
+                  <p>This section contains basic information regarding the item.<br></p>
+                </div>
+                <div class="card-action">
+                  <a class="waves-effect waves-light btn modal-trigger" href="#modal2">Respond</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div> -->
+
+        <!-- <div class="row " id="ClosedGroupsTab">
+          <br><br>
+
+          <div class="col s12 m12 info">
+            <h5 class="left-align register">Closed Groups Pending Evaluation to be Assigned</h5>
+
             <p class="light"> There's currently no item here</p>
             <br>
           </div>
-      </div>
+
+        </div> -->
 
 
         <br><br> <br><br> <br><br>
 
-    <!-- </div> -->
+    </div>
 
     
     <script src="assets/js/materialize.js"></script>
-    <script type="text/javascript" src="assets/js/OU.js"></script>
+    <!-- <script type="text/javascript" src="assets/js/OU.js"></script> -->
+    <script type="text/javascript" src="assets/js/SU.js"></script>
 </body>
 </html>
