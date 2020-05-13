@@ -277,7 +277,7 @@ def handleGroupInvite():
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(invitee,))
 
     #If they accept the invitation
-    if response.lower() == "Accept":
+    if response.lower() == "accept":
         #Add the invitee to the group list
         cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
         groupData= list(cursor.fetchone())
@@ -327,7 +327,7 @@ def handleGroupInvite():
         return (jsonify({
             "message": "You've been added to the group {} and your response has been sent to your inviter.".format(groupName)
         }))
-    elif response.lower() == "Decline":
+    elif response.lower() == "decline":
         #Notify the inviter that their invitation has been declined
         cursor.execute("SELECT * FROM users where [email] = ?",(inviter,))
         inviterData = list(cursor.fetchone())
