@@ -34,7 +34,51 @@ $(document).ready(function() {
       console.log(("YOUR CHOICE HERE IS" + radioValue))
         alert("YOUR CHOICE HERE IS :\t" + radioValue);
     }
-  });
+    let type = $(this).attr("pollType")
+    let responder = $(this).attr("responder")
+    let targetedMemberEmail = $(this).attr("targetedMemberEmail")
+    let pollUUID = $(this).attr("uuid")
+
+    dataJSON = {
+      voterEmail: responder,
+      pollResponse: radioValue,
+      targetedMemberEmail: targetedMemberEmail,
+      groupName: groupName,
+      pollUUID: pollUUID
+
+    }
+
+    if(type == "WARNING"){
+      $.post("/issueWarningVote", JSON.stringify(dataJSON))
+      .then(function(response) {
+        console.log("issueWarningVote WITH\t", JSON.stringify(response))
+      })
+    }
+    else if(type == "KICK"){
+      $.post("/issueKickVote", JSON.stringify(dataJSON))
+      .then(function(response) {
+        console.log("issueKickVote WITH\t", JSON.stringify(response))
+      })
+    }
+    else if(type == "PRAISE"){
+      $.post("/issuePraiseVote", JSON.stringify(dataJSON))
+      .then(function(response) {
+        console.log("issuePraiseVote WITH\t", JSON.stringify(response))
+      })
+    }
+    else if(type == "CLOSE"){
+        $.post("/issueCloseGroupVote", JSON.stringify(dataJSON))
+        .then(function(response) {
+          console.log("issueCloseGroupVote WITH\t", JSON.stringify(response))
+      })
+    }
+    else if(type == "MEETUP"){
+        $.post("/issueMeetupVote", JSON.stringify(dataJSON))
+        .then(function(response) {
+          console.log("issueMeetupVote WITH\t", JSON.stringify(response))
+      })
+    }
+  })
 
   groupNameJSON = {
     groupName: groupName
@@ -43,22 +87,22 @@ $(document).ready(function() {
   $.post("/getGroupData", JSON.stringify(groupNameJSON))
   .then(function(response) {
     // console.log("GroupData ACTIVE AND CLOSED\t " + JSON.stringify(response));
-    console.log("GroupData\t " + JSON.stringify(response["groupData"][4]));
+    // console.log("GroupData\t " + JSON.stringify(response["groupData"][4]));
     let groupPollList = response["groupData"][4]; // closing and meetup
     let memberPollList = response["groupData"][3]; // kick praise warn
     let combinedPollList = groupPollList.concat(memberPollList)
 
     for(let i=0; i< combinedPollList.length; i++) {
-      console.log("EMAIL IN LOOP",i, email)
-      console.log("TARGETED", combinedPollList[i]["targetedMemberEmail"])
-      console.log("POLL TYPE", combinedPollList[i]["pollType"])
+      // console.log("EMAIL IN LOOP",i, email)
+      // console.log("TARGETED", combinedPollList[i]["targetedMemberEmail"])
+      // console.log("POLL TYPE", combinedPollList[i]["pollType"])
       if(combinedPollList[i]["pollType"] == "WARNING" || combinedPollList[i]["pollType"] == "KICK" || combinedPollList[i]["pollType"] == "PRAISE" ){
         if(combinedPollList[i]["targetedMemberEmail"] == email){
           continue
         }
       }
       let pTags = "";
-      console.log("LOOK",combinedPollList[i]["pollVoteOptionsList"])
+      // console.log("LOOK",combinedPollList[i]["pollVoteOptionsList"])
       for(let j=0; j<combinedPollList[i]["pollVoteOptionsList"].length; j++){
         pTags += `<p>` +
                   `<label>` +
@@ -77,7 +121,7 @@ $(document).ready(function() {
         pTags +
       `</form>` +
       `<br>` +
-      `<a href="#" id="meetupVoteButton" class="btn waves-effect waves-light light-blue accent-4" style="margin-left: 2%">Vote` +
+      `<a href="#" id="meetupVoteButton" targetedMemberEmail=${combinedPollList[i]["targetedMemberEmail"]} responder=${email} pollType=${combinedPollList[i]["pollType"]} uuid=${combinedPollList[i]["pollUUID"]} groupName=${groupName} class="btn waves-effect waves-light light-blue accent-4" style="margin-left: 2%">Vote` +
         `<i class="material-icons right">done</i>` +
       `</a>` +
       `</form>`)
