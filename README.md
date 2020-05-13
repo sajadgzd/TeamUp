@@ -71,6 +71,25 @@ Go to your browser and type in the corresponding address you see the app is runn
 Now you should see the application open locally.
 
 <a name="display"></a>
-## App Screenshot
+## App Screenshot samples
+### Landing Page
 <img src="/view/assets/images/landing.png">
+
+### Signup Page
+<img src="/view/assets/images/signup.png">
+
+### Login Page
+<img src="/view/assets/images/login.png">
+
+### A sample screen shot of a user. In this case a Super User
+<img src="/view/assets/images/su.png">
+
+### Group page
+<img src="/view/assets/images/gp.png">
+
+### Sample feature. Creating a meetup schedule poll
+<img src="/view/assets/images/gp2.png">
+
+### Sample feature. Voting for a meetup schedule poll
+<img src="/view/assets/images/gp3.png">
 
