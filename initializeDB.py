@@ -92,6 +92,6 @@ def createSuperUser2():
     connection.close()
 
 
-# clearAllTables()
-# createSuperUser()
+clearAllTables()
+createSuperUser()
 createSuperUser2()

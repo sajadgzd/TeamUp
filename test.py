@@ -192,7 +192,7 @@ def inviteToGroup():
 
     blackList = json.loads(inviteeData[7])
     for blocked in blackList:
-        if blocked["email"] == inviter:
+        if blocked == inviter:
             connection.close()
             return jsonify({
             "Message": "Sorry, your invitation has been automatically rejected."
@@ -200,7 +200,7 @@ def inviteToGroup():
 
     whiteList = json.loads(inviteeData[8])
     for autoAccept in whiteList:
-        if autoAccept["email"] == inviter:
+        if autoAccept == inviter:
             #Add group to invitee list
             groupList = json.loads(inviteeData[3])
             if groupName in groupList:
@@ -309,7 +309,7 @@ def handleGroupInvite():
 
         invitationList = json.loads(inviteeData[6])
         deleteIndex = None
-        for index,invitation in invitationList:
+        for index,invitation in enumerate(invitationList):
             if invitation["groupName"] == groupName:
                 deleteIndex = index
                 break
@@ -345,7 +345,7 @@ def handleGroupInvite():
         inviterData = list(cursor.fetchone())
         inboxList = json.loads(inviterData[10])
         inboxList.append({
-            "sender": inviter,
+            "sender": invitee,
             "Message": message
         })
         inboxList = json.dumps(inboxList)
@@ -359,7 +359,7 @@ def handleGroupInvite():
         inviteeData = list(cursor.fetchone())
         invitationList = json.loads(inviteeData[6])
         deleteIndex = None
-        for index,invitation in invitationList:
+        for index,invitation in enumerate(invitationList):
             if invitation["groupName"] == groupName:
                 deleteIndex = index
                 break
