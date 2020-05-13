@@ -130,6 +130,22 @@ def getAllVIPEmails():
         "allVIPEmail": emails
     }))    
 
+@app.route('/getGroupNames',methods = ["GET"])
+def getGroupNames():
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM groups")
+
+    names = []
+
+    for group in cursor.fetchall():
+        names.append(group[0])
+    
+    connection.close()
+    return (jsonify({
+        "allGroupNames": names
+    }))
+
 @app.route('/getGroupData', methods = ["POST"])
 def getGroupData():
     jsonData =json.loads(request.get_data())
@@ -1099,7 +1115,7 @@ def appealReputation():
     #GET FRONT END DATA
     jsonData =json.loads(request.get_data())
     userEmail = jsonData["email"] # email of the user appealing
-    appealMessage = jsonData["appealMessage"]
+    appealMessage = "This user is requesting a reverse in point deduction."
 
     sendModRequest(userEmail, appealMessage, "REP_APPEAL")
     return jsonify({"Success: appeal has been submitted."})
@@ -1109,8 +1125,8 @@ def reportUser():
     #GET FRONT END DATA
     jsonData =json.loads(request.get_data())
     targetEmail = jsonData["email"] #email of the user being reported
-    reportMessage = jsonData["reportMessage"]
-    sendModRequest(targetEmail, reportMessage, "REPORT")
+    reportMessage = "This user has been reported for misbehaving."
+    sendModRequest(targetEmail, reportMessage, "REPORT_USER")
     return jsonify({"Success: report has been submitted."})
 
 @app.route('/reportGroup', methods = ["POST"])
@@ -1118,8 +1134,8 @@ def reportGroup():
     #GET FRONT END DATA
     jsonData =json.loads(request.get_data())
     groupName = jsonData["groupName"] #name of the group being reported
-    reportMessage = jsonData["reportMessage"]
-    sendModRequest(groupName, reportMessage, "REPORT")
+    reportMessage = "This group has been reported for acting inappropriately."
+    sendModRequest(groupName, reportMessage, "REPORT_GROUP")
     return jsonify({"Success: report has been submitted."})
 
 ### END SENDING REPORTS/APPEALS ###
