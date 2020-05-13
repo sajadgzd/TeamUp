@@ -223,9 +223,9 @@ $(document).ready(function() {
 
 
     // GENERATE INVITATION CARDS
-    console.log("First Invitation::", response["userData"][6][0]["groupName"])
+    // console.log("First Invitation::", response["userData"][6][0]["groupName"])
     for(let i=0; i<response["userData"][6].length; i++){
-      console.log("LIST OF ALL Invitations::", response["userData"][6][0])
+      // console.log("LIST OF ALL Invitations::", response["userData"][6][0])
       $("#showInvitations").append(`<div class="col s12 m4">` +
                                       `<div class="card blue-grey darken-1">` +
                                         `<div class="card-content white-text">` +
@@ -234,22 +234,24 @@ $(document).ready(function() {
                                           `<p>${response["userData"][6][0]["inviterEmail"]}</p>` +
                                         `</div>` +
                                         `<div class="card-action">` +
-                                          `<a href="#">Accept</a>` +
-                                          `<a href="#">Decline</a>` +
+                                          `<a href="#" id="handleInviteAccept-button" groupName=${response["userData"][6][i]["groupName"]} 
+                                          inviterEmail=${response["userData"][6][0]["inviterEmail"]} >Accept</a>` +
+                                          // `<a class="" href="#inviteDeclineIntital">Decline</a>` +
+                                          `<div id="inviteDeclineMessageDiv">` +
+                                            `<h6>Please explain the reason why you'd like to decline the invitation?</h6>` +
+                                            `<div class="input-field col s12">` +
+                                              `<input id="inviteDeclineMessage" type="text" class="validate" required>` +
+                                              `<label for="inviteDeclineMessage">Reason</label>` +
+                                           `</div>` +
+                                          `</div>` +
+                                          `<a href="#" class="" id="inviteDeclineSubmit-button" 
+                                          groupName=${response["userData"][6][i]["groupName"]} 
+                                          inviterEmail=${response["userData"][6][0]["inviterEmail"]}>Decline</a>` +
                                         `</div>` +
-                                      `</div>` +
                                     `</div>`)
     }
 
-
-
-    
-
-
-
   });
-
-
 
   let signupData = {
     email: email
@@ -324,6 +326,63 @@ $(document).ready(function() {
       );
 
   });
+
+  // $("#inviteDeclineMessageDiv").hide()
+  // $(document.body).on("click", "#inviteDeclineIntital", function(event) {
+  //   $("#inviteDeclineMessageDiv").show()
+  // }); 
+  // $(document.body).on("click", "#inviteDeclineSubmit-button", function(event) {
+    
+  // })
+
+  $(document.body).on("click", "#handleInviteAccept-button", function(event) {
+
+    let handleInviteAccept = {
+      inviterEmail: $(this).attr("inviterEmail"), 
+      groupName: $(this).attr("groupName"),
+      inviteeEmail: email,
+      message: $(this).val().trim(),
+      response: "accept",
+    }
+
+    console.log("handleInviteAccept INPUT:\t", handleInviteAccept)
+  
+    $.post("/handleGroupInvite", JSON.stringify(handleInviteAccept))
+    .then(function(response) {
+              console.log("GOT THIS BACK FROM handleGroupInvite", response)
+              console.log(response["Message"])
+              M.toast({html: response["Message"]})
+    //       location.reload()
+        }
+      );
+
+  }); 
+
+
+
+  $(document.body).on("click", "#inviteDeclineSubmit-button", function(event) {
+
+    let inviteDeclineSubmit = {
+      inviterEmail: $(this).attr("inviterEmail"), 
+      groupName: $(this).attr("groupName"),
+      inviteeEmail: email,
+      message: $("#inviteDeclineMessage").val().trim(),
+      response: "decline",
+    }
+
+    console.log("inviteDeclineSubmit INPUT:\t", JSON.stringify(inviteDeclineSubmit))
+  
+    $.post("/handleGroupInvite", JSON.stringify(inviteDeclineSubmit))
+    .then(function(response) {
+          console.log("GOT THIS BACK FROM handleGroupInvite",response)
+          console.log(response["Message"])
+          M.toast({html: response["Message"]})
+          // location.reload()
+        }
+      );
+
+  });
+
 
 
 
