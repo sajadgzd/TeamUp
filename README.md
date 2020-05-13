@@ -56,7 +56,9 @@ Run the following commands in your terminal
 ### Step 4: Launch App 
 Via terminal type in these bash command once you are in the Team Up root directory
 
-``python server.py``
+```python
+python server.py
+```
  
 
 Go to your browser and type in the corresponding address you see the app is running `localhost:?000` in your URL bar. Now you should see the application open locally.
