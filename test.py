@@ -173,19 +173,20 @@ def loginUser():
 @app.route('/inviteToGroup', methods = ["POST"])
 def inviteToGroup():
 
-    #GET JSON DAT
+    #GET JSON DATA
     jsonData =json.loads(request.get_data())
 
     inviter = jsonData["inviterEmail"].lower()
-    inviterFullname = jsonData["inviterFullname"]
     groupName = jsonData["groupName"]
     invitee = jsonData["inviteeEmail"].lower()
 
     #CONNECT TO DATABASE
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE [email] = ?",(inviter,))
+    inviterData = cursor.fetchone()
+    inviterFullname = inviterData[1]
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(invitee,))
-
     inviteeData = cursor.fetchone()
     inviteeData = list(inviteeData)
 
@@ -202,6 +203,9 @@ def inviteToGroup():
         if autoAccept["email"] == inviter:
             #Add group to invitee list
             groupList = json.loads(inviteeData[3])
+            if groupName in groupList:
+                connection.close()
+                return jsonify({"Message": "The user is already in this group."})
             groupList.append(groupName)
             groupList = json.dumps(groupList)
             inviteeData[3] = groupList
@@ -228,7 +232,7 @@ def inviteToGroup():
             connection.commit()
             connection.close()
             return jsonify({
-                "Message": "Your invitation has been automatically accepted!"
+                "Message": "Your invitation has been automatically accepted."
             })
 
     invitations = json.loads(inviteeData[6])
@@ -244,7 +248,7 @@ def inviteToGroup():
     connection.commit()
     connection.close()
     return jsonify({
-        "Message": "Your invitation has been sent!"
+        "Message": "Your invitation has been sent."
     })
 
 
@@ -255,7 +259,6 @@ def handleGroupInvite():
     jsonData =json.loads(request.get_data())
 
     inviter = jsonData["inviterEmail"]
-    inviterFullname = jsonData["inviterFullName"]
     groupName = jsonData["groupName"]
     invitee = jsonData["inviteeEmail"]
     message = jsonData["message"]
@@ -269,11 +272,15 @@ def handleGroupInvite():
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(invitee,))
 
     #If they accept the invitation
-    if response.lower() == "accepted":
+    if response.lower() == "Accept":
         #Add the invitee to the group list
         cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
         groupData= list(cursor.fetchone())
         memberData = json.loads(groupData[5])
+        for data in memberData:
+            if data["member"] == invitee:
+                connection.close()
+                return jsonify({"Message": "You're already in the group!"})
         memberData.append({
                 "member": invitee,
                 "warnings": 0,
@@ -315,7 +322,7 @@ def handleGroupInvite():
         return (jsonify({
             "message": "You've been added to the group {} and your response has been sent to your inviter.".format(groupName)
         }))
-    elif response.lower() == "declined":
+    elif response.lower() == "Decline":
         #Notify the inviter that their invitation has been declined
         cursor.execute("SELECT * FROM users where [email] = ?",(inviter,))
         inviterData = list(cursor.fetchone())
