@@ -331,7 +331,7 @@ def handleGroupInvite():
         #Notify the inviter that their invitation has been declined
         cursor.execute("SELECT * FROM users where [email] = ?",(inviter,))
         inviterData = list(cursor.fetchone())
-        inboxList = json.loads(inviteeData[10])
+        inboxList = json.loads(inviterData[10])
         inboxList.append({
             "sender": inviter,
             "Message": message
