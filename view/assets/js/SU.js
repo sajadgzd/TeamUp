@@ -40,11 +40,12 @@ $(document).ready(function() {
       inviteeEmail: inviteeEmail
     }
 
-    console.log("createInviteData input:\t", JSON.stringify(createInviteData))
+    // console.log("createInviteData input:\t", JSON.stringify(createInviteData))
 
     $.post("/inviteToGroup", JSON.stringify(createInviteData))
     .then(function(response) {
       console.log("inviteToGroup call worked with\t " + JSON.stringify(response));
+      M.toast({html: response["Message"]})
     });
 
 
