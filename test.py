@@ -1118,7 +1118,7 @@ def appealReputation():
     appealMessage = "This user is requesting a reverse in point deduction."
 
     sendModRequest(userEmail, appealMessage, "REP_APPEAL")
-    return jsonify({"Success: appeal has been submitted."})
+    return jsonify({"Message": "Your appeal has been submitted."})
 
 @app.route('/reportUser', methods = ["POST"])
 def reportUser():
@@ -1127,7 +1127,7 @@ def reportUser():
     targetEmail = jsonData["email"] #email of the user being reported
     reportMessage = "This user has been reported for misbehaving."
     sendModRequest(targetEmail, reportMessage, "REPORT_USER")
-    return jsonify({"Success: report has been submitted."})
+    return jsonify({"Message": "You report for this user has been submitted."})
 
 @app.route('/reportGroup', methods = ["POST"])
 def reportGroup():
@@ -1136,7 +1136,7 @@ def reportGroup():
     groupName = jsonData["groupName"] #name of the group being reported
     reportMessage = "This group has been reported for acting inappropriately."
     sendModRequest(groupName, reportMessage, "REPORT_GROUP")
-    return jsonify({"Success: report has been submitted."})
+    return jsonify({"Message": "Your report for this group has been submitted.""})
 
 ### END SENDING REPORTS/APPEALS ###
 
