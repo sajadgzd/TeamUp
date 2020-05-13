@@ -48,6 +48,7 @@ Make sure you have Python 3 or above version installed on your system
 2. Run the following commands in your terminal
 
 > ``python createDatabases.py``
+then
 > ``python initializeDB.py``
 
 
