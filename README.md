@@ -54,15 +54,15 @@ Make sure you have **Python3** or above version installed on your system
 
 
 ```python
-python initializeDB.py
+python3 initializeDB.py
 ```
 
 
 ### Step 4: Launch the App 
-Via terminal type in these bash command once you are in the Team Up root directory
+Run the following command in your terminal
 
 ```python
-python server.py
+python3 test.py
 ```
 
 
