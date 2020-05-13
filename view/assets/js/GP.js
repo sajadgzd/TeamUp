@@ -26,15 +26,15 @@ $(document).ready(function() {
 
   $("#groupName").text(groupName);
 
-  // $(document.body).on("click", "#meetupVoteButton", function(event) {
-  //   event.preventDefault()
-  //   console.log("RADIO BUTTON CLICKED")
-  //   var radioValue = $("input[name='meetupChoices']:checked").val();
-  //   if(radioValue){
-  //     console.log(("YOUR CHOICE HERE IS" + radioValue))
-  //       alert("YOUR CHOICE HERE IS:\t" + radioValue);
-  //   }
-  // });
+  $(document.body).on("click", "#meetupVoteButton", function(event) {
+    event.preventDefault()
+    console.log("RADIO BUTTON CLICKED")
+    var radioValue = $("input[name='meetupChoices']:checked").val();
+    if(radioValue){
+      console.log(("YOUR CHOICE HERE IS" + radioValue))
+        alert("YOUR CHOICE HERE IS :\t" + radioValue);
+    }
+  });
 
   groupNameJSON = {
     groupName: groupName
@@ -60,13 +60,14 @@ $(document).ready(function() {
       }
 
       $("#showAllPolls").append(`<form class="col s12 m12" id="reg-form">` +
-      `<h6><b>${groupPollList[j]["pollCreator"]}</b> posted the following poll</h6>` +
-      `<h6>Title: <b>${groupPollList[j]["pollTitle"]}</b></h6>` +
-      `<h6>Description: <b>${groupPollList[j]["pollPrompt"]}</b></h6>` +
+      `<h6><b>${groupPollList[i]["pollCreator"]}</b> posted the following poll</h6>` +
+      `<h6>Title: <b>${groupPollList[i]["pollTitle"]}</b></h6>` +
+      `<h6>Description: <b>${groupPollList[i]["pollPrompt"]}</b></h6>` +
       `<br>` +
       `<form action="#">` +
         pTags +
       `</form>` +
+      `<br>` +
       `<a href="#" id="meetupVoteButton" class="btn waves-effect waves-light light-blue accent-4" style="margin-left: 2%">Vote` +
         `<i class="material-icons right">done</i>` +
       `</a>` +
