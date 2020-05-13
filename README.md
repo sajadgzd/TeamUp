@@ -41,9 +41,9 @@ The Team Up project and its files should now be in your project folder.
 
 Make sure you have **Python3** or above version installed on your system
 
-Here's a link to OS specific guide to installation of **Python**
+> Here's a link to OS specific guide to installation of [Python3](https://realpython.com/installing-python/)
 
-[Install Python](https://realpython.com/installing-python/)
+
 
 
 ### Step 3: Set up SQL Database
