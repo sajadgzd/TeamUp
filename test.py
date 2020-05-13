@@ -138,7 +138,7 @@ def getGroupData():
 def loginUser():
     jsonData =json.loads(request.get_data())
 
-    email = jsonData["email"]
+    email = jsonData["email"].lower()
     credentials = jsonData["credentials"]
 
     connection = sqlite3.connect(r"./database.db")
