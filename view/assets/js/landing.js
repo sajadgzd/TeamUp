@@ -9,8 +9,8 @@ $(document).ready(function() {
   //add a new item
   for(let i=0; i<3; i++){
     bestProjectsSlider.append('<div class="carousel-item blue white-text" href="#one!">' +
-                    '<h2>TEST TITLE ' + i + '</h2>' +
-                    '<p class="white-text">THIS IS A TEST</p>'+
+                    '<h5>Project ' + (i+1) + '</h5>' +
+                    '<p class="white-text">Awesome Project</p>'+
                   '</div>');
   }
   //remove the 'initialized' class which prevents bestProjectsSlider from initializing itself again when it's not needed
@@ -29,8 +29,8 @@ $(document).ready(function() {
   //add a new item
   for(let i=0; i<3; i++){
     bestUsersSlider.append('<div class="carousel-item blue white-text" href="#one!">' +
-                    '<h2>TEST TITLE ' + i + '</h2>' +
-                    '<p class="white-text">THIS IS A TEST</p>'+
+                    '<h5>User ' + (i+1) + '</h5>' +
+                    '<p class="white-text">Awesome User</p>'+
                   '</div>');
   }
   //remove the 'initialized' class which prevents bestUsersSlider from initializing itself again when it's not needed
@@ -67,24 +67,7 @@ $(document).ready(function() {
       console.log("GET root worked fine\n");
   });
   };
-  getData();
+  // getData();
 
-  $(document.body).on("click", "#test2btn", function(event) {
-    event.preventDefault();
-    var text = $("#test2txt").val().trim()
-    $("#reg-form").append("<p style='font-weight: bold'> Typed: " + text + "</p><br>")
-    console.log("text value:", text)
-
-    var msg = {
-      textmsg: text 
-    }
-
-    $.post("/test2", msg)
-    .then(function(data) {
-      console.log("got data back from POST call", data.textmsg);
-      alert("POST worked...");
-    });
-
-  });
 
 });
