@@ -63,7 +63,7 @@ def getSignUpData():
 
 
 @app.route('/getModerationQueue', methods = ["GET"])
-def getUserData():
+def getModerationQueue():
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
