@@ -49,7 +49,8 @@ $(document).ready(function() {
 
     for(let i=0; i< groupPollList.length; i++) {
       let pTags = "";
-      for(let j=0; j<groupPollList["pollVoteOptionsList"].length; j++){
+      console.log("LOOK",groupPollList[i]["pollVoteOptionsList"])
+      for(let j=0; j<groupPollList[i]["pollVoteOptionsList"].length; j++){
         pTags += `<p>` +
                   `<label>` +
                     `<input name="meetupChoices" type="radio" value="${groupPollList["pollVoteOptionsList"][i]}"/>` +
