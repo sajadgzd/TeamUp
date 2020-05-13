@@ -46,23 +46,32 @@ $(document).ready(function() {
     console.log("GroupData\t " + JSON.stringify(response["groupData"][4]));
     let groupPollList = response["groupData"][4]; // closing and meetup
     let memberPollList = response["groupData"][3]; // kick praise warn
+    let combinedPollList = groupPollList.concat(memberPollList)
 
-    for(let i=0; i< groupPollList.length; i++) {
+    for(let i=0; i< combinedPollList.length; i++) {
+      console.log("EMAIL IN LOOP",i, email)
+      console.log("TARGETED", combinedPollList[i]["targetedMemberEmail"])
+      console.log("POLL TYPE", combinedPollList[i]["pollType"])
+      if(combinedPollList[i]["pollType"] == "WARNING" || combinedPollList[i]["pollType"] == "KICK" || combinedPollList[i]["pollType"] == "PRAISE" ){
+        if(combinedPollList[i]["targetedMemberEmail"] == email){
+          continue
+        }
+      }
       let pTags = "";
-      console.log("LOOK",groupPollList[i]["pollVoteOptionsList"])
-      for(let j=0; j<groupPollList[i]["pollVoteOptionsList"].length; j++){
+      console.log("LOOK",combinedPollList[i]["pollVoteOptionsList"])
+      for(let j=0; j<combinedPollList[i]["pollVoteOptionsList"].length; j++){
         pTags += `<p>` +
                   `<label>` +
-                    `<input name="meetupChoices" type="radio" value="${groupPollList[i]["pollVoteOptionsList"][j]}"/>` +
-                    `<span>${groupPollList[i]["pollVoteOptionsList"][j]}</span>` +
+                    `<input name="meetupChoices" type="radio" value="${combinedPollList[i]["pollVoteOptionsList"][j]}"/>` +
+                    `<span>${combinedPollList[i]["pollVoteOptionsList"][j]}</span>` +
                   `</label>` +
                 `</p>`
       }
 
       $("#showAllPolls").append(`<form class="col s12 m12" id="reg-form">` +
-      `<h6><b>${groupPollList[i]["pollCreator"]}</b> posted the following poll</h6>` +
-      `<h6>Title: <b>${groupPollList[i]["pollTitle"]}</b></h6>` +
-      `<h6>Description: <b>${groupPollList[i]["pollPrompt"]}</b></h6>` +
+      `<h6><b>${combinedPollList[i]["pollCreator"]}</b> posted the following poll</h6>` +
+      `<h6>Title: <b>${combinedPollList[i]["pollTitle"]}</b></h6>` +
+      `<h6>Description: <b>${combinedPollList[i]["pollPrompt"]}</b></h6>` +
       `<br>` +
       `<form action="#">` +
         pTags +
