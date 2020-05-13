@@ -23,19 +23,71 @@ def managePointStatus(email):
     elif status == "OU":
         if points > 30:
             userData[5] = "VIP"
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (email,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (email,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     connection.commit()
     connection.close()
 
+
+@app.route('/getAllSignUpData', methods = ["GET"])
+def getAllSignUpData():
+
+    signUpData = []
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM signup")
+    
+    for userData in cursor.fetchall():
+        signUpData.append(list(userData))
+    connection.close()
+    return (jsonify({
+        "signUpData": signUpData
+    }))
+
+
+@app.route('/getSignUpData', methods = ["POST"])
+def getSignUpData():
+    jsonData =json.loads(request.get_data())
+    email = jsonData["email"]
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM signup WHERE [email] = ?",(email,))
+    
+    userData = cursor.fetchone()
+    userData = list(userData)
+    connection.close()
+    return (jsonify({
+        "signUpData": userData
+    }))
+
+
+@app.route('/getModerationQueue', methods = ["GET"])
+def getModerationQueue():
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM moderationRequests")
+    
+    moderationData = cursor.fetchall()
+    send = []
+    for data in moderationData:
+        send.append(list(data))
+    connection.close()
+    return (jsonify({
+        "moderationData": send
+    }))
+
+
 @app.route('/getUserData', methods = ["POST"])
 def getUserData():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     email = jsonData["email"]
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(email,))
+    
     userData = cursor.fetchone()
     userData = list(userData)
     userData[3] = json.loads(userData[3]) #grouplist
@@ -44,18 +96,65 @@ def getUserData():
     userData[8] = json.loads(userData[8]) #whitelist
     userData[10] = json.loads(userData[10]) #inbox
     userData[11] = json.loads(userData[11]) #referredUsers
+    connection.close()
     return (jsonify({
         "userData": userData
     }))
 
+@app.route('/getAllUserEmails',methods = ["GET"])
+def getAllUserEmails():
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users")
+
+    emails = []
+    for user in cursor.fetchall():
+        emails.append(user[0])
+    connection.close()
+    return (jsonify({
+        "allUsersEmail": emails
+    }))
+
+@app.route('/getAllVIPEmails',methods = ["GET"])
+def getAllVIPEmails():
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users")
+    
+    emails = []
+    for user in cursor.fetchall():
+        if user[5] == "VIP":
+            emails.append(user[0])
+    connection.close()
+    return (jsonify({
+        "allVIPEmail": emails
+    }))    
+
+@app.route('/getGroupNames',methods = ["GET"])
+def getGroupNames():
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM groups")
+
+    names = []
+
+    for group in cursor.fetchall():
+        names.append(group[0])
+    
+    connection.close()
+    return (jsonify({
+        "allGroupNames": names
+    }))
+
 @app.route('/getGroupData', methods = ["POST"])
 def getGroupData():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     groupName = jsonData["groupName"]
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE [groupName] = ?",(groupName,))
+    cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
+    
     groupData = cursor.fetchone()
     groupData = list(groupData)
 
@@ -63,29 +162,42 @@ def getGroupData():
     groupData[3] = json.loads(groupData[3]) #member polls
     groupData[4] = json.loads(groupData[4]) #group polls
     groupData[5] = json.loads(groupData[5]) #member list
-
+    connection.close()
     return (jsonify({
         "groupData": groupData
     }))
 
-@app.route('/login', methods = ["POST"])
-def login():
-    jsonData = request.json
+@app.route('/loginUser', methods = ["POST"])
+def loginUser():
+    jsonData =json.loads(request.get_data())
 
-    email = jsonData["email"]
+    email = jsonData["email"].lower()
     credentials = jsonData["credentials"]
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE [email] = ? AND [credentials] = ?",(email,credentials))
+    cursor.execute("SELECT * FROM users WHERE [email] = ? AND [password] = ?",(email,credentials))
     userData = cursor.fetchone()
-    userData = list(userData)
 
     if userData is not None:
+        connection = sqlite3.connect(r"./database.db")
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE [email] = ?",(email,))
+        userData = cursor.fetchone()
+        userData = list(userData)
+        userData[3] = json.loads(userData[3]) #grouplist
+        userData[6] = json.loads(userData[6]) #invitations
+        userData[7] = json.loads(userData[7]) #blacklist
+        userData[8] = json.loads(userData[8]) #whitelist
+        userData[10] = json.loads(userData[10]) #inbox
+        userData[11] = json.loads(userData[11]) #referredUsers
+        connection.close()
         return jsonify({
-            "Sucess": "Welcome to Team Up!"
+            "Success": "Welcome to Team Up!",
+            "userData": userData
         })
     else:
+        connection.close()
         return jsonify({
             "Error": "Sorry, email or password combination does not exist."
         })
@@ -93,25 +205,26 @@ def login():
 @app.route('/inviteToGroup', methods = ["POST"])
 def inviteToGroup():
 
-    #GET JSON DAT
-    jsonData = request.json
+    #GET JSON DATA
+    jsonData =json.loads(request.get_data())
 
     inviter = jsonData["inviterEmail"].lower()
-    inviterFullname = jsonData["inviterFullname"]
     groupName = jsonData["groupName"]
     invitee = jsonData["inviteeEmail"].lower()
 
     #CONNECT TO DATABASE
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
+    cursor.execute("SELECT * FROM users WHERE [email] = ?",(inviter,))
+    inviterData = cursor.fetchone()
+    inviterFullname = inviterData[1]
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(invitee,))
-
     inviteeData = cursor.fetchone()
     inviteeData = list(inviteeData)
 
     blackList = json.loads(inviteeData[7])
     for blocked in blackList:
-        if blocked["email"] == inviter:
+        if blocked == inviter:
             connection.close()
             return jsonify({
             "Message": "Sorry, your invitation has been automatically rejected."
@@ -119,13 +232,16 @@ def inviteToGroup():
 
     whiteList = json.loads(inviteeData[8])
     for autoAccept in whiteList:
-        if autoAccept["email"] == inviter:
+        if autoAccept == inviter:
             #Add group to invitee list
             groupList = json.loads(inviteeData[3])
+            if groupName in groupList:
+                connection.close()
+                return jsonify({"Message": "The user is already in this group."})
             groupList.append(groupName)
             groupList = json.dumps(groupList)
             inviteeData[3] = groupList
-            cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
+            cursor.execute("DELETE FROM users WHERE [email] = ?", (invitee,))
             cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
             connection.commit()
 
@@ -143,15 +259,19 @@ def inviteToGroup():
             memberData = json.dumps(memberData)
             groupData[5] = memberData
 
-            cursor.execute("DELETE * FROM groups WHERE [groupName] = ?",(groupName,))
+            cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
             cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
             connection.commit()
             connection.close()
             return jsonify({
-                "Message": "Your invitation has been automatically accepted!"
+                "Message": "Your invitation has been automatically accepted."
             })
 
     invitations = json.loads(inviteeData[6])
+    for invitation in invitations:
+        if invitation["groupName"] == groupName:
+            connection.close()
+            return jsonify({"Message": "This user has already received an invite to this group."})
     invitations.append({
         "inviterFullName": inviterFullname,
         "inviterEmail" :inviter,
@@ -159,12 +279,13 @@ def inviteToGroup():
     })
 
     invitations = json.dumps(invitations)
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (invitee,))
+    inviteeData[6] = invitations
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (invitee,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
     connection.commit()
     connection.close()
     return jsonify({
-        "Message": "Your invitation has been sent!"
+        "Message": "Your invitation has been sent."
     })
 
 
@@ -172,10 +293,9 @@ def inviteToGroup():
 def handleGroupInvite():
 
     #GET JSON DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     inviter = jsonData["inviterEmail"]
-    inviterFullname = jsonData["inviterFullName"]
     groupName = jsonData["groupName"]
     invitee = jsonData["inviteeEmail"]
     message = jsonData["message"]
@@ -189,11 +309,15 @@ def handleGroupInvite():
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(invitee,))
 
     #If they accept the invitation
-    if response.lower() == "accepted":
+    if response.lower() == "accept":
         #Add the invitee to the group list
         cursor.execute("SELECT * FROM groups WHERE [groupName] = ?",(groupName,))
         groupData= list(cursor.fetchone())
         memberData = json.loads(groupData[5])
+        for data in memberData:
+            if data["member"] == invitee:
+                connection.close()
+                return jsonify({"Message": "You're already in the group!"})
         memberData.append({
                 "member": invitee,
                 "warnings": 0,
@@ -214,6 +338,18 @@ def handleGroupInvite():
         groupList.append(groupName)
         groupList = json.dumps(groupList)
         inviteeData[3] =groupList
+
+        invitationList = json.loads(inviteeData[6])
+        deleteIndex = None
+        for index,invitation in enumerate(invitationList):
+            if invitation["groupName"] == groupName:
+                deleteIndex = index
+                break
+        if deleteIndex is not None:
+            del invitationList[deleteIndex]
+        invitationList = json.dumps(invitationList)
+        inviteeData[6] = invitationList
+
         cursor.execute("DELETE FROM users WHERE [email] = ?",(invitee,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
         connection.commit()
@@ -224,7 +360,7 @@ def handleGroupInvite():
         inboxList = json.loads(inviteeData[10])
         inboxList.append({
             "sender": inviter,
-            "message": "Your invitation has been accepted by {}.".format(invitee)
+            "Message": "Your invitation has been accepted by {}.".format(invitee)
         })
         inboxList = json.dumps(inboxList)
         inviterData[10] =inboxList
@@ -233,25 +369,43 @@ def handleGroupInvite():
         connection.commit()
         connection.close()
         return (jsonify({
-            "message": "You've been added to the group {} and your response has been sent to your inviter.".format(groupName)
+            "Message": "You've been added to the group {} and your response has been sent to your inviter.".format(groupName)
         }))
-    elif response.lower() == "declined":
+    elif response.lower() == "decline":
         #Notify the inviter that their invitation has been declined
         cursor.execute("SELECT * FROM users where [email] = ?",(inviter,))
         inviterData = list(cursor.fetchone())
-        inboxList = json.loads(inviteeData[10])
+        inboxList = json.loads(inviterData[10])
         inboxList.append({
-            "sender": inviter,
-            "message": message
+            "sender": invitee,
+            "Message": message
         })
         inboxList = json.dumps(inboxList)
         inviterData[10] =inboxList
         cursor.execute("DELETE FROM users WHERE [email] = ?",(inviter,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviterData))
         connection.commit()
+
+        #Delete the invitation from the invitee's list
+        cursor.execute("SELECT * FROM users where [email] = ?",(invitee,))
+        inviteeData = list(cursor.fetchone())
+        invitationList = json.loads(inviteeData[6])
+        deleteIndex = None
+        for index,invitation in enumerate(invitationList):
+            if invitation["groupName"] == groupName:
+                deleteIndex = index
+                break
+        if deleteIndex is not None:
+            del invitationList[deleteIndex]
+        invitationList = json.dumps(invitationList)
+        inviteeData[6] = invitationList
+
+        cursor.execute("DELETE FROM users WHERE [email] = ?",(invitee,))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+        connection.commit()
         connection.close()
         return (jsonify({
-            "message": "You have declined your invitation to the group {} and your response has been sent to your inviter.".format(groupName)
+            "Message": "You have declined your invitation to the group {} and your response has been sent to your inviter.".format(groupName)
         }))
 
 ### CREATE POLLS SECTION ###
@@ -259,17 +413,17 @@ def handleGroupInvite():
 # CREATE MEETUP/CLOSE POLL #~Helper
 def createMeetCloseHelper(pollType):
     
-    jsonData =request.json
+    jsonData =json.loads(request.get_data())
     #GET DATA FROM FRONT END#
     groupName = jsonData["groupName"]
     pollData = {}
-    pollData["pollCreator"] = jsonData["creatorFullName"]
+    pollData["pollCreator"] = jsonData["pollCreator"]
     pollData["pollTitle"] = jsonData["pollTitle"]
     pollData["pollPrompt"] = jsonData["pollPrompt"]
     pollData["pollType"] = pollType
     pollData["uuid"] = str(uuid.uuid4())
     pollData["pollStatus"] = "ACTIVE"
-    
+    pollData["pollVoteOptionsList"] = jsonData["pollVoteOptions"]
     pollVoteOptions = {}
     for option in jsonData["pollVoteOptions"]:
         pollVoteOptions[option] = 0
@@ -285,13 +439,13 @@ def createMeetCloseHelper(pollType):
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?",(groupName,))
     groupData = list(cursor.fetchone())
 
-    groupPolls = json.loads(groupName[4])
+    groupPolls = json.loads(groupData[4])
     groupPolls.append(pollData)
     groupPolls = json.dumps(groupPolls)
     groupData[4] = groupPolls
 
     cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
-    cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?)",tuple(groupData))
+    cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
     connection.close()
 
@@ -312,16 +466,16 @@ def createCloseGroupPoll():
 
 # CREATE WARNPRAISEKICK POLL #~Helper
 def createWarnPraiseKickHelper(pollType):
-    jsonData =request.json
+    jsonData =json.loads(request.get_data())
     #GET DATA FROM FRONT END#
     groupName = jsonData["groupName"]
     pollData = {}
-    pollData["pollCreator"] = jsonData["creatorFullName"]
+    pollData["pollCreator"] = jsonData["pollCreator"]
     pollData["targetedMemberEmail"] = jsonData["targetedMemberEmail"]
-    pollData["targetedMemberName"] = jsonData["targetedMemberName"]
     pollData["pollTitle"] = jsonData["pollTitle"]
     pollData["pollPrompt"] = jsonData["pollPrompt"]
     pollData["pollType"] = pollType
+    pollData["pollVoteOptionsList"] = jsonData["pollVoteOptions"]
     pollData["uuid"] = str(uuid.uuid4())
     pollData["pollStatus"] = "ACTIVE"
     pollVoteOptions = {}
@@ -339,7 +493,7 @@ def createWarnPraiseKickHelper(pollType):
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?",(groupName,))
     groupData = list(cursor.fetchone())
 
-    memberPolls = json.loads(groupName[3])
+    memberPolls = json.loads(groupData[3])
     memberPolls.append(pollData)
     memberPolls = json.dumps(memberPolls)
     groupData[3] = memberPolls
@@ -365,7 +519,7 @@ def createPraisePoll():
 
 @app.route('/createKickPoll', methods = ["POST"])
 def createKickPoll():
-    createMeetCloseHelper(pollType="KICK")
+    createWarnPraiseKickHelper(pollType="KICK")
     return (jsonify({
         "Message": "Your Kick poll has been created."
     }))
@@ -377,10 +531,10 @@ def createKickPoll():
 def issueMeetupVote():
 
     #GET JSON DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     pollResponse = jsonData["pollResponse"] #Option they selected
-    pollResponder = jsonData["email"]
+    pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
     groupName = jsonData["groupName"]
     #
@@ -396,6 +550,9 @@ def issueMeetupVote():
     groupPolls = json.loads(groupData[4])
     for index,poll in enumerate(groupPolls):
         if poll["uuid"] == pollUUID:
+            if pollResponder in poll["voters"]:
+                connection.close()
+                return jsonify({"Message": "You cannot vote more than once!"})
             poll["voters"].append(pollResponder)
             pollVoteOptions = poll["pollVoteOptions"]
             pollVoteOptions[pollResponse] += 1
@@ -417,7 +574,8 @@ def issueMeetupVote():
             for option,voteCount in pollVoteOptions.items():
                 sumVotes += voteCount
             break
-    totalMembers = len(groupData[5])
+    memberList = json.loads(groupData[5])
+    totalMembers = len(memberList)
 
 
     maxResponseCount = 0
@@ -451,10 +609,10 @@ def issueMeetupVote():
 def issueCloseGroupVote():
 
     #GET JSON DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     pollResponse = jsonData["pollResponse"] #Option they selected
-    pollResponder = jsonData["email"]
+    pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
     groupName = jsonData["groupName"]
     #
@@ -470,6 +628,9 @@ def issueCloseGroupVote():
     groupPolls = json.loads(groupData[4])
     for index,poll in enumerate(groupPolls):
         if poll["uuid"] == pollUUID:
+            if pollResponder in poll["voters"]:
+                connection.close()
+                return jsonify({"Message": "You cannot vote more than once!"})
             poll["voters"].append(pollResponder)
             pollVoteOptions = poll["pollVoteOptions"]
             pollVoteOptions[pollResponse] += 1
@@ -491,7 +652,8 @@ def issueCloseGroupVote():
             for option,voteCount in pollVoteOptions.items():
                 sumVotes += voteCount
             break
-    totalMembers = len(groupData[5])
+    memberList = json.loads(groupData[5])
+    totalMembers = len(memberList)
 
 
     maxResponseCount = 0
@@ -513,13 +675,10 @@ def issueCloseGroupVote():
                          
                         #NOTIFY SUPER USER THAT GROUP MUST BE CLOSED
                         reportMessage = "Members have voted to close this group."
-
-                        connection = sqlite3.connect(r"./database.db")
-                        cursor = connection.cursor()
                         cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(groupName,reportMessage,"CLOSE","OPEN",None))
                         connection.commit()
                 else:
-                    poll["result"] = answer
+                    poll["result"] = "Not Unanimous"
                     poll["pollStatus"] = "CLOSED"
                     groupPolls[index] = poll
             break
@@ -542,6 +701,9 @@ def registerVote(cursor,groupName,connection,pollUUID,pollResponder,pollResponse
     memberPolls = json.loads(groupData[3])
     for index,poll in enumerate(memberPolls):
         if poll["uuid"] == pollUUID:
+            print(pollResponder)
+            if pollResponder in poll["voters"]:
+                return jsonify({"Message": "You cannot vote more than once!"})
             poll["voters"].append(pollResponder)
             pollVoteOptions = poll["pollVoteOptions"]
             pollVoteOptions[pollResponse] += 1
@@ -553,15 +715,20 @@ def registerVote(cursor,groupName,connection,pollUUID,pollResponder,pollResponse
     cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
     cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
+    return "Success"
 
 # HANDLE POLL CLOSURE #~HELPER
 def handleWarningPraiseKickVote(cursor,groupName,pollType,connection,pollUUID,pollTargetedMemberEmail):
+    print("HELLO?")
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?",(groupName,))
     groupData = list(cursor.fetchone())
     memberPolls = json.loads(groupData[3])
     
     sumVotes = 0 #Count of the total sum of votes
-    totalMembers = len(groupData[5]) # Cross checks to see if all votes have been registered
+    memberList = json.loads(groupData[5])
+    totalMembers = len(memberList)
+    # totalMembers = len(groupData[5]) # Cross checks to see if all votes have been registered
+    
     maxResponseCount = 0 # Checks to see if it's actually unanimous
     answer = None #Answer field
     for index,poll in enumerate(memberPolls):
@@ -573,15 +740,19 @@ def handleWarningPraiseKickVote(cursor,groupName,pollType,connection,pollUUID,po
                     maxResponseCount = voteCount
                     answer = option
             break
+    print("Did it pass?:",sumVotes == (totalMembers -1) == maxResponseCount)
+    print(sumVotes,(totalMembers-1),maxResponseCount)
     if sumVotes == (totalMembers -1) == maxResponseCount: #We have all votes, and they were unanimous
         for index,poll in enumerate(memberPolls):
             if poll["uuid"] == pollUUID:
+                print("POLL FOUND!")
                 poll["result"] = answer
                 poll["pollStatus"] = "CLOSED"
                 memberPolls[index] = poll
                 break
         groupData[3] = json.dumps(memberPolls) #update member polls
         if answer.lower() == "yes": 
+            print("UNANIMOUS!!!!")
             memberList = json.loads(groupData[5])
             for member in memberList:
                 if member["member"] == pollTargetedMemberEmail:
@@ -606,7 +777,7 @@ def handleWarningPraiseKickVote(cursor,groupName,pollType,connection,pollUUID,po
 def issueWarningVote():
 
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
@@ -619,8 +790,12 @@ def issueWarningVote():
     cursor = connection.cursor()
 
     #REGISTER VOTE INTO POLL
-    registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    flag = registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    if flag != "Success":
+        connection.close()
+        return flag
     #
+
 
     #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
     handleWarningPraiseKickVote(cursor = cursor,groupName= groupName,pollType = "warnings",connection = connection,pollUUID=pollUUID,pollTargetedMemberEmail=pollTargetedMemberEmail)
@@ -634,8 +809,8 @@ def issueWarningVote():
     for index,member in enumerate(memberList):
         if member["member"] == pollTargetedMemberEmail:
             if member["warnings"] >= 3: #User needs to be kicked out and points deducted
-                memberIndex = index
                 adjustMember = True
+                memberIndex = index
                 break
     if adjustMember:
         del memberList[memberIndex]
@@ -665,19 +840,19 @@ def issueWarningVote():
             "message": "You've received 3 warnings from {} and incurred a 5 point deduction.".format(groupName)
         })
         userData[10] = json.dumps(inboxList)
-        cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
         connection.commit()
     #Close Database connection and notify use that their vote has been registered
     connection.close()
     return (jsonify({
-        "Message": "Your vote has been submitted."
+        "Message": "Your vote has been submitted." + pollUUID
     }))
 
 @app.route('/issuePraiseVote', methods = ["POST"])
 def issuePraiseVote():
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
@@ -690,13 +865,16 @@ def issuePraiseVote():
     cursor = connection.cursor()
 
     #REGISTER VOTE INTO POLL
-    registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    flag = registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    if flag != "Success":
+        connection.close()
+        return flag
     #
 
     #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
     handleWarningPraiseKickVote(cursor = cursor,groupName= groupName,pollType = "praises",connection = connection,pollUUID=pollUUID,pollTargetedMemberEmail=pollTargetedMemberEmail)
     
-    #Check the warning count for members and kick out if necessary
+    #Check the praise count
     cursor.execute("SELECT * FROM  groups WHERE [groupName] = ?",(groupName,))
     groupData = list(cursor.fetchone())
     memberList = json.loads(groupData[5])
@@ -720,6 +898,7 @@ def issuePraiseVote():
     cursor.execute("SELECT * FROM users WHERE [email] = ?",(pollTargetedMemberEmail,))
     userData = cursor.fetchone()
     userData = list(userData)
+    print("BEFORE:",userData)
     if adjustMember:
         #Deduct points
         userData[4] += 5
@@ -731,7 +910,8 @@ def issuePraiseVote():
             "message": "You've received 3 praises from {} and was granted a 5 point increase! Congrats! Keep up the great work!".format(groupName)
         })
         userData[10] = json.dumps(inboxList)
-        cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
+        print("AFTER:",userData)
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
         connection.commit()
     #Close Database connection and notify use that their vote has been registered
@@ -745,7 +925,7 @@ def issuePraiseVote():
 def issueKickVote():
     
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
@@ -758,7 +938,10 @@ def issueKickVote():
     cursor = connection.cursor()
 
     #REGISTER VOTE INTO POLL
-    registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    flag = registerVote(cursor = cursor, groupName= groupName, connection= connection,pollUUID=pollUUID,pollResponder=pollResponder,pollResponse=pollResponse)
+    if flag != "Success":
+        connection.close()
+        return flag
     #
 
     #CHECK IF POLL IS COMPLETE - if so, handle the unanimous/non-unanimous outcomes
@@ -804,7 +987,7 @@ def issueKickVote():
             "message": "You have been kicked from {} and incurred a 10 point deduction.".format(groupName)
         })
         userData[10] = json.dumps(inboxList)
-        cursor.execute("DELETE * FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (pollTargetedMemberEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
         connection.commit()
     #Close Database connection and notify use that their vote has been registered
@@ -817,7 +1000,7 @@ def issueKickVote():
 @app.route('/issueComplimentVote', methods = ["POST"])
 def issueCompliment():
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     complimentReceiverEmail = jsonData["complimentReceiverEmail"]
     #
 
@@ -839,7 +1022,7 @@ def issueCompliment():
             "message": "You've received 3 compliments and a 5 point increase!"
         })
         userData[10] = json.dumps(inboxList)
-        cursor.execute("DELETE * FROM users WHERE [email] = ?", (complimentReceiverEmail,))
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (complimentReceiverEmail,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
         connection.commit()
     connection.close()
@@ -867,14 +1050,14 @@ def addtoAutoBox(cursor,connection,userEmail,emailAddition,index):
         autoBox.append(emailAddition)
     autoBox = json.dumps(autoBox)
     userData[index] = autoBox
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (userEmail,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     connection.commit()
 
 @app.route('/addToWhiteBox', methods = ["POST"])
 def addToWhiteBox():
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     emailAddition = jsonData["emailAddition"]
     userEmail = jsonData["userEmail"]
     #
@@ -894,7 +1077,7 @@ def addToWhiteBox():
 @app.route('/addToBlackBox', methods = ["POST"])
 def addToBlackBox():
     #GET DATA FROM FRONT END
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     emailAddition = jsonData["emailAddition"]
     userEmail = jsonData["userEmail"]
     #
@@ -930,30 +1113,30 @@ def sendModRequest(target, message, request_type):
 @app.route('/appealReputation', methods = ["POST"])
 def appealReputation():
     #GET FRONT END DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     userEmail = jsonData["email"] # email of the user appealing
-    appealMessage = jsonData["appealMessage"]
+    appealMessage = "This user is requesting a reverse in point deduction."
 
     sendModRequest(userEmail, appealMessage, "REP_APPEAL")
-    return jsonify({"Success: appeal has been submitted."})
+    return jsonify({"Message": "Your appeal has been submitted."})
 
 @app.route('/reportUser', methods = ["POST"])
 def reportUser():
     #GET FRONT END DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     targetEmail = jsonData["email"] #email of the user being reported
-    reportMessage = jsonData["reportMessage"]
-    sendModRequest(targetEmail, reportMessage, "REPORT")
-    return jsonify({"Success: report has been submitted."})
+    reportMessage = "This user has been reported for misbehaving."
+    sendModRequest(targetEmail, reportMessage, "REPORT_USER")
+    return jsonify({"Message": "You report for this user has been submitted."})
 
 @app.route('/reportGroup', methods = ["POST"])
 def reportGroup():
     #GET FRONT END DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     groupName = jsonData["groupName"] #name of the group being reported
-    reportMessage = jsonData["reportMessage"]
-    sendModRequest(groupName, reportMessage, "REPORT")
-    return jsonify({"Success: report has been submitted."})
+    reportMessage = "This group has been reported for acting inappropriately."
+    sendModRequest(groupName, reportMessage, "REPORT_GROUP")
+    return jsonify({"Message": "Your report for this group has been submitted."})
 
 ### END SENDING REPORTS/APPEALS ###
 
@@ -961,10 +1144,9 @@ def reportGroup():
 @app.route('/referenceReputation', methods = ["POST"])
 def referenceReputation():
     #GET FRONT END DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     referredUserEmail = jsonData["referredUser"] #The new guy
     referringUserEmail = jsonData["referringUser"] #The OG
-    points = jsonData["points"] # num of points user wants to add to referred user
     
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
@@ -975,11 +1157,11 @@ def referenceReputation():
     referringUserData = list(cursor.fetchone())
 
     if referringUserData[5] == "VIP":
-        referredUserData[4] += points
+        referredUserData[4] += 20
     else:
-        referredUserData[4] += points
+        referredUserData[4] += 10
     
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (referredUserEmail,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (referredUserEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(referredUserData))
     connection.commit()
 
@@ -989,7 +1171,7 @@ def referenceReputation():
     referredUsersList = json.dumps(referredUsersList)
     referringUserData[11] = referredUsersList
     
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (referringUserEmail,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (referringUserEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,complimentsorcomplaints,inbox) VALUES (?,?,?,?,?,?,?,?,?,?,?)",tuple(referringUserData))
     connection.commit()
     connection.close()
@@ -1000,7 +1182,7 @@ def referenceReputation():
 
 @app.route('/createGroup', methods=["POST"])
 def createGroup():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     groupName = jsonData["groupName"]
     creator = jsonData["email"] # email of creator
@@ -1020,7 +1202,23 @@ def createGroup():
     # add new group to DB
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?,?)",tuple(groupData))
+    cursor.execute("SELECT * FROM groups where [groupName] = ?",(groupName,))
+    groupDataFLAG = cursor.fetchone()
+    if groupDataFLAG is not None:
+        connection.close()
+        return jsonify({"Message": "Sorry, this group already exists!"})
+    cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
+    connection.commit()
+
+    # add group to user's grouplist
+    cursor.execute("SELECT * from users WHERE [email] = ?",(creator,))
+    userData = cursor.fetchone()
+    userData = list(userData)
+    groupList = json.loads(userData[3])
+    groupList.append(groupName)
+    userData[3] = json.dumps(groupList)
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (creator,))
+    cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
     connection.commit()
     connection.close()
     return jsonify({"Message" : "Group successfully created."})
@@ -1033,7 +1231,7 @@ def createGroup():
 def handleApplication():
 
     #------Get Data from Front-end-----#
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     response = jsonData["response"] #ACCEPT or DECLINE
     # responderEmail = jsonData["responderEmail"] #get the email of the responder
@@ -1062,8 +1260,6 @@ def handleApplication():
     blacklist = json.dumps(blacklist)
     whitelist = []
     whitelist = json.dumps(whitelist)
-    compliments = []
-    compliments = json.dumps(compliments)
     inbox = []
     inbox = json.dumps(inbox)
     referredUsers = []
@@ -1079,20 +1275,20 @@ def handleApplication():
     rowData.append(invitations)
     rowData.append(blacklist)
     rowData.append(whitelist)
-    rowData.append(compliments)
+    rowData.append(0)
     rowData.append(inbox)
     rowData.append(referredUsers)
 
 
-    # accept the invite
-    if response.lower() == "accepted":
+    # accept the applications
+    if response.lower() == "accept":
         #first update the signup row for this user and change user status
         rowData[5] = "OU"
         
         signUpUserData[6] = "USER"
         
 
-        cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+        cursor.execute("DELETE FROM signup WHERE [email] = ?", (email,))
         cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(signUpUserData))
         connection.commit()
 
@@ -1101,50 +1297,60 @@ def handleApplication():
         connection.commit()
         connection.close()
         return (jsonify({"Message" : "{} is now registered to Team Up.".format(email)}))
-
-    #decline the invite
-    elif response.lower() == "declined":
+    #decline the application
+    elif response.lower() == "decline":
 
         signUpUserData[6] = "REJECTED"
         #modify the row
-        cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+        cursor.execute("DELETE FROM signup WHERE [email] = ?", (email,))
         cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(signUpUserData))
         connection.commit()
         connection.close()
         return jsonify({
             "Message": "{} will be notified that their application has been rejected.".format(email)
         })
-
-@app.route('/blacklistFromServer', methods = ["POST"])
-def blacklistFromServer():
-    jsonData = request.json
-
-    userEmail = jsonData["userEmail"]
-
-    #------Connection-----#
-    connection = sqlite3.connect(r"./database.db")
-    cursor = connection.cursor()
-
-    #------Get the visitor information-----#
-    cursor.execute("SELECT * FROM signup where [email] = ?",(userEmail,))
-    visitorData = list(cursor.fetchone())
-
-    #modify the visitor signup row
-    visitorData[6] = "BLACKLISTED"
-    cursor.execute("DELETE * FROM signup WHERE [email] = ?", (userEmail,))
-    cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
-    connection.commit()
-    connection.close()
-
-    return jsonify({
-            "Message": "The visitor has been added to blacklist."
+    #blacklist the application
+    elif response.lower() == "blacklist":
+        signUpUserData[6] = "BLACKLISTED"
+        #modify the row
+        cursor.execute("DELETE FROM signup WHERE [email] = ?", (email,))
+        cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(signUpUserData))
+        connection.commit()
+        connection.close()
+        return jsonify({
+            "Message": "{} will be notified that their application has been blacklisted.".format(email)
         })
+
+# @app.route('/blacklistFromServer', methods = ["POST"])
+# def blacklistFromServer():
+#     jsonData =json.loads(request.get_data())
+
+#     userEmail = jsonData["userEmail"]
+
+#     #------Connection-----#
+#     connection = sqlite3.connect(r"./database.db")
+#     cursor = connection.cursor()
+
+#     #------Get the visitor information-----#
+#     cursor.execute("SELECT * FROM signup where [email] = ?",(userEmail,))
+#     visitorData = list(cursor.fetchone())
+
+#     #modify the visitor signup row
+#     visitorData[6] = "BLACKLISTED"
+#     cursor.execute("DELETE FROM signup WHERE [email] = ?", (userEmail,))
+#     cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
+#     connection.commit()
+#     connection.close()
+
+#     return jsonify({
+#             "Message": "The visitor has been added to blacklist."
+#         })
 
 
 
 @app.route('/reverseReputationDeduction', methods = ["POST"])
 def reverseReputationDeduction():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -1170,7 +1376,7 @@ def reverseReputationDeduction():
 def shutDownGroup():
 
     #------Get Data from Front-end-----#
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     groupName = jsonData['groupName']
 
@@ -1183,7 +1389,7 @@ def shutDownGroup():
     groupData = cursor.fetchone()
     groupData = list(groupData)
     groupData[1] = "CLOSED"
-    cursor.execute("DELETE * FROM groups WHERE [groupName] = ?",(groupName,))
+    cursor.execute("DELETE FROM groups WHERE [groupName] = ?",(groupName,))
     cursor.execute("INSERT INTO groups (groupName,status,posts,memberpolls,groupPolls,members) VALUES(?,?,?,?,?,?)",tuple(groupData))
     connection.commit()
     connection.close()
@@ -1195,7 +1401,7 @@ def shutDownGroup():
 @app.route('/issuePointDeduction', methods = ["POST"])
 def issuePointDeduction():
 
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -1220,7 +1426,7 @@ def issuePointDeduction():
 @app.route('/issuePointIncrement', methods = ["POST"])
 def issuePointIncrement():
     
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -1244,7 +1450,7 @@ def issuePointIncrement():
 @app.route('/banUser', methods = ["POST"])
 def banUser():
 
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     userEmail = jsonData["userEmail"]
 
     #------Connection-----#
@@ -1257,7 +1463,7 @@ def banUser():
 
     #modify the signup row
     visitorData[6] = "BLACKLISTED"
-    cursor.execute("DELETE * FROM signup WHERE [email] = ?", (userEmail,))
+    cursor.execute("DELETE FROM signup WHERE [email] = ?", (userEmail,))
     cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(visitorData))
 
 
@@ -1268,7 +1474,7 @@ def banUser():
 
     #modify the user row
     userData[5] = "BLACKLISTED"
-    cursor.execute("DELETE * FROM users WHERE [email] = ?", (userEmail,))
+    cursor.execute("DELETE FROM users WHERE [email] = ?", (userEmail,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",tuple(userData))
 
     connection.commit()
@@ -1285,7 +1491,7 @@ def banUser():
 @app.route('/createDemocraticSuperUserPoll', methods = ["POST"])
 def createDemocraticSuperUserPoll():
 
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     #GET DATA FROM FRONT END#
     pollData = {}
     pollData["pollCreator"] = jsonData["creatorFullName"]
@@ -1334,7 +1540,7 @@ def createDemocraticSuperUserPoll():
 def issueDemocraticSuperUserVote():
 
     #GET JSON DATA
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     pollResponse = jsonData["pollResponse"] #Option they selected
     pollResponder = jsonData["email"] # whoever is responding to the poll
 
@@ -1411,7 +1617,9 @@ def issueDemocraticSuperUserVote():
 
 @app.route('/signupApplication', methods = ["POST"])
 def signUpApplication():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
+    print("MY JSON DATA\n",jsonData)
+    # print("@@@@@Can you see this?@@@@@",jsonData)
     #
     rowData = [] #Data to be uploaded to database
     rowData.append(jsonData["fullname"])
@@ -1419,7 +1627,7 @@ def signUpApplication():
     rowData.append(jsonData["interests"])
     rowData.append(jsonData["credentials"])
     rowData.append(jsonData["reference"])
-    rowData.append("")                      # appeal (does not exist on initial sign up)
+    rowData.append("None")                      # appeal (does not exist on initial sign up)
     rowData.append("PENDING")
      
     connection = sqlite3.connect(r"./database.db")
@@ -1443,7 +1651,7 @@ def signUpApplication():
         referredUserList = json.loads(referrerData[11])
         referredUserList.append(jsonData["email"].lower())
         referrerData[11] = json.dumps(referredUserList)
-        cursor.execute("DELETE FROM users WHERE [email] = ?", (referrerData[0]))
+        cursor.execute("DELETE FROM users WHERE [email] = ?", (referrerData[0],))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(referrerData))
         connection.commit()
         connection.close()
@@ -1454,7 +1662,7 @@ def signUpApplication():
 
 @app.route('/checkStatus', methods = ["POST"])
 def checkStatus():
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
 
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
@@ -1496,7 +1704,7 @@ def checkStatus():
 @app.route("/appealRejection", methods = ["POST"])
 def appealRejection():
  
-    jsonData = request.json
+    jsonData =json.loads(request.get_data())
     email = jsonData["email"].lower()
     appealMessage = jsonData["appealMessage"]
  
@@ -1505,7 +1713,7 @@ def appealRejection():
     cursor.execute("SELECT * FROM signup WHERE [email] = ?",(email,))
     row = list(cursor.fetchone())
  
-    cursor.execute("DELETE * FROM signup WHERE [email] = ?", (email,))
+    cursor.execute("DELETE FROM signup WHERE [email] = ?", (email,))
     row[5] = appealMessage
     row[6] = "APPEALED"
     cursor.execute("INSERT INTO signup (fullname,email,interests,credentials,reference,appeal,status) VALUES(?,?,?,?,?,?,?)",tuple(row))
@@ -1515,7 +1723,7 @@ def appealRejection():
 
     connection.commit()
     connection.close()
-    return (jsonify({"Success" : "appeal has been submitted."}))
+    return (jsonify({"Message" : "Your appeal has been submitted!"}))
         
 ########## END VISITOR USER CODE ##########
 
@@ -1529,6 +1737,36 @@ def root():
 @app.route('/signup', methods=['GET'])
 def signup():
     return render_template("signup.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/login', methods=['GET'])
+def login():
+    return render_template("login.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/groupMainPage', methods=['GET'])
+def groupMainPage():
+    return render_template("groupMainPage.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/OU', methods=['GET'])
+def OU():
+    return render_template("OU.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/SU', methods=['GET'])
+def SU():
+    return render_template("SU.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/surfing', methods=['GET'])
+def surfing():
+    return render_template("surfing.html")
+    # return send_from_directory(app.static_folder, 'landing.html')
+
+@app.route('/vip', methods=['GET'])
+def vip():
+    return render_template("vip.html")
     # return send_from_directory(app.static_folder, 'landing.html')
 
 

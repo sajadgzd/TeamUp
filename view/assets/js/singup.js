@@ -2,11 +2,42 @@
 $(document).ready(function() {
 
   $('.sidenav').sidenav();
-  var elems = document.querySelectorAll('.chips');
-  var instances = M.Chips.init(elems, {});
+  // var elems = document.querySelectorAll('.chips');
+  // var instances = M.Chips.init(elems, {});
 
-  let elem = $(".chips")
-  var instance = M.Chips.getInstance(elem);
+  // let elem = $(".chips")
+  // var instance = M.Chips.getInstance(elem);
+
+  var selectElems = document.querySelectorAll('select');
+  var selectInstances = M.FormSelect.init(selectElems, {});
+
+  var selectInstance = M.FormSelect.getInstance(selectElems);
+
+
+  function getData() {
+    $.ajax({
+        url: "/getAllUserEmails",
+        method: "GET"
+    }).then(function(response) {
+        console.log("GOT BACK SOMETHING")
+        // console.log("NOW: \n", response.allUsersEmail.length);
+        console.log("Data:\n",response["allUsersEmail"])
+
+        for(let i = 0; i< response.allUsersEmail.length; i++){
+          console.log(response["allUsersEmail"][i])
+           $('#referMemberSelect').append(`<option value="${response["allUsersEmail"][i]}"> 
+                                       ${response["allUsersEmail"][i]} 
+                                  </option>`); 
+            
+        }
+        $('select').formSelect();
+        
+    });
+  };
+  getData();
+
+
+
 
   $(document.body).on("click", "#signup-button", function(event) {
     event.preventDefault();
@@ -14,28 +45,26 @@ $(document).ready(function() {
     let lastname = $("#last_name").val().trim()
     let fullname = firstname + " " + lastname
     let email = $("#email").val().trim()
-    let password = $("#password").val().trim()
-    let referringMember = $("#referringMember").val().trim()
-    let interests = []
-    // console.log("CHIP 0:\t", instance.chipsData)
-    for(let i=0; i< instance.chipsData.length; i++){
-      interests.push(instance.chipsData[i].tag)
-    }
+    let password = $("#password").val().trim() 
+    // let referringMember = $("#referringMember").val().trim()
+    let referringMember = $('#referMemberSelect').val()
+
+    let interests = $("#interests").val().trim()
 
     let user = {
       fullname: fullname,
       email: email,
       interests: interests,
-      password: password,
+      credentials: password,
       reference: referringMember,
     }
 
     console.log("FORM COMPLETED:\v", JSON.stringify(user))
 
-    $.post("/signup", user)
-    .then(function(data) {
-      console.log("signup POST wroked with JSON:\t" + JSON.stringify(data));
-      M.toast({html: 'Signed Up!'})
+    $.post("/signupApplication", JSON.stringify(user))
+    .then(function(response) {
+      console.log(response["Message"]);
+      M.toast({html: `${response["Message"]}`})
     });
 
   });
@@ -49,36 +78,66 @@ $(document).ready(function() {
       email : checkStatusEmail
     }
 
-    $.post("/checkStatus", statusEmail)
+    console.log("EMAIL CHECK\t", checkStatusEmail);
+
+
+    $.post("/checkStatus", JSON.stringify(statusEmail))
     .then(function(data) {
-      console.log("signup POST wroked with JSON:\t" + JSON.stringify(data));
-      let form = $("#lastItemForm")
+     
+      console.log("CHECK STATUS POST wroked with JSON:\t" + JSON.stringify(data));
+      let form = $("#checkResultDiv")
+
+      // count++
+
+      $(".statusResp").remove()
+      $(".statusResp").remove()
+      
+      
 
       if (data.Status == "PENDING" || data.Status == "USER" || data.Status == "APPEALED" || data.Status == "BLACKLISTED"){
-        form.append('<div class="col s2 m2 info center-align" style="">' +
+        form.append('<div class="col s12 m12 info center-align statusResp" id="statusResp" style="">' +
                       data.Message +
                       '</div>')
       }
-      else if (data.Status = "REJECTED"){
-        form.append('<div class="col s2 m2 info center-align" style="">' +
+      else if (data.Status == "REJECTED"){
+        form.append('<div class="col s12 m12 info center-align statusResp" id="statusResp" style="">' +
         data.Message +
-        '</div>').append('<form class="col s12 m12" id="appeal-form" style="">' +
+        '</div>').append('<form class="col s12 m12 statusResp" id="appeal-form" style="">' +
                             '<h5 class="center-align register">Write your appeal</h5>' +
                             '<div class="input-field col s12">' +
                               '<input id="appealInput" type="text" class="validate" required>' +
                               '<label for="appealInput">Appeal Message</label>' +
                             '</div>' +
-                            '<div class="input-field col s6" id="lastItemForm" >' +
-                              '<a href="#" id="checkStatus-button" class="btn waves-effect waves-light light-blue accent-4">Submit</a> <br><br>' +
+                            '<div class="input-field col s6" >' +
+                              '<a href="#" id="appeal-button" class="btn waves-effect waves-light light-blue accent-4">Submit</a> <br><br>' +
                             '</div>' +
                           '</form>')
+
+        $(document.body).on("click", "#appeal-button", function(event) {
+            let appealData = {
+              email: $("#checkStatusEmail").val().trim(),
+              appealMessage: $("#appealInput").val().trim()
+            }
+
+            console.log("appealData\t", JSON.stringify(appealData))
+
+            $.post("/appealRejection", JSON.stringify(appealData))
+            .then(function(response) {
+              console.log("DATA BACK FROM APPEAL POST REQ: \t", response)
+              $("#appeal-form").append(`<h6>  ${response["Message"]} </h6>`)
+
+            })
+          })
+
         
       }
       else {
-        form.append('<div class="col s2 m2 info center-align" style="">' +
+        form.append('<div class="col s12 m12 info center-align statusResp" id="statusResp" style="">' +
         data.Message +
         '</div>')
       }
+
+
     });
 
   });
