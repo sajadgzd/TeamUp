@@ -712,12 +712,14 @@ def handleWarningPraiseKickVote(cursor,groupName,pollType,connection,pollUUID,po
     if sumVotes == (totalMembers -1) == maxResponseCount: #We have all votes, and they were unanimous
         for index,poll in enumerate(memberPolls):
             if poll["uuid"] == pollUUID:
+                print("POLL FOUND!")
                 poll["result"] = answer
                 poll["pollStatus"] = "CLOSED"
                 memberPolls[index] = poll
                 break
         groupData[3] = json.dumps(memberPolls) #update member polls
         if answer.lower() == "yes": 
+            print("UNANIMOUS!!!!")
             memberList = json.loads(groupData[5])
             for member in memberList:
                 if member["member"] == pollTargetedMemberEmail:
