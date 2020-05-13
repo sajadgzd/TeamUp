@@ -407,7 +407,7 @@ $(document).ready(function() {
                 console.log("LOOOPING \t", response["moderationData"][i])
 
                 if((response["moderationData"][i][2]) == "CLOSE"){
-                  $("#NewRegistrationsTab").append(`<div class="col s12 m4 NewDiv" id=${response["moderationData"][i][0]}>` +
+                  $("#Moderation").append(`<div class="col s12 m4 NewDiv" id=${response["moderationData"][i][0]}>` +
                                                       `<div class="card blue-grey darken-1">` +
                                                         `<div class="card-content white-text">` +
                                                           `<span class="card-title">${response["moderationData"][i][1]}</span>` +
@@ -422,7 +422,7 @@ $(document).ready(function() {
                                                     `</div>`)
                 }
                 // else if((response["moderationData"][i][2]) == "APPEALED"){
-                //   $("#NewRegistrationsTab").append(`<div class="col s12 m4 NewDiv" id=${response["moderationData"][i][1]}>` +
+                //   $("#Moderation").append(`<div class="col s12 m4 NewDiv" id=${response["moderationData"][i][1]}>` +
                 //                                       `<div class="card blue-grey darken-1">` +
                 //                                         `<div class="card-content white-text">` +
                 //                                           `<span class="card-title">${response["moderationData"][i][0]}</span>` +
