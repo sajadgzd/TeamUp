@@ -1147,7 +1147,6 @@ def referenceReputation():
     jsonData =json.loads(request.get_data())
     referredUserEmail = jsonData["referredUser"] #The new guy
     referringUserEmail = jsonData["referringUser"] #The OG
-    points = jsonData["points"] # num of points user wants to add to referred user
     
     connection = sqlite3.connect(r"./database.db")
     cursor = connection.cursor()
