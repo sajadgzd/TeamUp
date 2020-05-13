@@ -61,7 +61,7 @@ $(document).ready(function() {
 
     // console.log("INPUT for meetupPollData\t", meetupPollData)
 
-    // $.post("/createMeetupPoll", JSON.stringify(meetupPollData))
+    $.post("/createMeetupPoll", JSON.stringify(meetupPollData))
     .then(function(response) {
       console.log("got data back from createMeetupPoll POST call", JSON.stringify(response));
       M.toast({html: response["Message"]})
