@@ -353,6 +353,24 @@ def handleGroupInvite():
         cursor.execute("DELETE FROM users WHERE [email] = ?",(inviter,))
         cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviterData))
         connection.commit()
+
+        #Delete the invitation from the invitee's list
+        cursor.execute("SELECT * FROM users where [email] = ?",(invitee,))
+        inviteeData = list(cursor.fetchone())
+        invitationList = json.loads(inviteeData[6])
+        deleteIndex = None
+        for index,invitation in invitationList:
+            if invitation["groupName"] == groupName:
+                deleteIndex = index
+                break
+        if deleteIndex is not None:
+            del invitationList[deleteIndex]
+        invitationList = json.dumps(invitationList)
+        inviteeData[6] = invitationList
+
+        cursor.execute("DELETE FROM users WHERE [email] = ?",(invitee,))
+        cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
+        connection.commit()
         connection.close()
         return (jsonify({
             "Message": "You have declined your invitation to the group {} and your response has been sent to your inviter.".format(groupName)
