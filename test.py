@@ -501,7 +501,7 @@ def issueMeetupVote():
     jsonData =json.loads(request.get_data())
 
     pollResponse = jsonData["pollResponse"] #Option they selected
-    pollResponder = jsonData["email"]
+    pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
     groupName = jsonData["groupName"]
     #
@@ -579,7 +579,7 @@ def issueCloseGroupVote():
     jsonData =json.loads(request.get_data())
 
     pollResponse = jsonData["pollResponse"] #Option they selected
-    pollResponder = jsonData["email"]
+    pollResponder = jsonData["voterEmail"]
     pollUUID = jsonData["pollUUID"]
     groupName = jsonData["groupName"]
     #
@@ -645,7 +645,7 @@ def issueCloseGroupVote():
                         cursor.execute("INSERT INTO moderationRequests (subject,message,type,status,number) VALUES(?,?,?,?,?)",(groupName,reportMessage,"CLOSE","OPEN",None))
                         connection.commit()
                 else:
-                    poll["result"] = answer
+                    poll["result"] = "Not Unanimous"
                     poll["pollStatus"] = "CLOSED"
                     groupPolls[index] = poll
             break
@@ -776,8 +776,8 @@ def issueWarningVote():
     for index,member in enumerate(memberList):
         if member["member"] == pollTargetedMemberEmail:
             if member["warnings"] >= 3: #User needs to be kicked out and points deducted
-                memberIndex = index
                 adjustMember = True
+                memberIndex = index
                 break
     if adjustMember:
         del memberList[memberIndex]

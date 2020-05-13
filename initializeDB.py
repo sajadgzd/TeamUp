@@ -32,7 +32,7 @@ def createDB():
                                 fullname             TEXT,\
                                 password             TEXT,\
                                 groupList            TEXT,\
-                                reputationScore      TEXT,\
+                                reputationScore      INTEGER,\
                                 status               TEXT,\
                                 invitations          TEXT,\
                                 blacklist            TEXT,\
