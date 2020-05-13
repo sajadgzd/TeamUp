@@ -62,6 +62,21 @@ def getSignUpData():
     }))
 
 
+@app.route('/getModerationQueue', methods = ["GET"])
+def getUserData():
+
+    connection = sqlite3.connect(r"./database.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM moderationRequests")
+    
+    moderationData = cursor.fetchone()
+    moderationData = list(moderationData)
+    connection.close()
+    return (jsonify({
+        "moderationData": moderationData
+    }))
+
+
 @app.route('/getUserData', methods = ["POST"])
 def getUserData():
     jsonData =json.loads(request.get_data())
