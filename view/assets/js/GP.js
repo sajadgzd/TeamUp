@@ -53,8 +53,8 @@ $(document).ready(function() {
       for(let j=0; j<groupPollList[i]["pollVoteOptionsList"].length; j++){
         pTags += `<p>` +
                   `<label>` +
-                    `<input name="meetupChoices" type="radio" value="${groupPollList["pollVoteOptionsList"][i]}"/>` +
-                    `<span>${groupPollList["pollVoteOptionsList"][j]}</span>` +
+                    `<input name="meetupChoices" type="radio" value="${groupPollList[i]["pollVoteOptionsList"][j]}"/>` +
+                    `<span>${groupPollList[i]["pollVoteOptionsList"][j]}</span>` +
                   `</label>` +
                 `</p>`
       }
