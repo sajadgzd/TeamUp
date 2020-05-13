@@ -26,6 +26,49 @@ $(document).ready(function() {
 
   $("#groupName").text(groupName);
 
+  $(document.body).on("click", "#schedule-button", function(event) {
+    event.preventDefault();
+
+    let pollTitle = $("#scheduleTitle").val().trim()
+    let pollPrompt = $("#scheduleText").val().trim()
+    let pollType = "MEETUP"
+    let pollVoteOptions = []
+
+    let date = ""
+    let time1 = ""
+    let time2 = ""
+    let pollVoteChoice = ""; 
+
+    console.log(numOfChoices)
+    for(let i=1; i<= numOfChoices; i++){
+      date = $(`div[data-number='${i}'] input[id='meetingDateChoice']`).val()
+      time1 = $(`div[data-number='${i}'] input[id='meetingFromTimeChoice']`).val()
+      time2 = $(`div[data-number='${i}'] input[id='meetingToTimeChoice']`).val()
+      pollVoteChoice = date + " From " + time1 + " to " + time2;
+      // console.log("POLL MEETUP CHOICE:\t", i , "- ", pollVoteChoice)
+      pollVoteOptions.push(pollVoteChoice)
+    }
+
+    var meetupPollData = {
+      groupName: groupName,
+      pollCreator: email,
+      pollTitle: pollTitle,
+      pollPrompt: pollPrompt,
+      pollType: pollType,
+      pollStatus: "ACTIVE",
+      pollVoteOptions: pollVoteOptions
+    }
+
+    // console.log("INPUT for meetupPollData\t", meetupPollData)
+
+    // $.post("/createMeetupPoll", JSON.stringify(meetupPollData))
+    .then(function(response) {
+      console.log("got data back from createMeetupPoll POST call", JSON.stringify(response));
+      M.toast({html: response["Message"]})
+      
+    });
+
+  });
 
 
 
@@ -35,17 +78,25 @@ $(document).ready(function() {
 
     let pollTitle = $("#closingPollTitle").val().trim()
     let pollPrompt = $("#closingPollDescription").val().trim()
+    let pollType = "CLOSE"
+    let pollVoteOptions = ["Yes", "No"]
 
     let closingPollData = {
       groupName: groupName,
+      pollCreator: email,
       pollTitle: pollTitle,
-      pollPrompt: pollPrompt
+      pollPrompt: pollPrompt,
+      pollType: pollType,
+      pollStatus: "ACTIVE",
+      pollVoteOptions: pollVoteOptions
     }
 
-    $.post("/createCloseGroupPoll", closingPollData)
-    .then(function(data) {
-      console.log("got data back from POST call", JSON.stringify(data));
-      alert("POST worked...");
+    // console.log("INPUT for createCloseGroupPoll POST", JSON.stringify(closingPollData));
+
+    $.post("/createCloseGroupPoll", JSON.stringify(closingPollData))
+    .then(function(response) {
+      console.log("got response back from createCloseGroupPoll POST call", JSON.stringify(response));
+      M.toast({html: response["Message"]})
     });
 
 
@@ -131,50 +182,7 @@ $(document).ready(function() {
 
 
 
-  $(document.body).on("click", "#schedule-button", function(event) {
-    event.preventDefault();
-
-    let pollTitle = $("#scheduleTitle").val().trim()
-    let pollPrompt = $("#scheduleText").val().trim()
-    let pollType = "MEETUP"
-    let pollVoteOptions = []
-
-    let date = ""
-    let time1 = ""
-    let time2 = ""
-    let pollVoteChoice = ""; 
-
-    console.log(numOfChoices)
-    for(let i=1; i<= numOfChoices; i++){
-      date = $(`div[data-number='${i}'] input[id='meetingDateChoice']`).val()
-      time1 = $(`div[data-number='${i}'] input[id='meetingFromTimeChoice']`).val()
-      time2 = $(`div[data-number='${i}'] input[id='meetingToTimeChoice']`).val()
-      pollVoteChoice = date + " From " + time1 + " to " + time2;
-      // console.log("POLL MEETUP CHOICE:\t", i , "- ", pollVoteChoice)
-      pollVoteOptions.push(pollVoteChoice)
-    }
-
-    var meetupPollData = {
-      groupName: groupName,
-      pollCreator: email,
-      pollTitle: pollTitle,
-      pollPrompt: pollPrompt,
-      pollType: pollType,
-      pollStatus: "ACTIVE",
-      pollVoteOptions: pollVoteOptions
-    }
-
-    // console.log("INPUT for meetupPollData\t", meetupPollData)
-
-    $.post("/createMeetupPoll", JSON.stringify(meetupPollData))
-    .then(function(response) {
-      console.log("got data back from createMeetupPoll POST call", JSON.stringify(response));
-      M.toast({html: response["Message"]})
-      
-    });
-
-  });
-
+  
 
   // function getData() {
   //   $.ajax({
