@@ -28,6 +28,27 @@ $(document).ready(function() {
 
   $("#userEmail").text(email);
 
+  $(document.body).on("click", "#grantPoints-button", function(event) {
+    event.preventDefault()
+
+    let referredUserSelect  = $("#referenceSelect").val()
+    
+    refereneReputation = {
+      referredUser: referredUserSelect,
+      referringUser: email
+    }
+
+    console.log("Reference Rep EMAIL: ", JSON.stringify(refereneReputation))
+
+
+    $.post("/referenceReputation", JSON.stringify(refereneReputation))
+    .then(function(response) {
+      console.log("refereneReputation call worked with\t " + JSON.stringify(response));
+      M.toast({html: response["Message"]})
+    });
+
+  })
+
 
   $(document.body).on("click", "#reportUser-button", function(event) {
 
@@ -235,6 +256,19 @@ $(document).ready(function() {
   .then(function(response) {
 
     console.log("get User Data GROUPS:\t " + JSON.stringify(response["userData"][3]));
+
+    for(let i=0; i<response["userData"][11].length; i++){
+
+      console.log("responsing got back:",response["userData"][11][i])
+
+      $("#referenceSelect").append(`<option value="${response["userData"][11][i]}"> 
+                                      ${response["userData"][11][i]} 
+                                    </option>`);   
+    }
+    $('select').formSelect();
+
+
+
 
     for(let i=0; i<response["userData"][3].length; i++){
 

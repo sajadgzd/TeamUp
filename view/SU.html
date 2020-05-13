@@ -58,7 +58,7 @@
           <li class="tab col s1"><a href="#WhiteListTab">WhiteList</a></li>
           <li class="tab col s2"><a href="#BlackListTab">BlackList</a></li>
           <li class="tab col s2"><a href="#Moderation">Moderation</a></li>
-          <li class="tab col s2"><a href="#ClosedGroupsTab">Closed Groups</a></li>
+          <li class="tab col s2"><a href="#pendingReferences">Pending References</a></li>
         </ul>
       </div>
     </div>
@@ -263,17 +263,26 @@
 
         </div>
 
-        <div class="row " id="ClosedGroupsTab">
+        <div class="row " id="pendingReferences">
           <br><br>
-
-          <div class="col s12 m12 info">
-            <h5 class="left-align register">Closed Groups Pending Evaluation to be Assigned</h5>
-
-            <p class="light"> There's currently no item here</p>
-            <br>
+            <div class="row">
+              <form class="col s12 m5" id="reg-form" style="">
+                <h5 class="left-align register">Pending References</h5>
+  
+                <div class="input-field col s12 left">
+                  <select id="referenceSelect">
+                    <option value="" disabled selected>Choose your reference</option>
+                  </select>
+                  <label>Choose your reference </label>
+                </div>
+                <div class="input-field col s12">
+                    <a href="" id="grantPoints-button" class="btn waves-effect waves-light light-blue accent-4">Grant Points
+                        <i class="material-icons right">done</i>
+                    </a>
+                </div>
+              </form>
+            </div>
           </div>
-
-        </div>
 
 
         <br><br> <br><br> <br><br>
