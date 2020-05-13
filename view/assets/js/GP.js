@@ -26,6 +26,56 @@ $(document).ready(function() {
 
   $("#groupName").text(groupName);
 
+  // $(document.body).on("click", "#meetupVoteButton", function(event) {
+  //   event.preventDefault()
+  //   console.log("RADIO BUTTON CLICKED")
+  //   var radioValue = $("input[name='meetupChoices']:checked").val();
+  //   if(radioValue){
+  //     console.log(("YOUR CHOICE HERE IS" + radioValue))
+  //       alert("YOUR CHOICE HERE IS:\t" + radioValue);
+  //   }
+  // });
+
+  groupNameJSON = {
+    groupName: groupName
+  }
+
+  $.post("/getGroupData", JSON.stringify(groupNameJSON))
+  .then(function(response) {
+    // console.log("GroupData ACTIVE AND CLOSED\t " + JSON.stringify(response));
+    console.log("GroupData\t " + JSON.stringify(response["groupData"][4]));
+    let groupPollList = response["groupData"][4]; // closing and meetup
+    let memberPollList = response["groupData"][3]; // kick praise warn
+
+    for(let i=0; i< groupPollList.length; i++) {
+      let pTags = "";
+      for(let j=0; j<groupPollList["pollVoteOptionsList"].length; j++){
+        pTags += `<p>` +
+                  `<label>` +
+                    `<input name="meetupChoices" type="radio" value="${groupPollList["pollVoteOptionsList"][i]}"/>` +
+                    `<span>${groupPollList["pollVoteOptionsList"][j]}</span>` +
+                  `</label>` +
+                `</p>`
+      }
+
+      $("#showAllPolls").append(`<form class="col s12 m12" id="reg-form">` +
+      `<h6><b>${groupPollList[j]["pollCreator"]}</b> posted the following poll</h6>` +
+      `<h6>Title: <b>${groupPollList[j]["pollTitle"]}</b></h6>` +
+      `<h6>Description: <b>${groupPollList[j]["pollPrompt"]}</b></h6>` +
+      `<br>` +
+      `<form action="#">` +
+        pTags +
+      `</form>` +
+      `<a href="#" id="meetupVoteButton" class="btn waves-effect waves-light light-blue accent-4" style="margin-left: 2%">Vote` +
+        `<i class="material-icons right">done</i>` +
+      `</a>` +
+      `</form>`)
+    }
+
+
+    }
+  );
+
   $(document.body).on("click", "#schedule-button", function(event) {
     event.preventDefault();
 
@@ -39,7 +89,7 @@ $(document).ready(function() {
     let time2 = ""
     let pollVoteChoice = ""; 
 
-    console.log(numOfChoices)
+    // console.log(numOfChoices)
     for(let i=1; i<= numOfChoices; i++){
       date = $(`div[data-number='${i}'] input[id='meetingDateChoice']`).val()
       time1 = $(`div[data-number='${i}'] input[id='meetingFromTimeChoice']`).val()
@@ -60,11 +110,32 @@ $(document).ready(function() {
     }
 
     // console.log("INPUT for meetupPollData\t", meetupPollData)
-
     $.post("/createMeetupPoll", JSON.stringify(meetupPollData))
     .then(function(response) {
       console.log("got data back from createMeetupPoll POST call", JSON.stringify(response));
       M.toast({html: response["Message"]})
+
+      // let pTags = "";
+      // for(let i=0; i<pollVoteOptions.length; i++){
+      //   pTags += `<p>` +
+      //             `<label>` +
+      //               `<input name="meetupChoices" type="radio" value="${pollVoteOptions[i]}"/>` +
+      //               `<span>${pollVoteOptions[i]}</span>` +
+      //             `</label>` +
+      //           `</p>`
+      // }
+      // $("#showAllPolls").append(`<form class="col s12 m12" id="reg-form">` +
+      //                             `<h6><b>${email}</b> posted the following poll</h6>` +
+      //                             `<h6>Title: <b>${pollTitle}</b></h6>` +
+      //                             `<h6>Description: <b>${pollPrompt}</b></h6>` +
+      //                             `<br>` +
+      //                             `<form action="#">` +
+      //                               pTags +
+      //                             `</form>` +
+      //                             `<a href="#" id="meetupVoteButton" class="btn waves-effect waves-light light-blue accent-4" style="margin-left: 2%">Vote` +
+      //                               `<i class="material-icons right">done</i>` +
+      //                             `</a>` +
+      //                           `</form>`)
       
     });
 
@@ -187,12 +258,9 @@ $(document).ready(function() {
   });
 
 
-  $("#radiobtn").click(function(){
-    var radioValue = $("input[name='group1']:checked").val();
-    if(radioValue){
-        alert("Your chose herew" + radioValue);
-    }
-  });
+  
+
+  
 
 
 
