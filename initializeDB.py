@@ -28,8 +28,6 @@ def createSuperUser():
     blacklist = json.dumps(blacklist)
     whitelist = []
     whitelist = json.dumps(whitelist)
-    compliments = []
-    compliments = json.dumps(compliments)
     inbox = []
     inbox = json.dumps(inbox)
     referredUsers = []
@@ -45,7 +43,7 @@ def createSuperUser():
     rowData.append(invitations)
     rowData.append(blacklist)
     rowData.append(whitelist)
-    rowData.append(compliments)
+    rowData.append(0)
     rowData.append(inbox)
     rowData.append(referredUsers)
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",tuple(rowData))
@@ -67,8 +65,6 @@ def createSuperUser2():
     blacklist = json.dumps(blacklist)
     whitelist = []
     whitelist = json.dumps(whitelist)
-    compliments = []
-    compliments = json.dumps(compliments)
     inbox = []
     inbox = json.dumps(inbox)
     referredUsers = []
@@ -84,7 +80,7 @@ def createSuperUser2():
     rowData.append(invitations)
     rowData.append(blacklist)
     rowData.append(whitelist)
-    rowData.append(compliments)
+    rowData.append(0)
     rowData.append(inbox)
     rowData.append(referredUsers)
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",tuple(rowData))

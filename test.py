@@ -1215,8 +1215,6 @@ def handleApplication():
     blacklist = json.dumps(blacklist)
     whitelist = []
     whitelist = json.dumps(whitelist)
-    compliments = []
-    compliments = json.dumps(compliments)
     inbox = []
     inbox = json.dumps(inbox)
     referredUsers = []
@@ -1232,7 +1230,7 @@ def handleApplication():
     rowData.append(invitations)
     rowData.append(blacklist)
     rowData.append(whitelist)
-    rowData.append(compliments)
+    rowData.append(0)
     rowData.append(inbox)
     rowData.append(referredUsers)
 

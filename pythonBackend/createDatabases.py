@@ -37,7 +37,7 @@ if "users" not in tableList:
                               invitations          TEXT,\
                               blacklist            TEXT,\
                               whitelist            TEXT,\
-                              compliments          TEXT,\
+                              compliments          INTEGER,\
                               inbox                TEXT,\
                               referredUsers        TEXT\
                          );"
