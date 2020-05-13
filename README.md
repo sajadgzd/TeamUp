@@ -41,12 +41,16 @@ The Team Up project and its files should now be in your project folder.
 
 Make sure you have **Python3** or above version installed on your system
 
+Here's a link to OS specific guide to installation of **Python**
+
+[Install Python](https://realpython.com/installing-python/)
+
 
 ### Step 3: Set up SQL Database
 
 1. Go to the root directory **/softwareEngineeringProject**
 
-2. Run the following commands in your terminal
+2. Run the following commands in your terminal:
 
 ```python
 python createDatabases.py
