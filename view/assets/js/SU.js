@@ -32,12 +32,12 @@ $(document).ready(function() {
     url: "/getAllUserEmails",
     method: "GET"
   }).then(function(response) {
-      console.log("GOT BACK SOMETHING")
-      console.log("NOW: \n", response.allUsersEmail.length);
-      console.log("Data:\n",response["allUsersEmail"])
+      // console.log("GOT BACK SOMETHING")
+      // console.log("NOW: \n", response.allUsersEmail.length);
+      // console.log("Data:\n",response["allUsersEmail"])
 
       for(let i = 0; i< response.allUsersEmail.length; i++){
-        console.log(response["allUsersEmail"][i])
+        // console.log(response["allUsersEmail"][i])
         if(response["allUsersEmail"][i] != email){
           $('#whiteEmailAddition').append(`<option value="${response["allUsersEmail"][i]}"> 
                                               ${response["allUsersEmail"][i]} 
@@ -54,7 +54,7 @@ $(document).ready(function() {
 
   $(document.body).on("click", "#addWhite-button", function(event) {
 
-    console.log("EMAIL ADDITION: \t", $('#whiteEmailAddition').val())
+    // console.log("EMAIL ADDITION: \t", $('#whiteEmailAddition').val())
     let addWhiteData = {
       userEmail: email,
       emailAddition: $('#whiteEmailAddition').val()
@@ -62,14 +62,14 @@ $(document).ready(function() {
 
     $.post("/addToWhiteBox", JSON.stringify(addWhiteData))
     .then(function(response) {
-      console.log("ADD TO WHITEBOX call worked with\t " + JSON.stringify(response));
+      // console.log("ADD TO WHITEBOX call worked with\t " + JSON.stringify(response));
       M.toast({html: response["Message"]})
     });
   })
 
   $(document.body).on("click", "#addBlack-button", function(event) {
 
-    console.log("BLACK EMAIL ADDITION: \t", $('#blackEmailAddition').val())
+    // console.log("BLACK EMAIL ADDITION: \t", $('#blackEmailAddition').val())
     let addBlackData = {
       userEmail: email,
       emailAddition: $('#blackEmailAddition').val()
@@ -77,7 +77,7 @@ $(document).ready(function() {
 
     $.post("/addToBlackBox", JSON.stringify(addBlackData))
     .then(function(response) {
-      console.log("ADD TO BLACKBOX call worked with\t " + JSON.stringify(response));
+      // console.log("ADD TO BLACKBOX call worked with\t " + JSON.stringify(response));
       M.toast({html: response["Message"]})
     });
   })
@@ -105,25 +105,25 @@ $(document).ready(function() {
       email: email
     }
 
-    // console.log(JSON.stringify(createGroupData))
+    console.log("CREATE GROUP DATA input:\t", JSON.stringify(createGroupData))
 
     $.post("/createGroup", JSON.stringify(createGroupData))
     .then(function(response) {
-      // console.log("call worked with\t " + JSON.stringify(response));
+      console.log("CREATE GROUP call worked with\t " + JSON.stringify(response));
     });
 
-    location.reload();
+    // location.reload();
 
   });
 
 
   $.post("/getUserData", JSON.stringify(emailData))
   .then(function(response) {
-    console.log("GROUUPS::::\t " + JSON.stringify(response["userData"][3]));
+    console.log("get User Data GROUPS:\t " + JSON.stringify(response["userData"][3]));
 
     for(let i=0; i<response["userData"][3].length; i++){
 
-      console.log("LOOOPING in GetUserData")
+      console.log("LOOOPING in GetUserData to show")
       let groupName = response["userData"][3][i]
 
       groupNameJSON = {
@@ -132,7 +132,7 @@ $(document).ready(function() {
 
       $.post("/getGroupData", JSON.stringify(groupNameJSON))
       .then(function(response) {
-        console.log("GroupData ACTIVE AND CLOSED\t " + JSON.stringify(response));
+        // console.log("GroupData ACTIVE AND CLOSED\t " + JSON.stringify(response));
         console.log("GroupData ACTIVE AND CLOSED\t " + JSON.stringify(response["groupData"][1]));
 
         if((response["groupData"][1]) == "ACTIVE"){
@@ -168,7 +168,7 @@ $(document).ready(function() {
     // GENERATE BLACK LIST
     for(let i=0; i<response["userData"][7].length; i++){
 
-      console.log("LOOOPING in GetUserData for BLACK LIST", response["userData"][7][i])
+      // console.log("LOOOPING in GetUserData for BLACK LIST", response["userData"][7][i])
       $("#blackListDiv").append('<div class="col s4 m2">' +
                               `<div class="card blue-grey darken-1">` +
                                 `<div class="card-content white-text"> User Email: `  +
@@ -223,7 +223,7 @@ $(document).ready(function() {
 
       for(let i=0; i<response["signUpData"].length; i++){
         for(let j=0; j<response["signUpData"][i].length; i++){
-            console.log("LOOOPING \t", response["signUpData"][i][6])
+            // console.log("LOOOPING \t", response["signUpData"][i][6])
 
             if((response["signUpData"][i][6]) == "PENDING"){
             $("#NewRegistrationsTab").append(`<div class="col s12 m4 NewDiv" id=${response["signUpData"][i][1]}>` +
