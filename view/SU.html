@@ -302,8 +302,8 @@
           <!-- Modal Trigger -->
           <a class="waves-effect waves-light btn modal-trigger" href="#AddBlackModal">Add to Black List </a>
 
-          <div class="row">
-            <div class="col s12 m3">
+          <div class="row" id="blackListDiv">
+            <!-- <div class="col s12 m3">
               <div class="card blue-grey darken-1">
                 <div class="card-content white-text">
                   <span class="card-title">User name</span>
@@ -346,23 +346,25 @@
                   <a href="#">Remove</a>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
 
           <!-- Modal Structure -->
-          <div id="AddBlackModal" class="modal">
+          <div id="AddBlackModal" class="modal" style="height: 400px;">
             <div class="modal-content">
               <h4>Add to your Black list</h4>
-              <p>Enter the user name</p>
+              <p>Pick your choice</p>
               <form class="col s6 m6" id="reg-form" style="margin-left: 25%">
-                <div class="input-field col s12">
-                  <input id="username" type="text" class="validate" required>
-                  <label for="username">Username</label>
+                <div class="input-field col s12 center">
+                  <select id="blackEmailAddition">
+                    <option value="" disabled selected>Choose your user</option>
+                  </select>
+                  <label>Choose your user</label>
                 </div>
-            </form>
+              </form>
             </div>
             <div class="modal-footer">
-              <a href="#!" class="modal-close waves-effect waves-green btn-flat">Submit</a>
+              <a href="" class="modal-close waves-effect waves-green btn-flat" id="addBlack-button">Submit</a>
             </div>
           </div>
         </div>

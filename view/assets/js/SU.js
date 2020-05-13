@@ -40,8 +40,11 @@ $(document).ready(function() {
         console.log(response["allUsersEmail"][i])
         if(response["allUsersEmail"][i] != email){
           $('#whiteEmailAddition').append(`<option value="${response["allUsersEmail"][i]}"> 
-                                      ${response["allUsersEmail"][i]} 
-                                  </option>`); 
+                                              ${response["allUsersEmail"][i]} 
+                                           </option>`); 
+          $('#blackEmailAddition').append(`<option value="${response["allUsersEmail"][i]}"> 
+                                              ${response["allUsersEmail"][i]} 
+                                            </option>`);                         
         }
           
       }
@@ -62,8 +65,21 @@ $(document).ready(function() {
       console.log("ADD TO WHITEBOX call worked with\t " + JSON.stringify(response));
       M.toast({html: response["Message"]})
     });
+  })
 
+  $(document.body).on("click", "#addBlack-button", function(event) {
 
+    console.log("BLACK EMAIL ADDITION: \t", $('#blackEmailAddition').val())
+    let addBlackData = {
+      userEmail: email,
+      emailAddition: $('#blackEmailAddition').val()
+    }
+
+    $.post("/addToBlackBox", JSON.stringify(addBlackData))
+    .then(function(response) {
+      console.log("ADD TO BLACKBOX call worked with\t " + JSON.stringify(response));
+      M.toast({html: response["Message"]})
+    });
   })
 
 
@@ -138,7 +154,7 @@ $(document).ready(function() {
     // GERENATE WHITE LIST
     for(let i=0; i<response["userData"][8].length; i++){
 
-      console.log("LOOOPING in GetUserData for WhiteList", response["userData"][8][i])
+      // console.log("LOOOPING in GetUserData for WhiteList", response["userData"][8][i])
       $("#whiteListDiv").append('<div class="col s4 m2">' +
                               `<div class="card blue-grey darken-1">` +
                                 `<div class="card-content white-text"> User Email: `  +
@@ -148,6 +164,21 @@ $(document).ready(function() {
                             `</div>`)
 
     }
+
+    // GENERATE BLACK LIST
+    for(let i=0; i<response["userData"][7].length; i++){
+
+      console.log("LOOOPING in GetUserData for BLACK LIST", response["userData"][7][i])
+      $("#blackListDiv").append('<div class="col s4 m2">' +
+                              `<div class="card blue-grey darken-1">` +
+                                `<div class="card-content white-text"> User Email: `  +
+                                  `<span class="card-title">${response["userData"][7][i]}</span>` +
+                                `</div>` +
+                              `</div>` +
+                            `</div>`)
+
+    }
+
 
     
 
