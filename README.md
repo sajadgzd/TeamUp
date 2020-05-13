@@ -50,18 +50,15 @@ Make sure you have **Python3** or above version installed on your system
 
 1. Go to the root directory **/softwareEngineeringProject**
 
-2. Run the following commands in your terminal:
+2. Run the following command in your terminal:
 
-```python
-python createDatabases.py
-```
 
 ```python
 python initializeDB.py
 ```
 
 
-### Step 4: Launch App 
+### Step 4: Launch the App 
 Via terminal type in these bash command once you are in the Team Up root directory
 
 ```python
