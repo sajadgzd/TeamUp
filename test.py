@@ -236,6 +236,10 @@ def inviteToGroup():
             })
 
     invitations = json.loads(inviteeData[6])
+    for invitation in invitations:
+        if invitation["groupName"] == groupName:
+            connection.close()
+            return jsonify({"Message": "This user has already received an invite to this group."})
     invitations.append({
         "inviterFullName": inviterFullname,
         "inviterEmail" :inviter,
@@ -243,6 +247,7 @@ def inviteToGroup():
     })
 
     invitations = json.dumps(invitations)
+    inviteeData[6] = invitations
     cursor.execute("DELETE FROM users WHERE [email] = ?", (invitee,))
     cursor.execute("INSERT INTO users (email,fullname,password,groupList,reputationScore,status,invitations,blacklist,whitelist,compliments,inbox,referredUsers) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",tuple(inviteeData))
     connection.commit()
