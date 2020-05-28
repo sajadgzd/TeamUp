@@ -29,11 +29,11 @@ users to find team members for a given project.
 ## Local Installation
 ### Step 1: Git Clone
 Clone the project to your local git repo like the following:
-> git clone git@github.com:sajadgzd/softwareEngineeringProject.git
+> git clone git@github.com:sajadgzd/TeamUp.git
 
 or
 
-> git clone https://github.com/sajadgzd/softwareEngineeringProject.git
+> git clone https://github.com/sajadgzd/TeamUp.git
 
 The Team Up project and its files should now be in your project folder.
 
@@ -48,7 +48,7 @@ Make sure you have **Python3** or above version installed on your system
 
 ### Step 3: Set up SQL Database
 
-1. Go to the root directory **/softwareEngineeringProject**
+1. Go to the root directory **/TeamUp**
 
 2. Run the following command in your terminal:
 
